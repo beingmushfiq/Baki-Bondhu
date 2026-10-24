@@ -1,0 +1,6 @@
+{
+  "name": "Baki Bondhu",
+  "description": "Voice-first Bangla credit (baki) ledger and debt recovery app for neighbourhood shopkeepers",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

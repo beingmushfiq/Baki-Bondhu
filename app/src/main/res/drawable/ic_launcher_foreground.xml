@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Golden Geometric Shield Frame -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M54,20 L80,28 C80,56 54,84 54,84 C54,84 28,56 28,28 Z" />
+    <!-- Inner Deep Emerald Inset -->
+    <path
+        android:fillColor="#022C22"
+        android:pathData="M54,24 L76,31 C76,54 54,78 54,78 C54,78 32,54 32,31 Z" />
+    <!-- Gold Taka Ribbon & Khata Symbol -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M44,36 h20 c2.2,0 4,1.8 4,4 v24 l-14,-6 l-14,6 v-24 c0,-2.2 1.8,-4 4,-4 z" />
+    <!-- Bangla Taka Horizontal Crossbar -->
+    <path
+        android:fillColor="#022C22"
+        android:pathData="M40,46 h28 v3.5 h-28 z" />
+    <!-- Central Taka Stem -->
+    <path
+        android:fillColor="#022C22"
+        android:pathData="M52,38 h4 v18 h-4 z" />
+    <!-- Voice Soundwave Micro-Dots -->
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M54,64 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+</vector>

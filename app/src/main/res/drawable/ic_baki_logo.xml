@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Emerald Shield Base -->
+    <path
+        android:fillColor="#047857"
+        android:pathData="M24,4 L38,9 C38,24 24,42 24,42 C24,42 10,24 10,9 Z" />
+    <!-- Inner Dark Emerald Shield Layer -->
+    <path
+        android:fillColor="#022C22"
+        android:pathData="M24,7 L35,11 C35,23 24,38 24,38 C24,38 13,23 13,11 Z" />
+    <!-- Gold Ledger Pages / Ribbon -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M19,16 h10 c1.1,0 2,0.9 2,2 v14 l-7,-3 l-7,3 v-14 c0,-1.1 0.9,-2 2,-2 z" />
+    <!-- Gold Taka Symbol Horizontal Crossbar -->
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M17,21 h14 v2 h-14 z" />
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M23,17 h2 v10 h-2 z" />
+</vector>
