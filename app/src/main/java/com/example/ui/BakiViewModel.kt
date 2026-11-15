@@ -111,6 +111,16 @@ class BakiViewModel(
     private val _autoBackupEnabled = MutableStateFlow(true)
     val autoBackupEnabled: StateFlow<Boolean> = _autoBackupEnabled.asStateFlow()
 
+    // Cloud Restore Preview & State
+    private val _isRestorePreviewOpen = MutableStateFlow(false)
+    val isRestorePreviewOpen: StateFlow<Boolean> = _isRestorePreviewOpen.asStateFlow()
+
+    private val _restorePreviewData = MutableStateFlow<com.example.ui.components.CloudRestorePreviewData?>(null)
+    val restorePreviewData: StateFlow<com.example.ui.components.CloudRestorePreviewData?> = _restorePreviewData.asStateFlow()
+
+    private val _isFetchingRestorePreview = MutableStateFlow(false)
+    val isFetchingRestorePreview: StateFlow<Boolean> = _isFetchingRestorePreview.asStateFlow()
+
     val voiceManager = VoiceSpeechManager(application) {
         uiState.value.customers.map { it.name }
     }
@@ -774,10 +784,12 @@ class BakiViewModel(
 
     fun updatePendingResult(customerName: String, amount: Double, type: TransactionType) {
         val current = _pendingConfirmation.value ?: return
+        val amountPaisa = com.example.util.Money.takaToPaisa(amount)
         _pendingConfirmation.value = current.copy(
             customerName = customerName,
-            amount = amount,
-            type = type
+            amountPaisa = amountPaisa,
+            type = type,
+            isAmountMissing = (amountPaisa <= 0)
         )
         _isEditingParsedResult.value = false
     }
@@ -998,19 +1010,14 @@ class BakiViewModel(
     }
 
     fun triggerSync() {
-        viewModelScope.launch {
+        if (authManager.currentUser.value != null) {
+            backupToCloud(silent = false)
+        } else {
             val isBn = uiState.value.isBangla
             showToast(
-                message = if (isBn) "ক্লাউড সিঙ্কিং শুরু হয়েছে..." else "Syncing ledger to cloud...",
+                message = if (isBn) "সকল হিসাব অফলাইনে স্থানীয়ভাবে সংরক্ষিত আছে" else "All records safely saved locally offline",
                 type = BakiToastType.INFO
             )
-            val success = repository.syncOfflineData()
-            if (success) {
-                showToast(
-                    message = if (isBn) "সব হিসাব অফলাইনে সংরক্ষিত ও সিঙ্কড" else "All ledger records synced",
-                    type = BakiToastType.SUCCESS
-                )
-            }
         }
     }
 

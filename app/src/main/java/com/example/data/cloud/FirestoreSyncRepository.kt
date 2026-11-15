@@ -5,12 +5,14 @@ import android.util.Log
 import com.example.R
 import com.example.data.model.CustomerEntity
 import com.example.data.model.ShopSettingsEntity
+import com.example.data.model.SyncStatus
 import com.example.data.model.TransactionEntity
 import com.example.data.model.TransactionType
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 data class BackupStats(
     val customersBackedUp: Int,
@@ -23,6 +25,12 @@ data class RestoreStats(
     val transactionsRestored: List<TransactionEntity>,
     val settingsRestored: ShopSettingsEntity?,
     val timestamp: Long
+)
+
+data class CloudPreviewStats(
+    val cloudCustomerCount: Int,
+    val cloudTransactionCount: Int,
+    val lastBackupAt: Long?
 )
 
 class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) {
@@ -45,11 +53,10 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
     })
 
     private val db: FirebaseFirestore? get() = dbProvider()
-
     private val tag = "FirestoreSyncRepo"
 
     /**
-     * Initializes or updates the user profile metadata document in Firestore.
+     * Initializes or updates user profile metadata in Firestore.
      */
     suspend fun syncUserProfile(user: FirebaseUser, settings: ShopSettingsEntity? = null, autoBackup: Boolean = true) {
         val database = db ?: return
@@ -66,12 +73,14 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             data["ownerName"] = settings.ownerName
             data["bkashNumber"] = settings.bkashNumber
             data["nagadNumber"] = settings.nagadNumber
+            data["language"] = settings.language
         }
         userDoc.set(data, SetOptions.merge()).await()
     }
 
     /**
-     * Performs a complete backup of local Room ledger data to the user's Firestore cloud database.
+     * Performs an atomic chunked batch backup of local Room ledger data to the user's Firestore cloud database.
+     * Uses stable UUIDs to guarantee cross-device deduplication.
      */
     suspend fun backupAll(
         userId: String,
@@ -83,8 +92,9 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
         val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
         return try {
             val userDoc = database.collection("users").document(userId)
+            val now = System.currentTimeMillis()
 
-            // Update user profile and backup metadata
+            // 1. Update user profile document
             val profileData = mapOf(
                 "userId" to userId,
                 "email" to (user.email ?: ""),
@@ -93,123 +103,82 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                 "ownerName" to settings.ownerName,
                 "bkashNumber" to settings.bkashNumber,
                 "nagadNumber" to settings.nagadNumber,
-                "lastBackupAt" to System.currentTimeMillis(),
+                "lastBackupAt" to now,
                 "customerCount" to customers.size,
                 "transactionCount" to transactions.size,
-                "totalBaki" to customers.filter { it.balance > 0 }.sumOf { it.balance },
-                "updatedAt" to System.currentTimeMillis()
+                "totalBakiPaisa" to customers.filter { it.balancePaisa > 0 }.sumOf { it.balancePaisa },
+                "updatedAt" to now
             )
             userDoc.set(profileData, SetOptions.merge()).await()
 
-            // Back up customers in subcollection
+            // 2. Batch commit customers using UUIDs in chunks of 400 (well within Firestore 500 limit)
             val customersCol = userDoc.collection("customers")
-            for (cust in customers) {
-                val custMap = mutableMapOf<String, Any>(
-                    "id" to cust.id,
-                    "userId" to userId,
-                    "name" to cust.name,
-                    "phone" to cust.phone,
-                    "balance" to cust.balance,
-                    "trustScore" to cust.trustScore,
-                    "note" to cust.note,
-                    "lastTransactionAt" to cust.lastTransactionAt,
-                    "createdAt" to cust.createdAt
-                )
-                if (cust.dueDate != null) {
-                    custMap["dueDate"] = cust.dueDate
+            customers.chunked(400).forEach { chunk ->
+                val batch = database.batch()
+                for (cust in chunk) {
+                    val docRef = customersCol.document(cust.uuid.ifBlank { cust.id.toString() })
+                    val custMap = mutableMapOf<String, Any>(
+                        "uuid" to cust.uuid,
+                        "userId" to userId,
+                        "name" to cust.name,
+                        "phone" to cust.phone,
+                        "balancePaisa" to cust.balancePaisa,
+                        "balance" to cust.balance,
+                        "trustScore" to cust.trustScore,
+                        "note" to cust.note,
+                        "lastTransactionAt" to cust.lastTransactionAt,
+                        "createdAt" to cust.createdAt,
+                        "isArchived" to cust.isArchived,
+                        "updatedAt" to cust.updatedAt
+                    )
+                    if (cust.dueDate != null) {
+                        custMap["dueDate"] = cust.dueDate
+                    }
+                    batch.set(docRef, custMap, SetOptions.merge())
                 }
-                customersCol.document(cust.id.toString()).set(custMap, SetOptions.merge()).await()
+                batch.commit().await()
             }
 
-            // Back up transactions in subcollection
+            // 3. Batch commit transactions using UUIDs in chunks of 400
             val txCol = userDoc.collection("transactions")
-            for (tx in transactions) {
-                val txMap = mutableMapOf<String, Any>(
-                    "id" to tx.id,
-                    "userId" to userId,
-                    "customerId" to tx.customerId,
-                    "customerName" to tx.customerName,
-                    "type" to tx.type.name,
-                    "amount" to tx.amount,
-                    "note" to tx.note,
-                    "timestamp" to tx.timestamp
-                )
-                if (tx.originalSpokenText != null) {
-                    txMap["originalSpokenText"] = tx.originalSpokenText
+            transactions.chunked(400).forEach { chunk ->
+                val batch = database.batch()
+                for (tx in chunk) {
+                    val docRef = txCol.document(tx.uuid.ifBlank { tx.id.toString() })
+                    val txMap = mutableMapOf<String, Any>(
+                        "uuid" to tx.uuid,
+                        "userId" to userId,
+                        "customerId" to tx.customerId,
+                        "customerUuid" to tx.customerUuid,
+                        "customerName" to tx.customerName,
+                        "type" to tx.type.name,
+                        "amountPaisa" to tx.amountPaisa,
+                        "amount" to tx.amount,
+                        "note" to tx.note,
+                        "timestamp" to tx.timestamp,
+                        "isDeleted" to tx.isDeleted,
+                        "updatedAt" to tx.updatedAt
+                    )
+                    if (tx.originalSpokenText != null) {
+                        txMap["originalSpokenText"] = tx.originalSpokenText
+                    }
+                    if (tx.dueDate != null) {
+                        txMap["dueDate"] = tx.dueDate
+                    }
+                    batch.set(docRef, txMap, SetOptions.merge())
                 }
-                if (tx.dueDate != null) {
-                    txMap["dueDate"] = tx.dueDate
-                }
-                txCol.document(tx.id.toString()).set(txMap, SetOptions.merge()).await()
+                batch.commit().await()
             }
 
             val stats = BackupStats(
                 customersBackedUp = customers.size,
                 transactionsBackedUp = transactions.size,
-                timestamp = System.currentTimeMillis()
+                timestamp = now
             )
             Result.success(stats)
         } catch (e: Exception) {
             Log.e(tag, "Backup failed", e)
             Result.failure(e)
-        }
-    }
-
-    /**
-     * Backs up a single customer directly to the user's cloud account.
-     */
-    suspend fun backupCustomer(userId: String, customer: CustomerEntity) {
-        val database = db ?: return
-        try {
-            val doc = database.collection("users").document(userId)
-                .collection("customers").document(customer.id.toString())
-            val custMap = mutableMapOf<String, Any>(
-                "id" to customer.id,
-                "userId" to userId,
-                "name" to customer.name,
-                "phone" to customer.phone,
-                "balance" to customer.balance,
-                "trustScore" to customer.trustScore,
-                "note" to customer.note,
-                "lastTransactionAt" to customer.lastTransactionAt,
-                "createdAt" to customer.createdAt
-            )
-            if (customer.dueDate != null) {
-                custMap["dueDate"] = customer.dueDate
-            }
-            doc.set(custMap, SetOptions.merge()).await()
-        } catch (e: Exception) {
-            Log.w(tag, "Failed to auto-backup customer ${customer.id}", e)
-        }
-    }
-
-    /**
-     * Backs up a single transaction directly to the user's cloud account.
-     */
-    suspend fun backupTransaction(userId: String, tx: TransactionEntity) {
-        val database = db ?: return
-        try {
-            val doc = database.collection("users").document(userId)
-                .collection("transactions").document(tx.id.toString())
-            val txMap = mutableMapOf<String, Any>(
-                "id" to tx.id,
-                "userId" to userId,
-                "customerId" to tx.customerId,
-                "customerName" to tx.customerName,
-                "type" to tx.type.name,
-                "amount" to tx.amount,
-                "note" to tx.note,
-                "timestamp" to tx.timestamp
-            )
-            if (tx.originalSpokenText != null) {
-                txMap["originalSpokenText"] = tx.originalSpokenText
-            }
-            if (tx.dueDate != null) {
-                txMap["dueDate"] = tx.dueDate
-            }
-            doc.set(txMap, SetOptions.merge()).await()
-        } catch (e: Exception) {
-            Log.w(tag, "Failed to auto-backup transaction ${tx.id}", e)
         }
     }
 
@@ -227,11 +196,13 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                 val oName = userDoc.getString("ownerName") ?: ""
                 val bkash = userDoc.getString("bkashNumber") ?: ""
                 val nagad = userDoc.getString("nagadNumber") ?: ""
+                val lang = userDoc.getString("language") ?: "bn"
                 restoredSettings = ShopSettingsEntity(
                     shopName = sName,
                     ownerName = oName,
                     bkashNumber = bkash,
-                    nagadNumber = nagad
+                    nagadNumber = nagad,
+                    language = lang
                 )
             }
 
@@ -240,26 +211,34 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
 
             val restoredCustomers = custSnap.documents.mapNotNull { doc ->
                 try {
-                    val id = doc.getLong("id") ?: 0L
+                    val uuid = doc.getString("uuid") ?: doc.id.ifBlank { UUID.randomUUID().toString() }
                     val name = doc.getString("name") ?: return@mapNotNull null
                     val phone = doc.getString("phone") ?: ""
-                    val balance = doc.getDouble("balance") ?: 0.0
+                    // Handle balancePaisa with fallback to legacy balance Double
+                    val balancePaisa = doc.getLong("balancePaisa")
+                        ?: Math.round((doc.getDouble("balance") ?: 0.0) * 100.0)
                     val trust = (doc.getLong("trustScore") ?: 2L).toInt()
                     val note = doc.getString("note") ?: ""
                     val lastTx = doc.getLong("lastTransactionAt") ?: System.currentTimeMillis()
                     val createdAt = doc.getLong("createdAt") ?: System.currentTimeMillis()
                     val dueDate = doc.getLong("dueDate")
+                    val isArchived = doc.getBoolean("isArchived") ?: false
+                    val updatedAt = doc.getLong("updatedAt") ?: System.currentTimeMillis()
 
                     CustomerEntity(
-                        id = id,
+                        id = 0L, // Re-indexed locally by Room
+                        uuid = uuid,
                         name = name,
                         phone = phone,
-                        balance = balance,
+                        balancePaisa = balancePaisa,
                         trustScore = trust,
                         note = note,
                         lastTransactionAt = lastTx,
                         createdAt = createdAt,
-                        dueDate = dueDate
+                        dueDate = dueDate,
+                        isArchived = isArchived,
+                        syncStatus = SyncStatus.SYNCED,
+                        updatedAt = updatedAt
                     )
                 } catch (_: Exception) {
                     null
@@ -271,27 +250,35 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
 
             val restoredTransactions = txSnap.documents.mapNotNull { doc ->
                 try {
-                    val id = doc.getLong("id") ?: 0L
-                    val custId = doc.getLong("customerId") ?: 0L
+                    val uuid = doc.getString("uuid") ?: doc.id.ifBlank { UUID.randomUUID().toString() }
+                    val custUuid = doc.getString("customerUuid") ?: ""
                     val custName = doc.getString("customerName") ?: ""
                     val typeStr = doc.getString("type") ?: "BAKI_SALE"
                     val type = try { TransactionType.valueOf(typeStr) } catch (_: Exception) { TransactionType.BAKI_SALE }
-                    val amount = doc.getDouble("amount") ?: 0.0
+                    val amountPaisa = doc.getLong("amountPaisa")
+                        ?: Math.round((doc.getDouble("amount") ?: 0.0) * 100.0)
                     val originalText = doc.getString("originalSpokenText")
                     val note = doc.getString("note") ?: ""
                     val timestamp = doc.getLong("timestamp") ?: System.currentTimeMillis()
                     val dueDate = doc.getLong("dueDate")
+                    val isDeleted = doc.getBoolean("isDeleted") ?: false
+                    val updatedAt = doc.getLong("updatedAt") ?: System.currentTimeMillis()
 
                     TransactionEntity(
-                        id = id,
-                        customerId = custId,
+                        id = 0L, // Re-indexed locally by Room
+                        uuid = uuid,
+                        customerId = 0L, // Resolved to local ID during insertion
+                        customerUuid = custUuid,
                         customerName = custName,
                         type = type,
-                        amount = amount,
+                        amountPaisa = amountPaisa,
                         originalSpokenText = originalText,
                         note = note,
                         timestamp = timestamp,
-                        dueDate = dueDate
+                        dueDate = dueDate,
+                        isDeleted = isDeleted,
+                        syncStatus = SyncStatus.SYNCED,
+                        updatedAt = updatedAt
                     )
                 } catch (_: Exception) {
                     null
@@ -307,6 +294,33 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             Result.success(stats)
         } catch (e: Exception) {
             Log.e(tag, "Restore failed", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Retrieves cloud summary counts and last backup timestamp for pre-restore preview.
+     */
+    suspend fun getCloudPreview(userId: String): Result<CloudPreviewStats> {
+        val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
+        return try {
+            val userDoc = database.collection("users").document(userId).get().await()
+            val lastBackup = if (userDoc.exists()) userDoc.getLong("lastBackupAt") else null
+
+            val custSnap = database.collection("users").document(userId)
+                .collection("customers").get().await()
+            val txSnap = database.collection("users").document(userId)
+                .collection("transactions").get().await()
+
+            Result.success(
+                CloudPreviewStats(
+                    cloudCustomerCount = custSnap.size(),
+                    cloudTransactionCount = txSnap.size(),
+                    lastBackupAt = lastBackup
+                )
+            )
+        } catch (e: Exception) {
+            Log.e(tag, "Get cloud preview failed", e)
             Result.failure(e)
         }
     }

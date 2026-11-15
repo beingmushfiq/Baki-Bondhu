@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -525,28 +526,84 @@ fun VoiceRecordSheet(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Amount in large bold
-                            val amountStr = BakiStrings.formatMoney(pending.amount, isBn)
-                            Text(
-                                text = amountStr,
-                                fontSize = 36.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = typeColor
-                            )
+                            if (pending.isAmountMissing || (pending.amountPaisa ?: 0L) <= 0L) {
+                                // Missing Amount Warning Alert
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.35f)
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.WarningAmber,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = if (isBn) "টাকার পরিমাণ স্পষ্ট নয়! নিচে টাকার পরিমাণ বেছে নিন বা লিখুন:"
+                                            else "Amount not clearly heard. Select amount below or type:",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
+                                }
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                            // Read back audio button
-                            OutlinedButton(
-                                onClick = {
-                                    val phrase = pending.toReadBackPhrase(isBn)
-                                    viewModel.voiceManager.speak(phrase, isBn)
-                                },
-                                modifier = Modifier.testTag("hear_readback_button")
-                            ) {
-                                Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = null)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(if (isBn) "পুনরায় ভয়েস শুনুন" else "Hear Read-Back Again")
+                                // Quick Amount Chips
+                                FlowRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    listOf(50, 100, 200, 500, 1000, 2000).forEach { quickAmt ->
+                                        val chipText = if (isBn) "৳\u00A0${BanglaVoiceParser.toBanglaDigits("$quickAmt")}" else "৳\u00A0$quickAmt"
+                                        SuggestionChip(
+                                            onClick = {
+                                                viewModel.updatePendingResult(
+                                                    customerName = pending.customerName,
+                                                    amount = quickAmt.toDouble(),
+                                                    type = pending.type
+                                                )
+                                            },
+                                            label = { Text(chipText, fontWeight = FontWeight.Bold, fontSize = 12.sp) },
+                                            modifier = Modifier.padding(horizontal = 3.dp)
+                                        )
+                                    }
+                                }
+                            } else {
+                                // Amount in large bold
+                                val amountStr = BakiStrings.formatMoney(pending.amount, isBn)
+                                Text(
+                                    text = amountStr,
+                                    fontSize = 36.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = typeColor
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Read back audio button
+                                OutlinedButton(
+                                    onClick = {
+                                        val phrase = pending.toReadBackPhrase(isBn)
+                                        viewModel.voiceManager.speak(phrase, isBn)
+                                    },
+                                    modifier = Modifier.testTag("hear_readback_button")
+                                ) {
+                                    Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(if (isBn) "পুনরায় ভয়েস শুনুন" else "Hear Read-Back Again")
+                                }
                             }
                         }
                     }
@@ -585,8 +642,10 @@ fun VoiceRecordSheet(
                             Text(BakiStrings.correctEntry(isBn), fontSize = 12.sp)
                         }
 
+                        val canConfirm = !pending.isAmountMissing && (pending.amountPaisa ?: 0L) > 0L
                         Button(
                             onClick = { viewModel.confirmPendingTransaction() },
+                            enabled = canConfirm,
                             colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
                             shape = RoundedCornerShape(16.dp),
                             modifier = Modifier

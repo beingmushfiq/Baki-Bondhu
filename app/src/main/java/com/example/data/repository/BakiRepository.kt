@@ -1,5 +1,7 @@
 package com.example.data.repository
 
+import androidx.room.withTransaction
+import com.example.data.local.AppDatabase
 import com.example.data.local.CustomerDao
 import com.example.data.local.LedgerEntryDao
 import com.example.data.local.ShopSettingsDao
@@ -12,14 +14,15 @@ import com.example.data.model.SyncStatus
 import com.example.data.model.Transaction
 import com.example.data.model.TransactionEntity
 import com.example.data.model.TransactionType
+import com.example.util.Money
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /**
  * Repository interface defining abstract data operations for Baki Bondhu.
@@ -43,6 +46,8 @@ interface BakiRepository {
     suspend fun addCustomer(customer: CustomerEntity): Long
     suspend fun updateCustomer(customer: CustomerEntity)
     suspend fun deleteCustomer(customer: CustomerEntity)
+    suspend fun archiveCustomer(customerId: Long)
+
     suspend fun recordTransaction(
         customerName: String,
         customerPhone: String?,
@@ -52,31 +57,44 @@ interface BakiRepository {
         note: String = "",
         dueDate: Long? = null
     ): Long
+
+    suspend fun recordTransactionPaisa(
+        customerName: String,
+        customerPhone: String?,
+        type: TransactionType,
+        amountPaisa: Long,
+        spokenText: String?,
+        note: String = "",
+        dueDate: Long? = null
+    ): Long
+
     fun getTransactionsInDateRange(startTime: Long, endTime: Long): Flow<List<LedgerEntryEntity>>
     suspend fun updateCustomerDueDate(customerId: Long, dueDate: Long?)
     suspend fun calculateTotalDebtPerCustomer(): Map<Long, Double>
+    suspend fun reconcileCustomerBalance(customerId: Long): Long
     suspend fun deleteTransaction(transactionId: Long): Transaction?
     suspend fun deleteTransactionsBatch(ids: Set<Long>): List<Transaction>
     suspend fun restoreTransactionsBatch(transactions: List<Transaction>)
     suspend fun updateTransaction(oldTx: Transaction, newTx: Transaction)
     suspend fun settleCustomerDue(customerId: Long, amount: Double, customerName: String): Long
-    suspend fun syncOfflineData(): Boolean
     suspend fun clearDatabase()
     suspend fun restoreCloudData(
         customers: List<CustomerEntity>,
         transactions: List<TransactionEntity>,
         settings: ShopSettingsEntity?
     )
+    suspend fun syncOfflineData(): Boolean
 }
 
 /**
  * Default implementation of BakiRepository managing local Room tables (Customers, LedgerEntries)
- * and atomic financial consistency.
+ * and atomic financial consistency with Long Paisa precision.
  */
 class DefaultBakiRepository(
     private val customerDao: CustomerDao,
     private val ledgerEntryDao: LedgerEntryDao,
     private val shopSettingsDao: ShopSettingsDao,
+    private val database: AppDatabase? = null,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BakiRepository {
 
@@ -112,18 +130,30 @@ class DefaultBakiRepository(
     }
 
     override suspend fun addCustomer(customer: CustomerEntity): Long = withContext(ioDispatcher) {
-        val id = customerDao.insertCustomer(customer)
+        val now = System.currentTimeMillis()
+        val customerToInsert = if (customer.uuid.isBlank()) {
+            customer.copy(uuid = UUID.randomUUID().toString(), createdAt = now, updatedAt = now)
+        } else {
+            customer.copy(updatedAt = now)
+        }
+        val id = customerDao.insertCustomer(customerToInsert)
         markPendingSync()
         id
     }
 
     override suspend fun updateCustomer(customer: CustomerEntity) = withContext(ioDispatcher) {
-        customerDao.updateCustomer(customer)
+        customerDao.updateCustomer(customer.copy(updatedAt = System.currentTimeMillis()))
         markPendingSync()
     }
 
     override suspend fun deleteCustomer(customer: CustomerEntity) = withContext(ioDispatcher) {
-        customerDao.deleteCustomer(customer)
+        // Soft-archive customer rather than hard deleting to preserve financial transaction integrity
+        customerDao.archiveCustomer(customer.id, System.currentTimeMillis())
+        markPendingSync()
+    }
+
+    override suspend fun archiveCustomer(customerId: Long) = withContext(ioDispatcher) {
+        customerDao.archiveCustomer(customerId, System.currentTimeMillis())
         markPendingSync()
     }
 
@@ -139,6 +169,13 @@ class DefaultBakiRepository(
         customerDao.getAllCustomers().first().associate { it.id to it.balance }
     }
 
+    override suspend fun reconcileCustomerBalance(customerId: Long): Long = withContext(ioDispatcher) {
+        val netPaisa = ledgerEntryDao.calculateNetLedgerPaisaForCustomer(customerId) ?: 0L
+        val now = System.currentTimeMillis()
+        customerDao.setCustomerBalancePaisa(customerId, netPaisa, now)
+        netPaisa
+    }
+
     override suspend fun recordTransaction(
         customerName: String,
         customerPhone: String?,
@@ -147,182 +184,264 @@ class DefaultBakiRepository(
         spokenText: String?,
         note: String,
         dueDate: Long?
+    ): Long {
+        return recordTransactionPaisa(
+            customerName = customerName,
+            customerPhone = customerPhone,
+            type = type,
+            amountPaisa = Math.round(amount * 100.0),
+            spokenText = spokenText,
+            note = note,
+            dueDate = dueDate
+        )
+    }
+
+    override suspend fun recordTransactionPaisa(
+        customerName: String,
+        customerPhone: String?,
+        type: TransactionType,
+        amountPaisa: Long,
+        spokenText: String?,
+        note: String,
+        dueDate: Long?
     ): Long = withContext(ioDispatcher) {
         val cleanName = customerName.trim().ifBlank { "সাধারণ খরিদ্দার" }
-        val existing = customerDao.findCustomerByName(cleanName)
+        val cleanPhone = customerPhone?.trim() ?: ""
         val now = System.currentTimeMillis()
 
-        val customerId = if (existing != null) {
-            if (dueDate != null) {
-                customerDao.updateCustomerDueDate(existing.id, dueDate)
+        suspend fun executeAtomic(): Long {
+            // Find existing customer by phone first if provided, otherwise by exact name
+            val existingByPhone = if (cleanPhone.isNotBlank()) customerDao.findCustomerByPhone(cleanPhone) else null
+            val existing = existingByPhone ?: customerDao.findCustomerByName(cleanName)
+
+            val (customerId, customerUuid) = if (existing != null) {
+                if (dueDate != null) {
+                    customerDao.updateCustomerDueDate(existing.id, dueDate, now)
+                }
+                Pair(existing.id, existing.uuid)
+            } else {
+                val newUuid = UUID.randomUUID().toString()
+                val newId = customerDao.insertCustomer(
+                    Customer(
+                        uuid = newUuid,
+                        name = cleanName,
+                        phone = cleanPhone,
+                        balancePaisa = 0L,
+                        trustScore = 2,
+                        lastTransactionAt = now,
+                        createdAt = now,
+                        dueDate = dueDate,
+                        isArchived = false,
+                        syncStatus = SyncStatus.PENDING_SYNC,
+                        updatedAt = now
+                    )
+                )
+                Pair(newId, newUuid)
             }
-            existing.id
-        } else {
-            // Register new customer in Customers table on the fly
-            customerDao.insertCustomer(
-                Customer(
-                    name = cleanName,
-                    phone = customerPhone ?: "",
-                    balance = 0.0,
-                    trustScore = 2,
-                    lastTransactionAt = now,
-                    createdAt = now,
-                    dueDate = dueDate
+
+            // Calculate balance delta in paisa
+            val balancePaisaDelta = when (type) {
+                TransactionType.BAKI_SALE -> amountPaisa   // Customer owes more baki
+                TransactionType.REPAYMENT -> -amountPaisa  // Customer repaid debt
+                TransactionType.CASH_SALE -> 0L            // Immediate cash sale
+            }
+
+            if (balancePaisaDelta != 0L) {
+                customerDao.adjustBalancePaisa(customerId, balancePaisaDelta, now)
+            }
+
+            // Insert into LedgerEntries table
+            val entryId = ledgerEntryDao.insertTransaction(
+                Transaction(
+                    uuid = UUID.randomUUID().toString(),
+                    customerId = customerId,
+                    customerUuid = customerUuid,
+                    customerName = cleanName,
+                    type = type,
+                    amountPaisa = amountPaisa,
+                    originalSpokenText = spokenText,
+                    timestamp = now,
+                    note = note,
+                    dueDate = dueDate,
+                    isDeleted = false,
+                    syncStatus = SyncStatus.PENDING_SYNC,
+                    updatedAt = now
                 )
             )
+
+            markPendingSync()
+            return entryId
         }
 
-        // Calculate balance delta
-        val balanceDelta = when (type) {
-            TransactionType.BAKI_SALE -> amount       // Customer owes more baki
-            TransactionType.REPAYMENT -> -amount      // Customer repaid debt
-            TransactionType.CASH_SALE -> 0.0          // Immediate cash, ledger balance unaffected
+        if (database != null) {
+            database.withTransaction { executeAtomic() }
+        } else {
+            executeAtomic()
         }
-
-        if (balanceDelta != 0.0) {
-            customerDao.adjustBalance(customerId, balanceDelta, now)
-        }
-
-        // Insert into LedgerEntries table
-        val entryId = ledgerEntryDao.insertTransaction(
-            LedgerEntryEntity(
-                customerId = customerId,
-                customerName = cleanName,
-                type = type,
-                amount = amount,
-                originalSpokenText = spokenText,
-                timestamp = now,
-                note = note,
-                dueDate = dueDate
-            )
-        )
-
-        markPendingSync()
-        entryId
     }
 
     override suspend fun deleteTransaction(transactionId: Long): Transaction? = withContext(ioDispatcher) {
-        val target = ledgerEntryDao.getTransactionById(transactionId) ?: return@withContext null
-        val now = System.currentTimeMillis()
+        suspend fun execute(): Transaction? {
+            val target = ledgerEntryDao.getTransactionById(transactionId) ?: return null
+            val now = System.currentTimeMillis()
 
-        // Reverse the financial impact of this transaction
-        val reverseDelta = when (target.type) {
-            TransactionType.BAKI_SALE -> -target.amount // Removing credit sale decreases debt
-            TransactionType.REPAYMENT -> target.amount  // Removing payment restores debt
-            TransactionType.CASH_SALE -> 0.0
+            val reversePaisaDelta = when (target.type) {
+                TransactionType.BAKI_SALE -> -target.amountPaisa
+                TransactionType.REPAYMENT -> target.amountPaisa
+                TransactionType.CASH_SALE -> 0L
+            }
+
+            if (reversePaisaDelta != 0L) {
+                customerDao.adjustBalancePaisa(target.customerId, reversePaisaDelta, now)
+            }
+
+            // Soft delete with tombstone for cloud sync
+            ledgerEntryDao.softDeleteTransactionById(transactionId, now)
+            markPendingSync()
+            return target
         }
 
-        if (reverseDelta != 0.0) {
-            customerDao.adjustBalance(target.customerId, reverseDelta, now)
+        if (database != null) {
+            database.withTransaction { execute() }
+        } else {
+            execute()
         }
-
-        ledgerEntryDao.deleteTransactionById(transactionId)
-        markPendingSync()
-        target
     }
 
     override suspend fun deleteTransactionsBatch(ids: Set<Long>): List<Transaction> = withContext(ioDispatcher) {
         if (ids.isEmpty()) return@withContext emptyList()
-        val targets = ledgerEntryDao.getTransactionsByIds(ids.toList())
-        val now = System.currentTimeMillis()
 
-        for (target in targets) {
-            val reverseDelta = when (target.type) {
-                TransactionType.BAKI_SALE -> -target.amount
-                TransactionType.REPAYMENT -> target.amount
-                TransactionType.CASH_SALE -> 0.0
+        suspend fun execute(): List<Transaction> {
+            val targets = ledgerEntryDao.getTransactionsByIds(ids.toList())
+            val now = System.currentTimeMillis()
+
+            for (target in targets) {
+                val reversePaisaDelta = when (target.type) {
+                    TransactionType.BAKI_SALE -> -target.amountPaisa
+                    TransactionType.REPAYMENT -> target.amountPaisa
+                    TransactionType.CASH_SALE -> 0L
+                }
+                if (reversePaisaDelta != 0L) {
+                    customerDao.adjustBalancePaisa(target.customerId, reversePaisaDelta, now)
+                }
             }
-            if (reverseDelta != 0.0) {
-                customerDao.adjustBalance(target.customerId, reverseDelta, now)
-            }
+
+            ledgerEntryDao.softDeleteTransactionsByIds(ids.toList(), now)
+            markPendingSync()
+            return targets
         }
 
-        ledgerEntryDao.deleteTransactionsByIds(ids.toList())
-        markPendingSync()
-        targets
+        if (database != null) {
+            database.withTransaction { execute() }
+        } else {
+            execute()
+        }
     }
 
     override suspend fun restoreTransactionsBatch(transactions: List<Transaction>) = withContext(ioDispatcher) {
         if (transactions.isEmpty()) return@withContext
-        val now = System.currentTimeMillis()
 
-        for (tx in transactions) {
-            val forwardDelta = when (tx.type) {
-                TransactionType.BAKI_SALE -> tx.amount
-                TransactionType.REPAYMENT -> -tx.amount
-                TransactionType.CASH_SALE -> 0.0
+        suspend fun execute() {
+            val now = System.currentTimeMillis()
+            val idsToRestore = transactions.map { it.id }
+
+            for (tx in transactions) {
+                val forwardPaisaDelta = when (tx.type) {
+                    TransactionType.BAKI_SALE -> tx.amountPaisa
+                    TransactionType.REPAYMENT -> -tx.amountPaisa
+                    TransactionType.CASH_SALE -> 0L
+                }
+                if (forwardPaisaDelta != 0L) {
+                    customerDao.adjustBalancePaisa(tx.customerId, forwardPaisaDelta, now)
+                }
             }
-            if (forwardDelta != 0.0) {
-                customerDao.adjustBalance(tx.customerId, forwardDelta, now)
-            }
+
+            ledgerEntryDao.restoreSoftDeletedTransactions(idsToRestore, now)
+            markPendingSync()
         }
 
-        ledgerEntryDao.insertTransactions(transactions)
-        markPendingSync()
+        if (database != null) {
+            database.withTransaction { execute() }
+        } else {
+            execute()
+        }
     }
 
     override suspend fun updateTransaction(oldTx: Transaction, newTx: Transaction) = withContext(ioDispatcher) {
-        val now = System.currentTimeMillis()
-        val oldImpact = when (oldTx.type) {
-            TransactionType.BAKI_SALE -> oldTx.amount
-            TransactionType.REPAYMENT -> -oldTx.amount
-            TransactionType.CASH_SALE -> 0.0
-        }
-        val newImpact = when (newTx.type) {
-            TransactionType.BAKI_SALE -> newTx.amount
-            TransactionType.REPAYMENT -> -newTx.amount
-            TransactionType.CASH_SALE -> 0.0
-        }
-        val netDelta = newImpact - oldImpact
+        suspend fun execute() {
+            val now = System.currentTimeMillis()
+            val oldPaisaImpact = when (oldTx.type) {
+                TransactionType.BAKI_SALE -> oldTx.amountPaisa
+                TransactionType.REPAYMENT -> -oldTx.amountPaisa
+                TransactionType.CASH_SALE -> 0L
+            }
+            val newPaisaImpact = when (newTx.type) {
+                TransactionType.BAKI_SALE -> newTx.amountPaisa
+                TransactionType.REPAYMENT -> -newTx.amountPaisa
+                TransactionType.CASH_SALE -> 0L
+            }
 
-        if (netDelta != 0.0) {
-            customerDao.adjustBalance(newTx.customerId, netDelta, now)
+            val netDelta = newPaisaImpact - oldPaisaImpact
+
+            if (oldTx.customerId == newTx.customerId) {
+                if (netDelta != 0L) {
+                    customerDao.adjustBalancePaisa(newTx.customerId, netDelta, now)
+                }
+            } else {
+                // Reassigned to another customer
+                if (oldPaisaImpact != 0L) {
+                    customerDao.adjustBalancePaisa(oldTx.customerId, -oldPaisaImpact, now)
+                }
+                if (newPaisaImpact != 0L) {
+                    customerDao.adjustBalancePaisa(newTx.customerId, newPaisaImpact, now)
+                }
+            }
+
+            ledgerEntryDao.updateTransaction(newTx.copy(updatedAt = now, syncStatus = SyncStatus.PENDING_SYNC))
+            markPendingSync()
         }
 
-        ledgerEntryDao.updateTransaction(newTx)
-        markPendingSync()
+        if (database != null) {
+            database.withTransaction { execute() }
+        } else {
+            execute()
+        }
     }
 
     override suspend fun settleCustomerDue(customerId: Long, amount: Double, customerName: String): Long =
         withContext(ioDispatcher) {
             val now = System.currentTimeMillis()
-            customerDao.adjustBalance(customerId, -amount, now)
-            val entryId = ledgerEntryDao.insertTransaction(
-                LedgerEntryEntity(
-                    customerId = customerId,
-                    customerName = customerName,
-                    type = TransactionType.REPAYMENT,
-                    amount = amount,
-                    originalSpokenText = "সম্পূর্ণ বকেয়া পরিশোধ",
-                    timestamp = now,
-                    note = "বকেয়া নিষ্পত্তি"
-                )
-            )
-            markPendingSync()
-            entryId
-        }
+            val amountPaisa = Math.round(amount * 100.0)
 
-    override suspend fun syncOfflineData(): Boolean = withContext(ioDispatcher) {
-        val current = _syncState.value
-        _syncState.value = current.copy(status = SyncStatus.SYNCING)
-        try {
-            // Emulate background synchronization of offline baki records
-            delay(800)
-            _syncState.value = SyncState(
-                status = SyncStatus.SYNCED,
-                pendingCount = 0,
-                lastSyncTimestamp = System.currentTimeMillis(),
-                errorMessage = null
-            )
-            true
-        } catch (e: Exception) {
-            _syncState.value = current.copy(
-                status = SyncStatus.FAILED,
-                errorMessage = e.localizedMessage
-            )
-            false
+            suspend fun execute(): Long {
+                customerDao.adjustBalancePaisa(customerId, -amountPaisa, now)
+                val customer = customerDao.getCustomerByIdDirect(customerId)
+                val entryId = ledgerEntryDao.insertTransaction(
+                    Transaction(
+                        uuid = UUID.randomUUID().toString(),
+                        customerId = customerId,
+                        customerUuid = customer?.uuid ?: "",
+                        customerName = customerName,
+                        type = TransactionType.REPAYMENT,
+                        amountPaisa = amountPaisa,
+                        originalSpokenText = "সম্পূর্ণ বকেয়া পরিশোধ",
+                        timestamp = now,
+                        note = "বকেয়া নিষ্পত্তি",
+                        isDeleted = false,
+                        syncStatus = SyncStatus.PENDING_SYNC,
+                        updatedAt = now
+                    )
+                )
+                markPendingSync()
+                return entryId
+            }
+
+            if (database != null) {
+                database.withTransaction { execute() }
+            } else {
+                execute()
+            }
         }
-    }
 
     override suspend fun clearDatabase() = withContext(ioDispatcher) {
         ledgerEntryDao.clearAllLedgerEntries()
@@ -339,20 +458,37 @@ class DefaultBakiRepository(
         transactions: List<TransactionEntity>,
         settings: ShopSettingsEntity?
     ) = withContext(ioDispatcher) {
-        if (customers.isNotEmpty()) {
-            customerDao.insertCustomers(customers)
+        suspend fun execute() {
+            if (customers.isNotEmpty()) {
+                customerDao.insertCustomers(customers)
+            }
+            if (transactions.isNotEmpty()) {
+                ledgerEntryDao.insertTransactions(transactions)
+            }
+            if (settings != null) {
+                shopSettingsDao.saveSettings(settings)
+            }
+            _syncState.value = SyncState(
+                status = SyncStatus.SYNCED,
+                pendingCount = 0,
+                lastSyncTimestamp = System.currentTimeMillis()
+            )
         }
-        if (transactions.isNotEmpty()) {
-            ledgerEntryDao.insertTransactions(transactions)
+
+        if (database != null) {
+            database.withTransaction { execute() }
+        } else {
+            execute()
         }
-        if (settings != null) {
-            shopSettingsDao.saveSettings(settings)
-        }
+    }
+
+    override suspend fun syncOfflineData(): Boolean = withContext(ioDispatcher) {
         _syncState.value = SyncState(
             status = SyncStatus.SYNCED,
             pendingCount = 0,
             lastSyncTimestamp = System.currentTimeMillis()
         )
+        true
     }
 
     private fun markPendingSync() {

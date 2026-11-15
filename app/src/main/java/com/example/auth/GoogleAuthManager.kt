@@ -24,6 +24,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
 
+/**
+ * User cancellation exception so UI layer knows not to display a scary error toast.
+ */
+class GoogleSignInCancelledException : Exception("Google Sign-In was cancelled by user")
+
 class GoogleAuthManager(private val context: Context) {
     private val auth: FirebaseAuth? by lazy {
         try {
@@ -69,6 +74,10 @@ class GoogleAuthManager(private val context: Context) {
         return null
     }
 
+    /**
+     * Executes Google Sign-In following official Android Credential Manager standards.
+     * Separates GetSignInWithGoogleOption and GetGoogleIdOption flows to prevent OEM exceptions.
+     */
     suspend fun signInWithGoogle(callingContext: Context? = null): Result<FirebaseUser> {
         return try {
             val webClientId = try {
@@ -78,38 +87,39 @@ class GoogleAuthManager(private val context: Context) {
                 return Result.failure(IllegalStateException("Web Client ID is not configured"))
             }
 
+            if (webClientId.isBlank()) {
+                return Result.failure(IllegalStateException("Web Client ID is empty. Local guest mode active."))
+            }
+
             // Credential Manager requires an Activity-based context to display UI dialogs
             val rawContext = callingContext ?: context
             val activity = findActivity(rawContext)
             val launchContext = if (activity != null) MutableContextWrapper(activity) else rawContext
 
-            // Build options: GetSignInWithGoogleOption + GetGoogleIdOption (with filterByAuthorizedAccounts = false)
-            // This ensures accounts on the device are shown even if they haven't authorized this app before
-            val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(webClientId)
-                .build()
-
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(webClientId)
-                .setAutoSelectEnabled(false)
-                .build()
-
-            val request = GetCredentialRequest.Builder()
+            // 1. First attempt: Explicit button flow using GetSignInWithGoogleOption
+            val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(webClientId).build()
+            val primaryRequest = GetCredentialRequest.Builder()
                 .addCredentialOption(signInWithGoogleOption)
-                .addCredentialOption(googleIdOption)
                 .build()
 
             val result = try {
                 credentialManager.getCredential(
-                    request = request,
+                    request = primaryRequest,
                     context = launchContext
                 )
             } catch (noCred: NoCredentialException) {
-                Log.w("GoogleAuthManager", "Retrying with explicit GetGoogleIdOption filterByAuthorizedAccounts=false", noCred)
-                // Fallback attempt with only googleIdOption (non-filtered)
+                Log.i("GoogleAuthManager", "No direct credentials, retrying with GetGoogleIdOption (filterByAuthorizedAccounts=false)")
+                // 2. Secondary fallback attempt: Account chooser bottom-sheet using GetGoogleIdOption
+                val googleIdOption = GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(false)
+                    .setServerClientId(webClientId)
+                    .setAutoSelectEnabled(false)
+                    .build()
+
                 val fallbackRequest = GetCredentialRequest.Builder()
                     .addCredentialOption(googleIdOption)
                     .build()
+
                 credentialManager.getCredential(
                     request = fallbackRequest,
                     context = launchContext
@@ -117,32 +127,26 @@ class GoogleAuthManager(private val context: Context) {
             }
 
             val credential = result.credential
-            if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            val idToken: String? = if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                val idToken = googleIdTokenCredential.idToken
-
-                val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                val currentAuth = auth ?: return Result.failure(IllegalStateException("Firebase Auth is not available"))
-                val authResult = currentAuth.signInWithCredential(firebaseCredential).await()
-                val user = authResult.user ?: throw IllegalStateException("Firebase user is null after sign in")
-                Result.success(user)
+                googleIdTokenCredential.idToken
             } else {
-                // Secondary extraction fallback for token from bundle
-                val idToken = credential.data.getString("androidx.credentials.BUNDLE_KEY_ID_TOKEN")
+                credential.data.getString("androidx.credentials.BUNDLE_KEY_ID_TOKEN")
                     ?: credential.data.getString("id_token")
-                if (!idToken.isNullOrBlank()) {
-                    val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                    val currentAuth = auth ?: return Result.failure(IllegalStateException("Firebase Auth is not available"))
-                    val authResult = currentAuth.signInWithCredential(firebaseCredential).await()
-                    val user = authResult.user ?: throw IllegalStateException("Firebase user is null after sign in")
-                    Result.success(user)
-                } else {
-                    Result.failure(IllegalStateException("Unexpected credential type: ${credential.type}"))
-                }
             }
+
+            if (idToken.isNullOrBlank()) {
+                return Result.failure(IllegalStateException("Failed to extract ID token from credential"))
+            }
+
+            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+            val currentAuth = auth ?: return Result.failure(IllegalStateException("Firebase Auth is not available"))
+            val authResult = currentAuth.signInWithCredential(firebaseCredential).await()
+            val user = authResult.user ?: throw IllegalStateException("Firebase user is null after sign in")
+            Result.success(user)
         } catch (e: GetCredentialCancellationException) {
             Log.i("GoogleAuthManager", "Google Sign In was cancelled by the user")
-            Result.failure(e)
+            Result.failure(GoogleSignInCancelledException())
         } catch (e: GetCredentialException) {
             Log.e("GoogleAuthManager", "Credential exception during Google Sign In: ${e.message}", e)
             Result.failure(e)

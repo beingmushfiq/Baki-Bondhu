@@ -185,6 +185,12 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
     }
 
     var showOpeningLoader by remember { mutableStateOf(true) }
+    var dismissedOnboarding by remember { mutableStateOf(false) }
+    val showOnboarding = !dismissedOnboarding &&
+            !showOpeningLoader &&
+            uiState.settings.ownerName.isBlank() &&
+            (uiState.settings.shopName == "আমার দোকান" || uiState.settings.shopName.isBlank()) &&
+            uiState.customers.isEmpty()
 
     Scaffold(
         bottomBar = {
@@ -313,12 +319,40 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                             uiState = uiState,
                             onCustomerClick = { customer -> viewModel.selectCustomerForDetail(customer) },
                             onSendSmsClick = { customer -> viewModel.openSmsReminder(customer) },
-                            onSendWhatsAppClick = { customer -> viewModel.sendWhatsAppReminder(context, customer) }
+                            onSendWhatsAppClick = { customer -> viewModel.sendWhatsAppReminder(context, customer) },
+                            onOpenDailyClosing = { viewModel.openEndOfDaySummary(true) }
                         )
                     }
                 }
 
             // MODALS & OVERLAYS
+
+            // 0.5 First-Run Merchant Onboarding
+            if (showOnboarding) {
+                com.example.ui.components.MerchantOnboardingDialog(
+                    initialShopName = uiState.settings.shopName,
+                    initialOwnerName = uiState.settings.ownerName,
+                    initialBkash = uiState.settings.bkashNumber,
+                    initialNagad = uiState.settings.nagadNumber,
+                    isBn = isBn,
+                    onSaveAndStart = { sName, oName, bkash, nagad, isBangla ->
+                        viewModel.updateSettings(
+                            shopName = sName,
+                            ownerName = oName,
+                            bkashNumber = bkash,
+                            nagadNumber = nagad,
+                            autoReadBack = uiState.settings.autoReadBack
+                        )
+                        if (isBangla != isBn) {
+                            viewModel.toggleLanguage()
+                        }
+                        dismissedOnboarding = true
+                    },
+                    onDismiss = {
+                        dismissedOnboarding = true
+                    }
+                )
+            }
 
             // 1. Voice Recording & Read-Back Sheet
             if (uiState.isVoiceSheetOpen) {
@@ -440,11 +474,16 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     isSyncingCloud = uiState.isSyncingCloud,
                     lastCloudBackupAt = uiState.lastCloudBackupAt,
                     autoBackupEnabled = uiState.autoBackupEnabled,
+                    isRestorePreviewOpen = uiState.isRestorePreviewOpen,
+                    restorePreviewData = uiState.restorePreviewData,
+                    isFetchingRestorePreview = uiState.isFetchingRestorePreview,
                     onSignInWithGoogle = { viewModel.signInWithGoogle(context) },
                     onSignOut = { viewModel.signOut() },
                     onSetAutoBackup = { viewModel.setAutoBackup(it) },
                     onBackupToCloud = { viewModel.backupToCloud() },
-                    onRestoreFromCloud = { viewModel.restoreFromCloud() },
+                    onRestoreFromCloud = { viewModel.openCloudRestorePreview() },
+                    onDismissRestorePreview = { viewModel.dismissRestorePreview() },
+                    onConfirmCloudRestore = { mergeWithLocal -> viewModel.confirmCloudRestore(mergeWithLocal) },
                     onSave = { shopName, ownerName, bkash, nagad, autoReadBack ->
                         viewModel.updateSettings(shopName, ownerName, bkash, nagad, autoReadBack)
                     },

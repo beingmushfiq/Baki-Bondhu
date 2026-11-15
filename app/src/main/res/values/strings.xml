@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Baki Bondhu</string>
+    <string name="default_web_client_id" translatable="false">704564450702-d0ns15b9aipnslup9cvgos3qvp15chmq.apps.googleusercontent.com</string>
 </resources>

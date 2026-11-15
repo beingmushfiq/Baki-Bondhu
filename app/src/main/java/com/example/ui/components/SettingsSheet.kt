@@ -65,11 +65,16 @@ fun SettingsSheet(
     isSyncingCloud: Boolean = false,
     lastCloudBackupAt: Long? = null,
     autoBackupEnabled: Boolean = true,
+    isRestorePreviewOpen: Boolean = false,
+    restorePreviewData: CloudRestorePreviewData? = null,
+    isFetchingRestorePreview: Boolean = false,
     onSignInWithGoogle: () -> Unit = {},
     onSignOut: () -> Unit = {},
     onSetAutoBackup: (Boolean) -> Unit = {},
     onBackupToCloud: () -> Unit = {},
     onRestoreFromCloud: () -> Unit = {},
+    onDismissRestorePreview: () -> Unit = {},
+    onConfirmCloudRestore: (mergeWithLocal: Boolean) -> Unit = {},
     onSave: (shopName: String, ownerName: String, bkash: String, nagad: String, autoReadBack: Boolean) -> Unit,
     onClearDatabase: () -> Unit = {},
     onDismiss: () -> Unit
@@ -293,20 +298,30 @@ fun SettingsSheet(
 
                                 OutlinedButton(
                                     onClick = onRestoreFromCloud,
-                                    enabled = !isSyncingCloud,
+                                    enabled = !isSyncingCloud && !isFetchingRestorePreview,
                                     shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(42.dp)
                                         .testTag("restore_cloud_button")
                                 ) {
-                                    Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (isBn) "রিস্টোর করুন" else "Restore",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    if (isFetchingRestorePreview) {
+                                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = if (isBn) "যাচাই..." else "Checking...",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    } else {
+                                        Icon(Icons.Default.CloudDownload, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = if (isBn) "রিস্টোর করুন" else "Restore",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
 
@@ -496,5 +511,17 @@ fun SettingsSheet(
                 }
             }
         }
+    }
+
+    if (isRestorePreviewOpen) {
+        CloudRestorePreviewDialog(
+            previewData = restorePreviewData,
+            isLoading = isFetchingRestorePreview,
+            isBn = isBn,
+            onConfirmRestore = { mergeWithLocal ->
+                onConfirmCloudRestore(mergeWithLocal)
+            },
+            onDismiss = onDismissRestorePreview
+        )
     }
 }

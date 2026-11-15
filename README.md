@@ -1,122 +1,187 @@
 # 🇧🇩 Baki Bondhu (বাকী বন্ধু)
-### **Voice-First Smart Credit & Debit Ledger for Bangladesh Retailers**
+### **Voice-First Smart Credit & Debit Ledger for Bangladeshi Retailers**
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+  <img src="https://img.shields.io/badge/Platform-Android%2014%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
   <img src="https://img.shields.io/badge/Kotlin-2.0.21-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
-  <img src="https://img.shields.io/badge/Jetpack%20Compose-M3-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" />
-  <img src="https://img.shields.io/badge/Firebase-Firestore%20%7C%20Auth-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/Google%20Sign--In-Credential%20Manager-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Sign-In" />
-  <img src="https://img.shields.io/badge/Database-Room%20SQLite%20(Offline--First)-009688?style=for-the-badge&logo=sqlite&logoColor=white" alt="Room DB" />
-  <img src="https://img.shields.io/badge/Reminders-WhatsApp%20%7C%20SMS-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp" />
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-M3%20Expressive-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Precision-Minor%20Units%20(Paisa)-059669?style=for-the-badge&logo=cashapp&logoColor=white" alt="Minor Units" />
+  <img src="https://img.shields.io/badge/Database-Room%20SQLite%20v5-009688?style=for-the-badge&logo=sqlite&logoColor=white" alt="Room DB" />
+  <img src="https://img.shields.io/badge/Auth-Credential%20Manager-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Credential Manager" />
+  <img src="https://img.shields.io/badge/Cloud-Google%20Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firestore" />
+  <img src="https://img.shields.io/badge/Engineering-DevCenterPoint-0A2540?style=for-the-badge&logo=google-chrome&logoColor=white" alt="DevCenterPoint" />
 </p>
 
 ---
 
-## 📖 Overview
+> **Core Product Promise**:  
+> **"আপনার দোকানের হিসাব, এখন শুধু মুখে বললেই।"**  
+> *(Your shop's ledger, simply by speaking.)*
 
-**Baki Bondhu (বাকী বন্ধু)** is an intelligent, offline-first digital ledger tailored specifically for Bangladeshi shopkeepers (*Mudi Dokan*, pharmacies, tea stalls, wholesalers, and small businesses). It replaces physical paper ledger notebooks (*খাতা*) with an effortless, voice-enabled experience. 
-
-With **Baki Bondhu**, shop owners simply speak in natural colloquial Bangla (*"করিম সাহেব বাকী নিলেন ৫০০ টাকা"* or *"রহিম জমা দিলেন ২০০"*), and the app automatically parses the customer name, amount, and transaction type to log it in real-time. Customer debt records can be backed up automatically to their personal **Google Account** via **Cloud Firestore**, and reminders can be sent directly to customers with **1-tap WhatsApp deep-linking** featuring bKash & Nagad payment numbers.
-
----
-
-## ✨ Key Features
-
-### 🎙️ 1. Native Bangla Voice Input (*ভয়েস খাতা*)
-- **Colloquial NLP Parsing**: Speaks natural Bangla dialects. Recognizes terms like *বাকী*, *দিলেন*, *নিলেন*, *জমা*, *পরিশোধ*, *ধার*, *নগদ বিক্রি*.
-- **Bangla Numeral & Word Extraction**: Converts English or Bangla numerals (*১২০*, *৫০০*, *১,২০০*) and conversational number words (*পাঁচশো*, *দেড় হাজার*, *বিশ টাকা*) into exact transaction amounts.
-- **Instant Audio Feedback & Audio Readback**: Optional Bengali voice confirmation reads back recorded transactions to build confidence for non-tech-savvy merchants.
-- **Smart Entity Disambiguation**: Matches spoken names against the existing customer contact list.
-
-### 📲 2. Rapid WhatsApp 1-Tap Deep-Linking & SMS Reminders
-- **Personalized Bangla Debt Summaries**: Formats polite, culturally respectful Bengali reminders containing:
-  - Total outstanding debt balance (*মোট বকেয়া*)
-  - Shop name & owner contact
-  - bKash & Nagad Send Money details
-  - Promised due date reminder
-- **Direct WhatsApp Protocol (`whatsapp://send?phone=...`)**: Opens WhatsApp directly to the customer's chat with the message pre-filled.
-- **SMS & Chooser Fallback**: Seamless fallback for customers without WhatsApp or internet connectivity.
-
-### ☁️ 3. Google Sign-In & Zero-Trust Cloud Backup (Firebase Firestore)
-- **Jetpack Credential Manager**: Frictionless one-tap Google Sign-In utilizing modern `GetSignInWithGoogleOption`.
-- **Automatic & Manual Cloud Sync**:
-  - **Auto-Backup**: Changes to customers or transactions are synchronized in the background whenever signed in.
-  - **Manual Backup & Restore**: One-tap backup and restore allowing shopkeepers to switch phones without losing records.
-- **Zero-Trust Security**: Cloud Firestore security rules strictly isolate records under `/users/{userId}/...` where `request.auth.uid == userId`. No cross-account leakage.
-
-### 🧾 4. Digital Receipts Generator
-- Generates itemized, shareable receipts featuring:
-  - Shop branding & owner contact
-  - Transaction date & time stamp
-  - Previous balance, current transaction, and remaining balance
-  - Merchant payment numbers (bKash / Nagad)
-- Direct sharing to WhatsApp, SMS, or system share sheet.
-
-### 📊 5. End-of-Day Cash Drawer Reconciliation & Reports
-- **Daily Cash Summary**: Instant calculation of:
-  - 💵 **Total Cash Received** (*মোট জমা*)
-  - 📉 **Total Credit Disbursed** (*নতুন বাকী*)
-  - ⚖️ **Net Daily Cash Flow** (*দিনের নিট ব্যালেন্স*)
-- **Filtering System**: Date-range filtering (*Today*, *Yesterday*, *This Week*, *This Month*, *Custom Date Range*).
-- **Search & Quick Actions**: Search by name or phone number with real-time balance calculations.
-
-### 🌐 6. 100% Offline-First Architecture
-- Full local SQLite persistence powered by **Android Jetpack Room**.
-- Never stalls or fails when mobile data drops; queues changes locally and syncs when connectivity resumes.
-- **Bilingual Interface**: One-tap toggle between **বাংলা (Bengali)** and **English**.
+**Baki Bondhu (বাকী বন্ধু)** is an intelligent, offline-first digital ledger application designed and engineered specifically for Bangladeshi neighborhood shopkeepers (*মুদির দোকান*, tea stalls, small pharmacies, wholesale suppliers, and retail merchants). It transforms traditional red paper ledgers (*লাল খাতা*) into an effortless, voice-enabled financial tool that works without internet connection and protects every single paisa with zero-drift integer arithmetic.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 📑 Table of Contents
+
+- [Key Highlights & Product Pillars](#-key-highlights--product-pillars)
+- [Architecture & Tech Stack](#-architecture--tech-stack)
+- [Financial Precision & Minor Units](#-financial-precision--minor-units)
+- [Voice-First Bengali NLP Engine](#-voice-first-bengali-nlp-engine)
+- [Cloud Synchronization & Conflict Safety](#-cloud-synchronization--conflict-safety)
+- [Comprehensive Technical Documentation](#-comprehensive-technical-documentation)
+- [Project Structure](#-project-structure)
+- [Setup & Build Instructions](#-setup--build-instructions)
+- [Engineering Credits & Attribution](#-engineering-credits--attribution)
+
+---
+
+## 🌟 Key Highlights & Product Pillars
+
+### 🎙️ 1. Natural Bengali Voice Ledger (*ভয়েস খাতা*)
+- **Colloquial Dialect Support**: Recognizes informal everyday phrasing: *"করিম সাহেব বাকী নিলেন ৫০০ টাকা"*, *"রহিম জমা দিলেন ২০০"*, *"সুমন পাঁচশো পরিশোধ"*, *"নগদ বিক্রি ১,২০০ টাকা"*.
+- **Spoken Word & Numeral Parsing**: Parses digits (`৪৫০`, `1250`) and verbal expressions (*এক হাজার*, *পাঁচশো*, *দেড় হাজার*, *আড়াই হাজার*).
+- **Zero-Amount Hallucination Guard**: Never guesses or defaults to zero when no monetary value is spoken. The app alerts the merchant and prompts for clarification before committing to the ledger.
+- **Audio Readback Confirmation**: Optional Bengali voice synthesis confirms recorded transactions aloud to reassure busy shopkeepers.
+
+### 🛡️ 2. Minor Currency Precision ($1\text{ BDT} = 100\text{ Paisa}$)
+- All customer balances and ledger entries are stored as **integer 64-bit numbers (`Long`)** in **Paisa**, completely eliminating IEEE 754 floating-point drift.
+- Bilingual formatting with immutable non-breaking spaces (`৳\u00A0১,২৫০`), preventing awkward line wraps between currency symbols and amounts.
+
+### 📶 3. 100% Offline-First (Room SQLite v5)
+- Fully operational without internet connectivity. Customers can be created, credit recorded, repayments entered, and daily reports generated while offline.
+- Data is written via atomic Room `@Transaction` methods; soft-delete tombstones (`isDeleted`) allow safe two-way cloud reconciliation.
+
+### 🔐 4. Modern Google Sign-In & Guest Mode
+- Powered by the **Android Credential Manager API** (`androidx.credentials`) with Google Identity Services.
+- **First-Class Guest Mode**: Shopkeepers are never forced to sign in. The entire app is accessible immediately on install; Google Sign-In is only needed for cloud backup.
+
+### ☁️ 5. Zero-Trust Cloud Backup & Pre-Restore Preview
+- Backs up customer and transaction records to **Google Cloud Firestore** under strict per-user paths (`/users/{userId}/...`).
+- **Batch Chunking**: Writes are chunked in safe blocks of 400 operations, comfortably under Firestore's 500-operation quota limit.
+- **Cloud Restore Preview**: Side-by-side modal displaying local vs. cloud counts with **Smart Merge** (non-destructive) or **Full Replace** options.
+
+### 📊 6. Comprehensive 11-Metric Financial Dashboard & Daily Closing
+- Computed directly from SQLite Room database with **Saturday-aligned commercial retail cycles** (traditional Bangladeshi business week).
+- Cash Drawer Reconciliation:
+  $$\text{Net Cash in Drawer} = \text{Today's Repayments} + \text{Today's Cash Sales}$$
+  $$\text{Net Credit Change} = \text{Today's Credit Sales} - \text{Today's Repayments}$$
+
+### 📲 7. 1-Tap WhatsApp & SMS Payment Reminders
+- Formats culturally respectful Bengali payment reminders with:
+  - Customer name & total outstanding balance
+  - Shop name & owner phone number
+  - bKash & Nagad "Send Money" instructions
+- Deep-links directly to WhatsApp with automated phone normalization (`88017...`).
+
+---
+
+## 🏗️ Architecture & Tech Stack
 
 ```mermaid
-graph TD
-    A[UI Layer: Jetpack Compose M3] -->|StateFlow / Events| B[BakiViewModel]
-    B -->|Coroutines / Flow| C[BakiRepository]
-    C -->|Room Database| D[(Local SQLite: Room DB)]
-    B -->|CredentialManager| E[GoogleAuthManager]
-    B -->|Background Sync| F[FirestoreSyncRepository]
-    F -->|Secure Rules: request.auth.uid == userId| G[(Google Cloud Firestore)]
-    B -->|Deep Link Intent| H[WhatsApp / SMS Intent Handlers]
-    B -->|Speech Recognition| I[BanglaVoiceParser / Android Speech]
+flowchart TD
+    subgraph UI_Presentation["UI Layer (Jetpack Compose Material 3)"]
+        UI[Screens: Home, Customers, Reports, ManualEntry]
+        Sheets[VoiceRecordSheet, SettingsSheet, CustomerDetailDialog]
+        Modals[CloudRestorePreviewDialog, MerchantOnboardingDialog]
+    end
+
+    subgraph State_Management["ViewModel Layer"]
+        VM[BakiViewModel - CoroutineScope & StateFlow]
+    end
+
+    subgraph Domain_Services["Domain & Utility Engines"]
+        Parser[BanglaVoiceParser - NLP Engine]
+        Auth[GoogleAuthManager - Credential Manager]
+        MoneyEngine[Money - Paisa Exact Math]
+        Receipts[DigitalReceiptHelper - WhatsApp / SMS]
+        Dates[DateRangeHelper - Saturday Retail Week]
+    end
+
+    subgraph Local_Persistence["Local Storage (Room SQLite v5)"]
+        Repo[BakiRepository / DefaultBakiRepository]
+        Room[(Room Database: Customers, LedgerEntries, ShopSettings)]
+    end
+
+    subgraph Cloud_Backend["Cloud Services (Firebase)"]
+        FSRepo[FirestoreSyncRepository]
+        FAuth[Firebase Auth]
+        Firestore[(Cloud Firestore - Chunked <= 400)]
+    end
+
+    UI -->|Events / Actions| VM
+    Sheets -->|Voice / Config| VM
+    Modals -->|Restore / Onboarding| VM
+    VM -->|Collects StateFlow| UI
+
+    VM -->|Parse Bangla Text| Parser
+    VM -->|Sign In / Out| Auth
+    VM -->|Paisa Conversion| MoneyEngine
+    VM -->|Generate Reminders| Receipts
+    VM -->|Calculate Metrics| Dates
+    VM -->|CRUD & Balances| Repo
+
+    Repo --> Room
+    Auth --> FAuth
+    VM -->|Backup & Restore| FSRepo
+    FSRepo --> Firestore
 ```
 
-| Layer | Technologies & Libraries |
-| :--- | :--- |
-| **Language & Toolchain** | **Kotlin 2.0.21**, Gradle Kotlin DSL (`.gradle.kts`), AGP 8.8.2 |
-| **UI Framework** | **Jetpack Compose**, Material Design 3 (M3 Expressive), Edge-to-Edge |
-| **State Management** | Android **ViewModel**, `MutableStateFlow`, `collectAsState` |
-| **Local Persistence** | **Android Room 2.6.1**, SQLite, Dao coroutine queries |
-| **Authentication** | **Jetpack Credential Manager**, Google Identity Services, Firebase Auth |
-| **Cloud Database** | **Google Cloud Firestore**, Real-time collections, Zero-Trust Rules |
-| **Voice & NLP** | Android SpeechRecognizer, Custom Regex Bangla Voice Grammar Engine |
-| **External Integrations** | WhatsApp Deep Link URI (`whatsapp://send`), Android SMS Intents |
-| **Testing** | Robolectric, Local JVM Unit Tests, Node.js Firebase Rules Tests |
+| Component | Technology | Version / Specification |
+| :--- | :--- | :--- |
+| **Language** | Kotlin | `2.0.21` |
+| **UI Framework** | Jetpack Compose + Material 3 Expressive | `1.7.5` / `1.3.1` |
+| **Local Database** | AndroidX Room | `2.6.1` (Schema Version `5`) |
+| **Asynchronous Engine**| Kotlin Coroutines & StateFlow | `1.9.0` |
+| **Authentication** | Jetpack Credential Manager + Google ID | `1.3.0` / `1.1.1` |
+| **Cloud Storage** | Google Cloud Firestore | Firebase BOM `33.5.1` |
+| **Voice Processing** | Android SpeechRecognizer + Bangla NLP | On-Device / Native |
+| **Target Platforms** | Android 8.0 (API 26) through Android 15 (API 35/36) | |
 
 ---
 
-## 🔒 Security & Data Privacy
+## 💰 Financial Precision & Minor Units
 
-Baki Bondhu is built with strict privacy controls for merchant financial data:
+In typical retail accounting, floating-point numbers (`Float`, `Double`) cause cumulative rounding errors. Baki Bondhu guarantees absolute financial integrity using integer minor units:
 
-1. **User-Scoped Isolation**:
-   ```javascript
-   match /users/{userId} {
-     allow read, write: if request.auth != null && request.auth.uid == userId;
-     
-     match /customers/{customerId} {
-       allow read, write: if request.auth != null && request.auth.uid == userId;
-     }
-     
-     match /transactions/{transactionId} {
-       allow read, write: if request.auth != null && request.auth.uid == userId;
-     }
-   }
-   ```
-2. **Credential Safety**:
-   - Web Client IDs are loaded dynamically via Android string resources (`R.string.default_web_client_id`), never hardcoded.
-   - Database credentials are managed securely through Google Play Services.
+```kotlin
+// Example: Converting BDT to Minor Units
+val debt = Money.fromBdt(1250.50) // Exact: 125050L Paisa
+val repayment = Money.fromBdt(250.00) // Exact: 25000L Paisa
+val remaining = debt - repayment // Exact: 100050L Paisa ($1000.50 BDT)
+
+// Formatting with non-breaking space
+println(remaining.format(isBn = true))  // "৳ ১২৫০.৫০"
+println(remaining.format(isBn = false)) // "৳ 1,250.50"
+```
+
+---
+
+## 🎙️ Voice-First Bengali NLP Engine
+
+Shopkeepers can speak naturally into their phone. The parser handles common Bengali grammatical suffixes, spoken digits, and verbal numbers:
+
+| Spoken Bengali Input | Parsed Entity | Amount | Transaction Type |
+| :--- | :--- | :--- | :--- |
+| *"রহিম ৪৫০ বাকী"* | Rahim | ৳ 450 | `BAKI_SALE` (বাকি বিক্রি) |
+| *"করিম ভাই ২০০ টাকা জমা"* | Karim Bhai | ৳ 200 | `REPAYMENT` (জমা আদায়) |
+| *"সুমন পাঁচশো পরিশোধ"* | Sumon | ৳ 500 | `REPAYMENT` (জমা আদায়) |
+| *"সালাম দেড় হাজার বাকি"* | Salam | ৳ 1,500 | `BAKI_SALE` (বাকি বিক্রি) |
+| *"নগদ বিক্রি ৮০০ টাকা"* | Cash Customer | ৳ 800 | `CASH_SALE` (নগদ বিক্রি) |
+| *"কামাল বাকি"* | Kamal | *Flagged Missing* | Prompts for amount |
+
+---
+
+## 📚 Comprehensive Technical Documentation
+
+Explore the in-depth technical guides authored in the [`docs/`](docs/) directory:
+
+- 🏛️ [**Architecture Guide**](docs/ARCHITECTURE.md): Architectural design, MVVM patterns, reactive StateFlow lifecycle, and offline-first data flows.
+- 🗄️ [**Database Architecture**](docs/DATABASE.md): Room schema v5, minor unit Paisa precision, `MIGRATION_4_5` SQL operations, foreign key integrity, and index designs.
+- 🔑 [**Authentication Guide**](docs/AUTHENTICATION.md): Modern Credential Manager integration, Google Sign-In setup, Activity context unwrapping, and Guest mode fallback.
+- 🔄 [**Synchronization & Conflict Resolution**](docs/SYNCHRONIZATION.md): Chunked Firestore batch writes (400 items), pre-restore safety inspection, Smart Merge vs. Full Replace.
+- 🎨 [**Design System & Bengali UX Tokens**](docs/DESIGN_SYSTEM.md): "Modern Bengali Ledger" aesthetic tokens, color palettes, tabular digits, and retail touch ergonomics.
+- 🧪 [**QA & Automated Testing**](docs/QA_AND_TESTING.md): Pure JVM tests, migration test cases, Robolectric testing, and quality assurance strategies.
 
 ---
 
@@ -127,113 +192,97 @@ Baki Bondhu is built with strict privacy controls for merchant financial data:
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/example/
-│   │   │   │   ├── MainActivity.kt                  # Main Activity, Scaffold & TopAppBar
+│   │   │   │   ├── MainActivity.kt               # Root Activity, Inset handling, Scaffold & Nav
 │   │   │   │   ├── auth/
-│   │   │   │   │   └── GoogleAuthManager.kt         # Jetpack Credential Manager Sign-In
+│   │   │   │   │   └── GoogleAuthManager.kt      # Credential Manager + Google Auth
 │   │   │   │   ├── data/
 │   │   │   │   │   ├── cloud/
-│   │   │   │   │   │   └── FirestoreSyncRepository.kt # Cloud Firestore backup & restore
+│   │   │   │   │   │   └── FirestoreSyncRepository.kt # Safe chunked Firestore sync & preview
 │   │   │   │   │   ├── local/
-│   │   │   │   │   │   ├── BakiDatabase.kt          # Room Database definition & TypeConverters
-│   │   │   │   │   │   ├── CustomerDao.kt           # Customer DAO (batch inserts & queries)
-│   │   │   │   │   │   └── TransactionDao.kt        # Transaction DAO & filtering
+│   │   │   │   │   │   ├── AppDatabase.kt        # Room DB v5 with registered migrations
+│   │   │   │   │   │   ├── DatabaseMigrations.kt # MIGRATION_4_5 non-destructive upgrade
+│   │   │   │   │   │   ├── CustomerDao.kt        # Customer queries & atomic Paisa balance
+│   │   │   │   │   │   ├── TransactionDao.kt     # Ledger queries, soft deletes & ranges
+│   │   │   │   │   │   └── ShopSettingsDao.kt    # Merchant profile & payment configs
 │   │   │   │   │   ├── model/
-│   │   │   │   │   │   ├── Customer.kt              # Customer entity
-│   │   │   │   │   │   ├── Transaction.kt           # Transaction entity & TransactionType
-│   │   │   │   │   │   └── ShopSettingsEntity.kt    # Merchant profile & payment details
+│   │   │   │   │   │   ├── Customer.kt           # Customer entity with Paisa & UUID
+│   │   │   │   │   │   ├── Transaction.kt        # Ledger entry entity with tombstone
+│   │   │   │   │   │   └── ShopSettingsEntity.kt # Shop settings schema
 │   │   │   │   │   └── repository/
-│   │   │   │   │       ├── BakiRepository.kt        # Repository abstraction
-│   │   │   │   │       └── DefaultBakiRepository.kt # Reactive Room repository implementation
+│   │   │   │   │       ├── BakiRepository.kt     # Atomic repository contract
+│   │   │   │   │       └── DefaultBakiRepository.kt # Reactive implementation
 │   │   │   │   ├── ui/
-│   │   │   │   │   ├── BakiViewModel.kt             # UI State, Voice, Auth & Sync flows
-│   │   │   │   │   ├── BakiStrings.kt               # Comprehensive EN/BN Localization map
-│   │   │   │   │   ├── components/
-│   │   │   │   │   │   ├── SettingsSheet.kt         # Shop config & Google Cloud Backup UI
-│   │   │   │   │   │   ├── CustomerDetailDialog.kt  # Account details & WhatsApp reminder
-│   │   │   │   │   │   ├── VoiceRecordSheet.kt      # Voice input oscilloscope & feedback
-│   │   │   │   │   │   ├── EndOfDaySummaryDialog.kt # Daily cash drawer reconciliation
-│   │   │   │   │   │   ├── DigitalReceiptDialog.kt  # Shareable receipt generator
-│   │   │   │   │   │   └── BakiToastHost.kt         # Floating snackbar & toast system
-│   │   │   │   │   ├── screens/
-│   │   │   │   │   │   ├── HomeScreen.kt            # Dashboard, Quick stats & Recent entries
-│   │   │   │   │   │   ├── CustomersScreen.kt       # Customer ledger cards & debt badges
-│   │   │   │   │   │   ├── ReportsScreen.kt         # Financial analytics & charts
-│   │   │   │   │   │   └── ManualEntryScreen.kt     # Fallback manual transaction form
+│   │   │   │   │   ├── BakiViewModel.kt          # UI state, coroutines, voice & sync coordinator
+│   │   │   │   │   ├── BakiStrings.kt            # Bengali/English localization strings
+│   │   │   │   │   ├── components/               # Reusable UI widgets & sheets
+│   │   │   │   │   │   ├── CloudRestorePreviewDialog.kt # Safe pre-restore inspection modal
+│   │   │   │   │   │   ├── MerchantOnboardingDialog.kt  # First-run setup wizard
+│   │   │   │   │   │   ├── SettingsSheet.kt             # Cloud sync & payment configuration
+│   │   │   │   │   │   ├── VoiceRecordSheet.kt          # Audio oscilloscope & voice review
+│   │   │   │   │   │   ├── CustomerDetailDialog.kt      # Ledger detail & WhatsApp reminders
+│   │   │   │   │   │   ├── EndOfDaySummaryDialog.kt     # Daily cash drawer reconciliation
+│   │   │   │   │   │   └── DigitalReceiptDialog.kt      # Itemized receipt generator
+│   │   │   │   │   ├── screens/                  # Primary application screens
+│   │   │   │   │   │   ├── HomeScreen.kt         # Ledger overview & recent activity
+│   │   │   │   │   │   ├── CustomersScreen.kt    # Customer catalog & debt status
+│   │   │   │   │   │   ├── ReportsScreen.kt      # 11 financial metrics & weekly analysis
+│   │   │   │   │   │   └── ManualEntryScreen.kt  # Fallback manual transaction entry
 │   │   │   │   │   └── theme/
-│   │   │   │   │       ├── Color.kt                 # Emerald Bengali Green Palette
-│   │   │   │   │       └── Theme.kt                 # Material 3 Theme setup
+│   │   │   │   │       ├── Color.kt              # Emerald Bengali Green color tokens
+│   │   │   │   │       ├── Theme.kt              # Material 3 dynamic color scheme
+│   │   │   │   │       └── Type.kt               # Bengali typography & tabular digits
+│   │   │   │   ├── util/
+│   │   │   │   │   ├── Money.kt                  # Minor currency unit (Paisa) math engine
+│   │   │   │   │   ├── DateRangeHelper.kt        # Saturday-aligned retail week ranges
+│   │   │   │   │   ├── DigitalReceiptHelper.kt   # WhatsApp & SMS reminder formatting
+│   │   │   │   │   └── OverdueHelper.kt          # Aging tiers & overdue calculations
 │   │   │   │   └── voice/
-│   │   │   │       ├── BanglaVoiceParser.kt         # Regex-based natural Bangla NLP parser
-│   │   │   │       └── BanglaVoiceManager.kt        # Audio record & SpeechRecognizer lifecycle
-│   │   │   └── res/
-│   │   │       ├── drawable/                        # Vector assets (Logo, WhatsApp, Google)
-│   │   │       └── values/                          # App strings, colors, firebase configs
-│   ├── build.gradle.kts                             # App module Gradle configuration
-├── firestore.rules                                  # Zero-trust Firestore security rules
-├── firestore.test.js                                # Automated security rules test suite
-├── firebase-blueprint.json                          # Backend schema blueprint
-└── README.md                                        # Project documentation
+│   │   │   │       ├── BanglaVoiceParser.kt      # NLP voice parser with digit extraction
+│   │   │   │       └── BanglaVoiceManager.kt     # Speech recognition controller
+│   │   │   └── res/                              # Drawables, layouts, localized strings
+│   │   └── test/java/com/example/                # Automated JUnit & Robolectric test suite
+│   │       ├── MoneyTest.kt                      # Paisa math & formatting tests
+│   │       ├── BanglaVoiceParserTest.kt          # Bengali NLP & dialect tests
+│   │       ├── DatabaseMigrationTest.kt          # SQLite v4 to v5 non-destructive tests
+│   │       ├── ExampleUnitTest.kt                # Utility & SMS tests
+│   │       └── ExampleRobolectricTest.kt         # Room DAOs, ViewModels & Helpers
+│   └── build.gradle.kts                          # App build configuration & dependencies
+├── docs/                                         # Technical documentation suite
+├── firestore.rules                               # Zero-trust Firestore security rules
+└── README.md                                     # Root project documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Setup & Build Instructions
 
 ### Prerequisites
-- **Android Studio Ladybug (2024.2.1)** or newer
-- **JDK 17** or **JDK 21**
-- Android SDK with `minSdk = 26` and `targetSdk = 35`
-- An Android device or emulator with Google Play Services installed
+- **Android Studio Ladybug (2024.2.1+)** or higher
+- **JDK 17** (configured as Gradle JVM)
+- **Android SDK API 35/36** with Build-Tools `35.0.0`
+- Optional: Google Play Services device or emulator for testing Google Sign-In
 
-### Cloning and Building
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/baki-bondhu.git
-   cd baki-bondhu
-   ```
-2. Open the project in **Android Studio**.
-3. Let Gradle sync project dependencies.
-4. Run the app on an Android device or emulator:
-   ```bash
-   ./gradlew assembleDebug
-   ```
-
-### Running Unit Tests
-Execute the local JVM and Robolectric test suite:
+### Clone & Build
 ```bash
+# 1. Clone repository
+git clone https://github.com/beingmushfiq/Baki-Bondhu.git
+cd Baki-Bondhu
+
+# 2. Build Debug APK
+./gradlew assembleDebug
+
+# 3. Run Unit and Migration Tests
 ./gradlew testDebugUnitTest
 ```
 
-### Running Firestore Security Rules Tests
-To test the Firestore zero-trust rules against the local Firebase emulator:
-```bash
-firebase emulators:exec --only firestore,auth "node --test firestore.test.js"
-```
+The compiled APK will be generated at:
+`app/build/outputs/apk/debug/app-debug.apk`
 
 ---
 
-## 💬 Sample Voice Commands (Bangla)
+## 👨‍💻 Engineering Credits & Attribution
 
-Try speaking any of the following natural Bengali phrases into the microphone:
-
-| Voice Input | Parsed Action | Amount |
-| :--- | :--- | :--- |
-| **"করিম সাহেব বাকী নিলেন ৫০০ টাকা"** | New Credit Given (*বাকী*) | ৳500 |
-| **"রহিম ভাই জমা দিলেন ২০০ টাকা"** | Payment Received (*জমা*) | ৳200 |
-| **"সুমন ৫০০ টাকা বাকি"** | New Credit Given (*বাকী*) | ৳500 |
-| **"মোল্লা স্টোর নগদ বিক্রি ১২০০ টাকা"** | Cash Sale (*নগদ বিক্রি*) | ৳1200 |
-| **"তারিকুল ইসলাম ধার নিলেন ৩৫০ টাকা"** | New Credit Given (*ধার*) | ৳350 |
-
----
-
-## 👨‍💻 Engineering & Credits
-
-- Developed for Bangladeshi Retailers and Small Merchants.
-- Technical Support & Engineering by **DevCenterPoint** ([devcenterpoint.com](https://devcenterpoint.com)).
-- Built with Google Jetpack Compose and Firebase.
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+- **Product & Engineering**: Developed and maintained by **DevCenterPoint** ([devcenterpoint.com](https://devcenterpoint.com)).
+- **App Nickname**: `com.dcp.bakibondhu`
+- **Application ID**: `com.aistudio.bakibondhu.kxdznp`
+- **License**: Released under the [MIT License](LICENSE).

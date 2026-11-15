@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 
 /**
  * Main Room database for Baki Bondhu application.
- * Manages Customer, Transaction, and ShopSettings entities.
+ * Manages Customer, Transaction (LedgerEntries), and ShopSettings entities.
+ *
+ * Configured with explicit migrations (v4 to v5) and no destructive production wipes.
  */
 @Database(
     entities = [
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
         Transaction::class,
         ShopSettingsEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -47,24 +49,27 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "baki_bondhu.db"
                 )
-                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    .addMigrations(DatabaseMigrations.MIGRATION_4_5)
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            // Initialize shop settings only; no sample customer data
+                            // Initialize default empty shop settings on first installation
                             CoroutineScope(Dispatchers.IO).launch {
                                 val database = getInstance(context)
-                                database.shopSettingsDao().saveSettings(
-                                    ShopSettingsEntity(
-                                        id = 1,
-                                        shopName = "বিসমিল্লাহ জেনারেল স্টোর",
-                                        ownerName = "মোঃ রফিকুল ইসলাম",
-                                        bkashNumber = "01823456789",
-                                        nagadNumber = "01723456789",
-                                        language = "bn",
-                                        autoReadBack = true
+                                val existing = database.shopSettingsDao().getSettingsDirect()
+                                if (existing == null) {
+                                    database.shopSettingsDao().saveSettings(
+                                        ShopSettingsEntity(
+                                            id = 1,
+                                            shopName = "আমার দোকান",
+                                            ownerName = "",
+                                            bkashNumber = "",
+                                            nagadNumber = "",
+                                            language = "bn",
+                                            autoReadBack = true
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     })

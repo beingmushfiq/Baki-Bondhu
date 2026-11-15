@@ -205,7 +205,7 @@ fun EditTransactionDialog(
                             return@Button
                         }
                         val updated = transaction.copy(
-                            amount = parsed,
+                            amountPaisa = com.example.util.Money.takaToPaisa(parsed),
                             type = selectedType,
                             note = noteText.trim()
                         )
