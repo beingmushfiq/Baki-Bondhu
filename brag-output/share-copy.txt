@@ -1,0 +1,10 @@
+Paper khatas tear. Calculations fail. Baki Bondhu (বাকী বন্ধু) transforms everyday Bangladeshi shopkeeping into an effortless, offline-first voice ledger. Speak your transaction in natural Bangla, and let the ledger settle to the exact paisa.
+
+"আপনার দোকানের হিসাব, এখন শুধু মুখে বললেই।"
+
+Engineered with Kotlin, Jetpack Compose, Room SQLite, Credential Manager & Firebase Firestore by DevCenterPoint.
+
+Check out the project: https://github.com/beingmushfiq/Baki-Bondhu
+Explore DevCenterPoint: https://devcenterpoint.com
+
+#Android #Kotlin #JetpackCompose #Fintech #BanglaNLP #SpeechToText #OfflineFirst #Bangladesh #DevCenterPoint

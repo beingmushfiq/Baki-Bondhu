@@ -1,0 +1,908 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 6,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "timeline_track_too_dense",
+        "severity": "warning",
+        "message": "Track 1 has 5 timed elements in this HTML file. Smaller sub-compositions keep timelines easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move coherent scene groups into separate .html files under compositions/ and mount them from the parent with data-composition-src so the timeline stays easier to inspect, revise, and validate."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"scene1\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene1",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"scene1\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"scene2\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene2",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"scene2\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"scene3\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene3",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"scene3\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"scene4\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene4",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"scene4\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"scene5\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene5",
+        "dataAttributes": {},
+        "sourceFile": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"scene5\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 5,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-impact1\" is 1.48s but its slot (data-duration) is 2.00s — the slot is shortened to the media length when rendered. Set data-duration to ~1.48s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-switch1\" is 0.31s but its slot (data-duration) is 1.50s — the slot is shortened to the media length when rendered. Set data-duration to ~0.31s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-click1\" is 0.09s but its slot (data-duration) is 1.00s — the slot is shortened to the media length when rendered. Set data-duration to ~0.09s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-card1\" is 0.60s but its slot (data-duration) is 1.50s — the slot is shortened to the media length when rendered. Set data-duration to ~0.60s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      },
+      {
+        "code": "clip_media_fit",
+        "severity": "warning",
+        "message": "Audio \"sfx-impact2\" is 1.48s but its slot (data-duration) is 2.50s — the slot is shortened to the media length when rendered. Set data-duration to ~1.48s if that isn't intended.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "21",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      }
+    ]
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 21,
+    "samples": [
+      1.167,
+      3.5,
+      5.833,
+      8.167,
+      10.5,
+      12.833,
+      15.167,
+      17.5,
+      19.833
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 5,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 4.32:1; WCAG AA requires 4.5:1.",
+        "text": "৳ ২০০ (জমা)",
+        "fg": "rgb(46,125,50)",
+        "bg": "rgb(244,235,215)",
+        "ratio": 4.32,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(45,121,48)",
+        "large": false,
+        "selector": "div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(3) > span:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1056.707275390625,
+          "y": 630.955322265625,
+          "width": 99.996826171875,
+          "height": 32.2330322265625
+        },
+        "time": 1.167,
+        "times": [
+          1.167
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.9:1; WCAG AA requires 4.5:1.",
+        "text": "[কাগজ ছেঁড়া • অস্পষ্ট হিসাব]",
+        "fg": "rgb(141,110,99)",
+        "bg": "rgb(244,235,215)",
+        "ratio": 3.9,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(128,100,90)",
+        "large": false,
+        "selector": "div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 763.2290649414062,
+          "y": 683.7853393554688,
+          "width": 215.71282958984375,
+          "height": 32.37322998046875
+        },
+        "time": 1.167,
+        "times": [
+          1.167
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.9:1; WCAG AA requires 4.5:1.",
+        "text": "---",
+        "fg": "rgb(141,110,99)",
+        "bg": "rgb(244,235,215)",
+        "ratio": 3.9,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(128,100,90)",
+        "large": false,
+        "selector": "div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1135.6370849609375,
+          "y": 684.2364501953125,
+          "width": 21.0025634765625,
+          "height": 32.13739013671875
+        },
+        "time": 1.167,
+        "times": [
+          1.167
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.29:1; WCAG AA requires 4.5:1.",
+        "text": "বাকী বন্ধু • Baki Bondhu",
+        "fg": "rgb(8,123,98)",
+        "bg": "rgb(17,30,23)",
+        "ratio": 3.29,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(51,146,125)",
+        "large": false,
+        "selector": "div > div:nth-of-type(3) > div > div:nth-of-type(2) > div:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 768,
+          "y": 347.890625,
+          "width": 384,
+          "height": 24
+        },
+        "time": 5.833,
+        "times": [
+          5.833
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.02:1; WCAG AA requires 4.5:1.",
+        "text": "✓ SQLite Room • Exact Minor Units",
+        "fg": "rgb(8,123,98)",
+        "bg": "rgb(22,38,29)",
+        "ratio": 3.02,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(62,152,132)",
+        "large": false,
+        "selector": "div > div:nth-of-type(4) > div > div:nth-of-type(2) > div:nth-of-type(5) > span:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 582,
+          "y": 829.890625,
+          "width": 236.5,
+          "height": 17
+        },
+        "time": 10.5,
+        "times": [
+          10.5
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      1.167,
+      5.833,
+      10.5,
+      15.167,
+      19.833
+    ],
+    "checked": 52,
+    "passed": 47
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 3,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "first_frame_empty",
+        "severity": "warning",
+        "message": "Frame 0 shows only the background, and the first frame is the thumbnail on social players: have the title or key image already on screen at 0 s instead of entering from nothing; see references/review.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 44 text elements stay under it for 0.5 s or more, the smallest \"ড্যাশবোর্ড • আজকের বাকি: ৳ ৩,৪০০\" at 13 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "ড্যাশবোর্ড • আজকের বাকি: ৳ ৩,৪০০",
+        "selector": "#s2-phone > div:nth-of-type(3)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 777.25,
+          "y": 432.24,
+          "width": 215.17,
+          "height": 16.18
+        },
+        "time": 4.25,
+        "times": [
+          0.375,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          4,
+          4.25,
+          4.25,
+          5.375,
+          7,
+          7,
+          7,
+          9,
+          9.25,
+          9.25,
+          9.25,
+          9.25,
+          9.25,
+          9.75,
+          9.75,
+          9.75,
+          10.25,
+          10.25,
+          10.25,
+          10.75,
+          10.75,
+          10.75,
+          14.25,
+          14.5,
+          14.5,
+          14.5,
+          14.5,
+          14.5,
+          14.5,
+          14.5,
+          14.625,
+          14.625,
+          14.625,
+          19.125
+        ],
+        "fontPx": 13.33,
+        "floorPx": 28,
+        "seconds": 4.5,
+        "elements": [
+          {
+            "selector": "#s2-phone > div:nth-of-type(3)",
+            "text": "ড্যাশবোর্ড • আজকের বাকি: ৳ ৩,৪০০",
+            "fontPx": 13.33,
+            "time": 4.25,
+            "seconds": 4.5
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(3)",
+            "text": "ভুল হিসাব • হারিয়ে যাওয়া বাকী",
+            "fontPx": 13.62,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "div.balance-pill > div:nth-of-type(1)",
+            "text": "মোট বাকী (Total Due)",
+            "fontPx": 13.7,
+            "time": 9.25,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s3-card > div:nth-of-type(5) > span:nth-of-type(1)",
+            "text": "✓ SQLite Room • Exact Minor Units",
+            "fontPx": 13.7,
+            "time": 9.25,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s3-card > div:nth-of-type(5) > span:nth-of-type(2)",
+            "text": "১ ক্লিকে bKash/Nagad তাগাদা SMS",
+            "fontPx": 13.7,
+            "time": 9.25,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s4-right > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2)",
+            "text": "1-Tap Account Linking",
+            "fontPx": 13.91,
+            "time": 14.625,
+            "seconds": 3.125
+          },
+          {
+            "selector": "#s4-right > div:nth-of-type(2)",
+            "text": "Cloud Firestore Smart Merge architecture guarantees 0% data overwrite across multi-device restoration.",
+            "fontPx": 14.91,
+            "time": 14.625,
+            "seconds": 3.125
+          },
+          {
+            "selector": "div.paper-header > p:nth-of-type(1)",
+            "text": "দোকান: ভাই ভাই ট্রেডার্স",
+            "fontPx": 15.57,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "div.customer-profile > div:nth-of-type(2) > p:nth-of-type(1)",
+            "text": "মোবাইল: ০১৮১১-XXXXXX • নিয়মিত খদ্দের",
+            "fontPx": 15.66,
+            "time": 9.25,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(1) > span:nth-of-type(1)",
+            "text": "আজকের নগদ ক্যাশ:",
+            "fontPx": 15.9,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(2) > span:nth-of-type(1)",
+            "text": "মোট বাকি দেওয়া:",
+            "fontPx": 15.9,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "আদায়কৃত টাকা:",
+            "fontPx": 15.9,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s2-badge > span:nth-of-type(1)",
+            "text": "👤 রহিম (Customer)",
+            "fontPx": 16,
+            "time": 7,
+            "seconds": 1.75
+          },
+          {
+            "selector": "#s2-badge > span:nth-of-type(2)",
+            "text": "• বাকী (Debit)",
+            "fontPx": 16,
+            "time": 7,
+            "seconds": 1.75
+          },
+          {
+            "selector": "#s2-badge > span:nth-of-type(3)",
+            "text": "• ৳ ৫০০",
+            "fontPx": 16,
+            "time": 7,
+            "seconds": 1.75
+          },
+          {
+            "selector": "#s2-phone > div:nth-of-type(2)",
+            "text": "বাকী বন্ধু • Baki Bondhu",
+            "fontPx": 17.13,
+            "time": 4.25,
+            "seconds": 4.5
+          },
+          {
+            "selector": "#s5-badge",
+            "text": "DEVELOPED BY DEVCENTERPOINT • V2.0.0",
+            "fontPx": 17.61,
+            "time": 19.125,
+            "seconds": 1.875
+          },
+          {
+            "selector": "#s1-tag",
+            "text": "Tradition Meets Inefficiency",
+            "fontPx": 18,
+            "time": 0.375,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s2-tag",
+            "text": "Natural Bangla Speech Processing",
+            "fontPx": 18,
+            "time": 4,
+            "seconds": 4.625
+          },
+          {
+            "selector": "#s3-tag",
+            "text": "Financial Integrity Without Internet",
+            "fontPx": 18,
+            "time": 9,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s4-tag",
+            "text": "Business Continuity & Security",
+            "fontPx": 18,
+            "time": 14.25,
+            "seconds": 3.375
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(1) > span:nth-of-type(1)",
+            "text": "রহিম চাচা",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(1) > span:nth-of-type(2)",
+            "text": "৳ ৫০০",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(2) > span:nth-of-type(1)",
+            "text": "করিম ভাই",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(2) > span:nth-of-type(2)",
+            "text": "৳ ৭৫০",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(3) > span:nth-of-type(1)",
+            "text": "আলী আহমদ",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "৳ ২০০ (জমা)",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s1-paper > div:nth-of-type(2) > div:nth-of-type(4) > span:nth-of-type(1)",
+            "text": "[কাগজ ছেঁড়া • অস্পষ্ট হিসাব]",
+            "fontPx": 19.46,
+            "time": 0.75,
+            "seconds": 3
+          },
+          {
+            "selector": "#s4-left > h4:nth-of-type(1)",
+            "text": "ব্যবসায়িক হিসাব (Saturday Retail Week)",
+            "fontPx": 19.87,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(1) > span:nth-of-type(2)",
+            "text": "৳ ১২,৪০০",
+            "fontPx": 19.87,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(2) > span:nth-of-type(2)",
+            "text": "৳ ৩,২০০",
+            "fontPx": 19.87,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-left > div:nth-of-type(3) > span:nth-of-type(2)",
+            "text": "৳ ৫,৮০০",
+            "fontPx": 19.87,
+            "time": 14.5,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s4-right > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+            "text": "Google Credential Manager",
+            "fontPx": 19.87,
+            "time": 14.625,
+            "seconds": 3.125
+          },
+          {
+            "selector": "#s3-row1 > div:nth-of-type(1)",
+            "text": "• নতুন বাকী (New Credit)",
+            "fontPx": 20,
+            "time": 9.75,
+            "seconds": 4.25
+          },
+          {
+            "selector": "#s3-row1 > div:nth-of-type(1) > strong:nth-of-type(1)",
+            "text": "আজ (Today)",
+            "fontPx": 20,
+            "time": 9.75,
+            "seconds": 4.25
+          },
+          {
+            "selector": "#s3-row1 > div:nth-of-type(2)",
+            "text": "+৳ ৫০০.০০",
+            "fontPx": 20,
+            "time": 9.75,
+            "seconds": 4.25
+          },
+          {
+            "selector": "#s3-row2 > div:nth-of-type(1)",
+            "text": "• কিস্তি জমা (Cash Repayment)",
+            "fontPx": 20,
+            "time": 10.25,
+            "seconds": 3.75
+          },
+          {
+            "selector": "#s3-row2 > div:nth-of-type(1) > strong:nth-of-type(1)",
+            "text": "গতকাল",
+            "fontPx": 20,
+            "time": 10.25,
+            "seconds": 3.75
+          },
+          {
+            "selector": "div.tx-tag-credit",
+            "text": "-৳ ২০০.০০",
+            "fontPx": 20,
+            "time": 10.25,
+            "seconds": 3.75
+          },
+          {
+            "selector": "#s3-row3 > div:nth-of-type(1)",
+            "text": "• চাল ও সয়াবিন তেল",
+            "fontPx": 20,
+            "time": 10.75,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s3-row3 > div:nth-of-type(1) > strong:nth-of-type(1)",
+            "text": "১২ নভেম্বর",
+            "fontPx": 20,
+            "time": 10.75,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#s3-row3 > div:nth-of-type(2)",
+            "text": "+৳ ৭৫০.০০",
+            "fontPx": 20,
+            "time": 10.75,
+            "seconds": 3.25
+          },
+          {
+            "selector": "div.avatar-circle",
+            "text": "র",
+            "fontPx": 25.44,
+            "time": 9.25,
+            "seconds": 4.75
+          },
+          {
+            "selector": "#s2-spoken",
+            "text": "“রহিম ভাই বাকি ৫০০ টাকা”",
+            "fontPx": 25.77,
+            "time": 5.375,
+            "seconds": 3.375
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"Cloud Firestore Smart Merge architecture guarantees 0% da...\" (13 words) is on screen 3.13 s (±0.01 s), under its 3.30 s floor: hold it about 0.5 s + 0.3 s a word (4.40 s here) before it leaves or changes; see references/motion.md.",
+        "text": "Cloud Firestore Smart Merge architecture guarantees 0% data overwrite across multi-device restoration.",
+        "selector": "#s4-right > div:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1042.11,
+          "y": 656.39,
+          "width": 440.9200000000001,
+          "height": 41.5
+        },
+        "time": 14.602,
+        "words": 13,
+        "seconds": 3.133,
+        "floorSeconds": 3.3,
+        "measured": [
+          {
+            "time": 14.25,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 14.375,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 14.5,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 14.625,
+            "opacity": 0.52,
+            "heightPx": 42
+          },
+          {
+            "time": 14.75,
+            "opacity": 0.86,
+            "heightPx": 42
+          },
+          {
+            "time": 14.875,
+            "opacity": 0.98,
+            "heightPx": 42
+          },
+          {
+            "time": 15,
+            "opacity": 1,
+            "heightPx": 42
+          },
+          {
+            "time": 17.25,
+            "opacity": 1,
+            "heightPx": 42
+          },
+          {
+            "time": 17.375,
+            "opacity": 1,
+            "heightPx": 42
+          },
+          {
+            "time": 17.5,
+            "opacity": 0.98,
+            "heightPx": 41
+          },
+          {
+            "time": 17.625,
+            "opacity": 0.88,
+            "heightPx": 41
+          },
+          {
+            "time": 17.75,
+            "opacity": 0.42,
+            "heightPx": 40
+          },
+          {
+            "time": 17.875,
+            "opacity": null,
+            "heightPx": null
+          },
+          {
+            "time": 18,
+            "opacity": null,
+            "heightPx": null
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 168
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

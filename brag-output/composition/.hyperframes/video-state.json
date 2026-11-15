@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "historyId": "6f3c42e8-f43a-4107-ac75-eac4625a3a48",
+  "currentRevision": "a694e6c2-8e5b-4c0a-9380-a9f6c66c96ff",
+  "pendingChanges": false,
+  "files": {
+    "assets/sfx/card-slide.ogg": {
+      "hash": "006cf9822d15d7063f8899e56041f41646df30adb6fbd8b974ee5d5420012690",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\00\\006cf9822d15d7063f8899e56041f41646df30adb6fbd8b974ee5d5420012690"
+    },
+    "assets/sfx/click.ogg": {
+      "hash": "59175ac17cd49a68dd736285738441287636112a84a6f7ce0d89921bda5a5360",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\59\\59175ac17cd49a68dd736285738441287636112a84a6f7ce0d89921bda5a5360"
+    },
+    "assets/sfx/impact.ogg": {
+      "hash": "94b8bb5f2d43ab65e4bcc32b28562416e9bc2c51d9fd4be1e333660ee52f977f",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\94\\94b8bb5f2d43ab65e4bcc32b28562416e9bc2c51d9fd4be1e333660ee52f977f"
+    },
+    "assets/sfx/switch.ogg": {
+      "hash": "efdd1d1e2904fb2d81259cd96bb80101caceae94be02baa4b5310714a6708b19",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\ef\\efdd1d1e2904fb2d81259cd96bb80101caceae94be02baa4b5310714a6708b19"
+    },
+    "assets/voiceover.wav": {
+      "hash": "b3afe170ffcbbdf3f88995ce7888c52eec73890fa7f4a2915ae192a9552d9aa6",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\b3\\b3afe170ffcbbdf3f88995ce7888c52eec73890fa7f4a2915ae192a9552d9aa6"
+    },
+    "index.html": {
+      "hash": "ddd5849af65185621d00df0810927ffe5fe7c014e884f1d6dccd92811fe995ed",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\dd\\ddd5849af65185621d00df0810927ffe5fe7c014e884f1d6dccd92811fe995ed"
+    },
+    "assets/music/track.mp3": {
+      "hash": "f9912f2c962ada1e579f5ccc5a7d854d67e5e81ee96a7dd8c885a8480ae58d09",
+      "content": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\f9\\f9912f2c962ada1e579f5ccc5a7d854d67e5e81ee96a7dd8c885a8480ae58d09"
+    }
+  },
+  "revisions": {
+    "df5be26e-f724-47d0-90e3-77e8b4645a52": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1794774560052,
+      "endedAt": 1794774560055,
+      "files": {
+        "index.html": {
+          "before": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\93\\93d0b987fcba61d222bc480f19d3ffba55c54e7ea63cad1b398e27f814d2bb59",
+          "after": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\e9\\e9e6bb07dc7622418e39ce269f00e88a0f81686c65ebd320e9d46f70849602f7"
+        }
+      }
+    },
+    "a694e6c2-8e5b-4c0a-9380-a9f6c66c96ff": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1794774765008,
+      "endedAt": 1794774765010,
+      "files": {
+        "index.html": {
+          "before": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\e9\\e9e6bb07dc7622418e39ce269f00e88a0f81686c65ebd320e9d46f70849602f7",
+          "after": "C:\\Users\\Aayan\\.cache\\hyperframes\\history\\6f3c42e8-f43a-4107-ac75-eac4625a3a48\\blobs\\dd\\ddd5849af65185621d00df0810927ffe5fe7c014e884f1d6dccd92811fe995ed"
+        }
+      }
+    }
+  },
+  "checks": {
+    "latest": {
+      "revision": null,
+      "id": "a91e1ecc-4f8d-4955-8f0b-dd99db0170d2"
+    },
+    "revisions": {
+      "df5be26e-f724-47d0-90e3-77e8b4645a52": [
+        {
+          "id": "69118d25-d795-45a6-bf76-1c1c0faf181b",
+          "scope": "project",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 45000,
+              "cache": true,
+              "contrast": true,
+              "craft": true,
+              "strict": false,
+              "snapshots": false,
+              "safeZones": [
+                "tiktok",
+                "reels",
+                "shorts"
+              ],
+              "browserGpuMode": "auto",
+              "includeUnmounted": false
+            }
+          },
+          "createdAt": 1794774570385,
+          "contentHash": "9ca77e732cae8b99c50ba59719f9f3062f5a872c13af5aef3af6c13d082d1127",
+          "revision": "df5be26e-f724-47d0-90e3-77e8b4645a52",
+          "inputFingerprint": "8199fc56828e3ec68637aba28735aad6af00139b6e668880f58f1d07ef3881d7",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision",
+          "status": "cleaned",
+          "cleanedAfterRender": "1037bc15-a579-484e-ac68-0ff67b3e231e"
+        }
+      ]
+    },
+    "unversioned": [
+      {
+        "id": "a91e1ecc-4f8d-4955-8f0b-dd99db0170d2",
+        "scope": "project",
+        "report": "C:\\Users\\Aayan\\Desktop\\BakiBondhu\\brag-output\\composition\\.hyperframes\\artifacts\\checks\\a91e1ecc-4f8d-4955-8f0b-dd99db0170d2.json",
+        "metadata": {
+          "ok": true,
+          "browserSkipped": false,
+          "options": {
+            "samples": 9,
+            "atTransitions": false,
+            "maxIssues": 80,
+            "collapseStatic": true,
+            "tolerance": 2,
+            "timeout": 45000,
+            "cache": true,
+            "contrast": true,
+            "craft": true,
+            "strict": false,
+            "snapshots": false,
+            "safeZones": [
+              "tiktok",
+              "reels",
+              "shorts"
+            ],
+            "browserGpuMode": "auto",
+            "includeUnmounted": false
+          }
+        },
+        "createdAt": 1794774505052,
+        "contentHash": "19f4e4c580f4388ecba2b35cde1927a234ffadc280bae2bca304de2ae337877b",
+        "revision": null,
+        "inputFingerprint": "4a3de4d4c87bc06aca77eba4348e0ee8cc7c4516dd42f3ac5adaf13beef46f6e",
+        "inputScope": "local-project-files",
+        "attribution": "unversioned"
+      }
+    ]
+  },
+  "snapshots": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  },
+  "renders": {
+    "latest": {
+      "id": "1037bc15-a579-484e-ac68-0ff67b3e231e",
+      "completedAt": 1794774852089,
+      "output": "D:\\brag-render\\brag.mp4",
+      "status": "completed",
+      "revision": "a694e6c2-8e5b-4c0a-9380-a9f6c66c96ff"
+    },
+    "retainedRevisions": [
+      "a694e6c2-8e5b-4c0a-9380-a9f6c66c96ff"
+    ]
+  },
+  "pendingArtifactCleanup": []
+}
