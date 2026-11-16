@@ -287,24 +287,24 @@
 
   <!-- ==================== TOP NAVIGATION ==================== -->
   <nav class="sticky top-0 z-50 glass-panel border-b border-ledger-border/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
       
-      <!-- Logo & Brand Badge -->
-      <a href="#" class="flex items-center gap-3.5 group">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-forest to-brand-primary border border-brand-bright/30 p-1.5 flex items-center justify-center shadow-lg shadow-brand-forest/50 group-hover:scale-105 transition-transform">
+      <!-- Logo & Brand Badge (Left) -->
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group flex-shrink-0">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-brand-forest to-brand-primary border border-brand-bright/30 p-1 sm:p-1.5 flex items-center justify-center shadow-lg shadow-brand-forest/50 group-hover:scale-105 transition-transform flex-shrink-0">
           <img src="favicon.svg" alt="Baki Bondhu Logo" class="w-full h-full drop-shadow" />
         </div>
         <div class="flex flex-col">
-          <div class="flex items-center gap-2">
-            <span class="text-xl font-bold tracking-tight text-white group-hover:text-brand-bright transition-colors">বাকী বন্ধু</span>
-            <span class="text-xs font-sans font-bold px-2.5 py-0.5 rounded-full bg-brand-primary/20 hover:bg-brand-primary/40 text-brand-bright border border-brand-bright/30 cursor-pointer transition-colors" id="openReleaseNotesNav" title="v2.1.0 রিলিজ নোট দেখুন">v2.1.0 🚀</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="text-base sm:text-xl font-bold tracking-tight text-white group-hover:text-brand-bright transition-colors whitespace-nowrap">বাকী বন্ধু</span>
+            <span class="text-[10px] sm:text-xs font-sans font-bold px-1.5 sm:px-2.5 py-0.5 rounded-full bg-brand-primary/20 hover:bg-brand-primary/40 text-brand-bright border border-brand-bright/30 cursor-pointer transition-colors whitespace-nowrap" id="openReleaseNotesNav" title="v2.1.0 রিলিজ নোট দেখুন">v2.1.0 🚀</span>
           </div>
-          <span class="text-xs text-slate-400 font-sans tracking-wide">Baki Bondhu • DevCenterPoint</span>
+          <span class="hidden sm:block text-xs text-slate-400 font-sans tracking-wide">Baki Bondhu • DevCenterPoint</span>
         </div>
       </a>
 
-      <!-- Desktop Navigation Links -->
-      <div class="hidden md:flex items-center gap-8 font-medium text-sm text-slate-300">
+      <!-- Desktop Navigation Links (Center) -->
+      <div class="hidden lg:flex items-center gap-6 xl:gap-8 font-medium text-sm text-slate-300">
         <a href="#features" class="hover:text-brand-bright transition-colors" data-i18n="nav_features">সুবিধাসমূহ</a>
         <a href="#voice-demo" class="hover:text-brand-bright transition-colors flex items-center gap-1.5" data-i18n="nav_demo">
           <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
@@ -317,21 +317,121 @@
         <a href="#faq" class="hover:text-brand-bright transition-colors" data-i18n="nav_faq">প্রশ্নোত্তর</a>
       </div>
 
-      <!-- Action Buttons & Language Switcher -->
-      <div class="flex items-center gap-3">
-        <!-- Language Switcher Toggle -->
-        <button id="langToggleBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ledger-border bg-ledger-card hover:border-brand-bright/40 text-xs font-sans font-semibold text-slate-200 transition-all">
+      <!-- Action Buttons & Switchers (Right) -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Desktop Language Switcher -->
+        <button id="langToggleBtn" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ledger-border bg-ledger-card hover:border-brand-bright/40 text-xs font-sans font-semibold text-slate-200 transition-all">
           <span id="langFlag">🇧🇩</span>
           <span id="langLabel">English</span>
         </button>
 
-        <!-- Download APK Primary CTA -->
-        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5">
+        <!-- Desktop Full APK Download Button -->
+        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
           </svg>
           <span data-i18n="btn_get_app">অ্যাপ ডাউনলোড (২৭.৩ MB)</span>
         </a>
+
+        <!-- Mobile Compact Download Pill (Shows on screens < md) -->
+        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="inline-flex md:hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-xs shadow-md shadow-brand-emerald/20 active:scale-95 transition-all whitespace-nowrap" title="apk ডাউনলোড করুন (২৭.৩ মেগাবাইট)">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+          </svg>
+          <span>এপিকে (২৭ MB)</span>
+        </a>
+
+        <!-- Mobile Animated Hamburger Button (Shows on screens < lg) -->
+        <button id="mobileMenuToggleBtn" aria-label="মেনু খুলুন বা বন্ধ করুন" class="flex lg:hidden w-9 h-9 rounded-lg bg-ledger-card border border-ledger-border hover:border-brand-bright/40 text-slate-200 items-center justify-center active:scale-95 transition-all focus:outline-none">
+          <!-- 3-Bar Hamburger -->
+          <svg id="hamburgerIcon" class="w-5 h-5 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <!-- Close X Icon (hidden by default) -->
+          <svg id="closeMenuIcon" class="w-5 h-5 fill-none stroke-current stroke-2 hidden" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Slide-Down Drawer Menu -->
+    <div id="mobileMenuDrawer" class="hidden lg:hidden fixed inset-x-0 top-16 bottom-0 z-50 bg-ledger-bg/95 backdrop-blur-2xl border-b border-ledger-border overflow-y-auto px-4 py-5 flex flex-col justify-between transition-all duration-300">
+      <div class="space-y-4">
+        <!-- Section Navigation Links -->
+        <div class="flex flex-col space-y-1 text-sm font-semibold text-slate-200">
+          <a href="#features" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>📋 সুবিধাসমূহ (Features)</span>
+            <span class="text-xs text-slate-500">মূল বৈশিষ্ট্য</span>
+          </a>
+          <a href="#voice-demo" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              🎙️ লাইভ ভয়েস ডেমো (Interactive)
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-mono">লাইভ ট্রায়াল</span>
+          </a>
+          <a href="#precision" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>⚡ নির্ভুল হিসাব (০% গরমিল)</span>
+            <span class="text-xs text-slate-500">পয়সা ম্যাথ</span>
+          </a>
+          <a href="#video-tour" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>🎥 ভিডিও টিউটোরিয়াল ও ট্যুর</span>
+            <span class="text-xs text-slate-500">ভিডিও দেখুন</span>
+          </a>
+          <a href="#gallery" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>📱 আসল অ্যাপের স্ক্রিনশট</span>
+            <span class="text-xs text-slate-500">৫টি পর্দা</span>
+          </a>
+          <a href="#reminders" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>💬 ১-ট্যাপে তাগাদা বার্তা</span>
+            <span class="text-xs text-slate-500">হোয়াটসঅ্যাপ</span>
+          </a>
+          <a href="#faq" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-brand-primary/10 hover:text-brand-bright transition-colors">
+            <span>❓ সচরাচর জিজ্ঞাসা (FAQ)</span>
+            <span class="text-xs text-slate-500">উত্তরসমূহ</span>
+          </a>
+        </div>
+
+        <!-- Quick Utilities & Actions -->
+        <div class="pt-3 border-t border-ledger-border/80 space-y-2.5">
+          <!-- Mobile Language Switcher Row -->
+          <div class="flex items-center justify-between px-3.5 py-2 rounded-xl bg-ledger-card border border-ledger-border">
+            <span class="text-xs text-slate-400 font-medium">ভাষা পরিবর্তন করুন:</span>
+            <button id="langToggleBtnMobile" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-ledger-surface border border-brand-bright/30 text-xs font-bold text-white transition-all">
+              <span id="langFlagMobile">🇧🇩</span>
+              <span id="langLabelMobile">English</span>
+            </button>
+          </div>
+
+          <!-- Mobile Release Notes Trigger -->
+          <button id="openReleaseNotesMobileBtn" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-brand-primary/15 border border-brand-bright/30 text-brand-bright text-xs font-bold transition-all hover:bg-brand-primary/25">
+            <span>🚀 v2.1.0 রিলিজ নোট দেখুন</span>
+            <span>বিস্তারিত →</span>
+          </button>
+
+          <!-- WhatsApp Direct Support -->
+          <a href="https://wa.me/8801614430525" target="_blank" rel="noopener noreferrer" 
+             class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:text-white text-xs font-bold transition-all">
+            <svg class="w-4 h-4 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            <span>WhatsApp সাপোর্ট (+8801614430525)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- High-Conversion Download Card at bottom of Drawer -->
+      <div class="mt-6 pt-4 border-t border-ledger-border/80">
+        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" 
+           class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-sm shadow-xl shadow-brand-emerald/30 active:scale-98 transition-all">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+          </svg>
+          <span>অ্যাপ ডাউনলোড করুন (২৭.৩ MB)</span>
+        </a>
+        <div class="text-center text-[11px] text-slate-400 mt-2 font-sans">
+          Android 7.0+ • সংস্করণ ২.১.০ • ১০০% নিরাপদ অফলাইন
+        </div>
       </div>
     </div>
   </nav>
@@ -1360,6 +1460,14 @@
             সর্বশেষ Android 16 (API 36) টার্গেট এবং Android 7.0 (API 24) সর্বনিম্ন সাপোর্ট সহ আসল ২৭.৩ মেগাবাইটের প্রোডাকশন এপিকে সরাসরি ডাউনলোডযোগ্য।
           </p>
         </div>
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <h4 class="text-sm font-bold text-teal-300 flex items-center gap-2 mb-1.5">
+            <span>📱</span> ৬. ফুললি রেসপনসিভ মোবাইল হেডার ও ইন্টারেক্টিভ ড্রয়ার
+          </h4>
+          <p class="text-slate-300">
+            মোবাইল ডিভাইসে কোনো ধরনের ওভারফ্লো বা লাইন ভাঙা ছাড়াই মসৃণ ব্র্যান্ডিং, কমপ্যাক্ট এক-ট্যাপ এপিকে ডাউনলোড বাটন এবং ফুল-স্ক্রিন গ্লাস ড্রয়ার মেনু যোগ করা হয়েছে।
+          </p>
+        </div>
       </div>
 
       <div class="mt-6 pt-4 border-t border-ledger-border flex items-center justify-between">
@@ -1519,12 +1627,19 @@
       
       const flag = document.getElementById('langFlag');
       const label = document.getElementById('langLabel');
+      const flagMobile = document.getElementById('langFlagMobile');
+      const labelMobile = document.getElementById('langLabelMobile');
+
       if (currentLang === 'bn') {
-        flag.innerText = '🇧🇩';
-        label.innerText = 'English';
+        if (flag) flag.innerText = '🇧🇩';
+        if (label) label.innerText = 'English';
+        if (flagMobile) flagMobile.innerText = '🇧🇩';
+        if (labelMobile) labelMobile.innerText = 'English';
       } else {
-        flag.innerText = '🇬🇧';
-        label.innerText = 'বাংলা';
+        if (flag) flag.innerText = '🇬🇧';
+        if (label) label.innerText = 'বাংলা';
+        if (flagMobile) flagMobile.innerText = '🇬🇧';
+        if (labelMobile) labelMobile.innerText = 'বাংলা';
       }
 
       document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1535,7 +1650,46 @@
       });
     }
 
-    document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener('click', toggleLanguage);
+    }
+    const langToggleBtnMobile = document.getElementById('langToggleBtnMobile');
+    if (langToggleBtnMobile) {
+      langToggleBtnMobile.addEventListener('click', toggleLanguage);
+    }
+
+    // --- RESPONSIVE MOBILE DRAWER MENU LOGIC ---
+    const mobileMenuToggleBtn = document.getElementById('mobileMenuToggleBtn');
+    const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    const closeMenuIcon = document.getElementById('closeMenuIcon');
+
+    function toggleMobileMenu(open = null) {
+      if (!mobileMenuDrawer) return;
+      const shouldOpen = open !== null ? open : mobileMenuDrawer.classList.contains('hidden');
+      if (shouldOpen) {
+        mobileMenuDrawer.classList.remove('hidden');
+        if (hamburgerIcon) hamburgerIcon.classList.add('hidden');
+        if (closeMenuIcon) closeMenuIcon.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      } else {
+        mobileMenuDrawer.classList.add('hidden');
+        if (hamburgerIcon) hamburgerIcon.classList.remove('hidden');
+        if (closeMenuIcon) closeMenuIcon.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    if (mobileMenuToggleBtn) {
+      mobileMenuToggleBtn.addEventListener('click', () => toggleMobileMenu());
+    }
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu(false);
+      });
+    });
 
     // --- INTERACTIVE VOICE STUDIO & AUDIO SYNTHESIS ENGINE (v2.1.0) ---
     let audioCtx = null;
@@ -1907,6 +2061,13 @@
     const openReleaseBtn = document.getElementById('openReleaseNotesNav');
     if (openReleaseBtn) {
       openReleaseBtn.addEventListener('click', openReleaseNotes);
+    }
+    const openReleaseMobileBtn = document.getElementById('openReleaseNotesMobileBtn');
+    if (openReleaseMobileBtn) {
+      openReleaseMobileBtn.addEventListener('click', () => {
+        toggleMobileMenu(false);
+        openReleaseNotes();
+      });
     }
     document.getElementById('closeReleaseNotesBtn').addEventListener('click', hideReleaseNotes);
     document.getElementById('closeReleaseNotesOkBtn').addEventListener('click', hideReleaseNotes);
