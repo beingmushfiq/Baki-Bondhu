@@ -1,0 +1,43 @@
+# Baki Bondhu (বাকী বন্ধু) - Comprehensive Product, Architecture & Developer Reference
+
+Baki Bondhu is a modern, offline-first Android application designed specifically for small and medium retail merchants across Bangladesh (মুদি দোকান, চায়ের দোকান, ফার্মেসি, কাপড়ের দোকান, পাইকারি আড়ত).
+
+## 1. Problem Statement
+Traditional retail commerce in Bangladesh relies on manual red paper ledgers (লাল খাতা). These suffer from:
+1. Physical vulnerability: Fire, water damage, page tearing, theft.
+2. Calculation errors: Daily cash drawer balances frequently mismatch ledger entries.
+3. Tedious collection: Debt collection calls are socially awkward and lack quick payment details (such as bKash/Nagad accounts).
+4. Generic accounting software failures: Existing cloud apps require stable 4G internet, complex logins, monthly subscriptions, and English terminology that ordinary shopkeepers find alienating.
+
+## 2. Core Technical Architecture
+- **Language**: Kotlin 2.0+ with Jetpack Compose Material 3.
+- **Persistence**: Android Room SQLite Database v5 with foreign keys, compound indices, and deterministic migration schemas.
+- **Precision Math**: Long integer paisa arithmetic (`paisa = round(amount * 100)`). No Float or Double IEEE 754 precision errors.
+- **Voice Engine**: Dual engine support—Google SpeechRecognizer API + fallback Google Cloud Speech-to-Text streaming for noisy retail environments.
+- **Sync Model**: Offline-first local-master architecture with optional one-tap encrypted backup to Firebase Firestore.
+
+## 3. Colloquial Voice Parsing Algorithm (BanglaVoiceParser)
+The application interprets real spoken conversational Bengali:
+- Spoken: "রহিম ভাই বাকি ৫০০ টাকা" -> Customer: "রহিম ভাই", Type: Credit (বাকী), Amount: 50,000 paisa (৳ 500.00).
+- Spoken: "করিম সাহেব জমা দিলেন ১,০০০ টাকা" -> Customer: "করিম সাহেব", Type: Repayment (জমা), Amount: 100,000 paisa (৳ 1,000.00).
+- Spoken: "খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন" -> Parses Bengali compound phrase "আড়াই হাজার" into 250,000 paisa (৳ 2,500.00).
+- Safeguard: Spoken phrase without an explicit amount (e.g., "জামাল উদ্দিন বাকি") refuses to insert a zero transaction and warns the merchant to specify amount.
+
+## 4. Merchant Workflows
+1. **Daily Cash Drawer (ক্যাশ ড্রয়ার)**:
+   Morning Opening Cash + Cash Sales + Debt Collections - Daily Cash Expenses = Evening Closing Drawer Balance.
+2. **Saturday Commercial Week**:
+   Reports calculate Saturday 00:00 through Friday 23:59 to reflect local market weekly cycles.
+3. **1-Tap WhatsApp Debt Reminders**:
+   Constructs polite Bengali reminder messages including the merchant's bKash and Nagad numbers for direct customer settlement.
+
+## 5. Security & Privacy
+- Zero user data is collected or tracked without explicit merchant consent.
+- All ledger files remain stored locally on device internal storage.
+- Encrypted export and import via standard SQLite / JSON archive formats.
+
+## 6. Official Endpoints
+- Homepage: https://bakibondhu.devcenterpoint.com/
+- Android APK Download: https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk
+- Canonical Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml
+- Robots Directive: https://bakibondhu.devcenterpoint.com/robots.txt

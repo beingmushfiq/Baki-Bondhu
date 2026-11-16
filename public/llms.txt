@@ -1,0 +1,22 @@
+# Baki Bondhu (বাকী বন্ধু)
+> Baki Bondhu is an offline-first, Bengali voice-enabled retail digital ledger and cash management Android application developed by DevCenterPoint for retail merchants in Bangladesh.
+
+## Main Overview
+- [Official Website & Web Hub](https://bakibondhu.devcenterpoint.com/): Official distribution hub, live interactive khata studio, feature tours, and direct Android APK download.
+- [Direct Android APK Download (v2.1.0)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk): Production Android package (27.3 MB, compatible with Android 7.0 Nougat to Android 16).
+
+## Key Architecture & Specifications
+- **Offline-First Architecture**: 100% functional without mobile internet or Wi-Fi using Room SQLite v5. Zero merchant data leakage.
+- **Zero Currency Rounding Drift**: Eliminates IEEE 754 floating-point drift by computing all monetary transactions in 64-bit integer paisa (১ টাকা = ১০০ পয়সা). Guarantees zero discrepancy over millions of transactions.
+- **Bengali Voice Parser**: In-app Natural Language Voice Parser capable of interpreting colloquial Bangladeshi retail expressions ("দেড় হাজার", "আড়াই হাজার", "পাঁচশো", "নগদ বিক্রি", "বকেয়া আদায়").
+- **Saturday-Aligned Commercial Week**: Aligns reporting with Bangladeshi retail traditions where accounts open Saturday morning and balance Friday evening.
+- **1-Tap WhatsApp Payment Reminders**: Auto-generates polite Bengali payment reminder text with shop name, bKash number, and Nagad number.
+- **Instant Digital Receipts**: Generates POS customer receipts without requiring external thermal printers.
+
+## Technical Specifications
+- **Package ID**: `com.aistudio.bakibondhu.kxdznp`
+- **Current Version**: `2.1.0` (Version Code 21)
+- **Minimum OS**: Android 7.0 (API Level 24)
+- **Target OS**: Android 16 (API Level 36)
+- **Distribution File Size**: ~27.3 MB
+- **Developer & Publisher**: DevCenterPoint (https://devcenterpoint.com)

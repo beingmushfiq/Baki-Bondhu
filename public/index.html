@@ -3,16 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>বাকী বন্ধু (Baki Bondhu) — মুখের কথায় দোকানের ডিজিটাল হিসাব খাতা</title>
-  <meta name="description" content="দোকানের বাকী-বকেয়া আর জমার হিসাব—এখন শুধু মুখে বললেই খাতা প্রস্তুত। কোনো ইন্টারনেট লাগবে না, ১ পয়সাও গরমিল হবে না। ডাউনলোড করুন বাকী বন্ধু v2.0.0।" />
+  <title>বাকী বন্ধু (Baki Bondhu) v2.1.0 — মুখের কথায় দোকানের ডিজিটাল হিসাব খাতা</title>
+  <meta name="description" content="দোকানের বাকী-বকেয়া আর জমার নির্ভুল হিসাব—এখন মুখে বললেই তৈরি। সম্পূর্ণ অফলাইন, ০% গরমিল ও ১-ট্যাপ হোয়াটসঅ্যাপ তাগাদা। ডাউনলোড করুন বাকী বন্ধু v2.1.0।" />
   
-  <!-- Canonical & Domain Target -->
+  <!-- Canonical, Hreflang & Domain Target -->
   <link rel="canonical" href="https://bakibondhu.devcenterpoint.com/" />
+  <link rel="alternate" hreflang="bn-BD" href="https://bakibondhu.devcenterpoint.com/" />
+  <link rel="alternate" hreflang="en" href="https://bakibondhu.devcenterpoint.com/" />
+  <link rel="alternate" hreflang="x-default" href="https://bakibondhu.devcenterpoint.com/" />
 
   <!-- Open Graph / Meta -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bakibondhu.devcenterpoint.com/" />
-  <meta property="og:title" content="বাকী বন্ধু (Baki Bondhu) — মুখের কথায় দোকানের ডিজিটাল হিসাব খাতা" />
+  <meta property="og:title" content="বাকী বন্ধু (Baki Bondhu) v2.1.0 — মুখের কথায় দোকানের ডিজিটাল হিসাব খাতা" />
   <meta property="og:description" content="আপনার দোকানের হিসাব, এখন শুধু মুখে বললেই। সম্পূর্ণ অফলাইন, ১ পয়সাও গরমিল ছাড়া এবং ১-ট্যাপে হোয়াটসঅ্যাপে তাগাদা পাঠানোর বিশ্বস্ত অ্যাপ।" />
   <meta property="og:image" content="https://bakibondhu.devcenterpoint.com/assets/release_banner_v1.0.0.jpg" />
   <meta property="og:image:width" content="1376" />
@@ -21,31 +24,129 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://bakibondhu.devcenterpoint.com/" />
-  <meta name="twitter:title" content="Baki Bondhu — Voice-First Smart Retail Ledger" />
+  <meta name="twitter:title" content="Baki Bondhu v2.1.0 — Voice-First Smart Retail Ledger" />
   <meta name="twitter:description" content="Natural Bengali voice ledger and zero-drift minor unit accounting for retail shopkeepers." />
   <meta name="twitter:image" content="https://bakibondhu.devcenterpoint.com/assets/release_banner_v1.0.0.jpg" />
 
-  <!-- Structured Data (JSON-LD) -->
+  <!-- Structured Data (Schema.org Multi-Entity Graph) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Baki Bondhu (বাকী বন্ধু)",
-    "operatingSystem": "Android 7.0 and up",
-    "applicationCategory": "BusinessApplication",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BDT"
-    },
-    "fileSize": "27.3MB",
-    "softwareVersion": "2.0.0",
-    "author": {
-      "@type": "Organization",
-      "name": "DevCenterPoint",
-      "url": "https://devcenterpoint.com"
-    },
-    "downloadUrl": "https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.0.0.apk"
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://bakibondhu.devcenterpoint.com/#software",
+        "name": "Baki Bondhu (বাকী বন্ধু)",
+        "operatingSystem": "Android 7.0 and up",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "FinanceApplication",
+        "softwareVersion": "2.1.0",
+        "fileSize": "27.3 MB",
+        "downloadUrl": "https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BDT"
+        },
+        "author": {
+          "@type": "Organization",
+          "@id": "https://devcenterpoint.com/#organization"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "@id": "https://devcenterpoint.com/#organization"
+        },
+        "description": "Offline-first Bengali voice-enabled retail digital ledger and cash management mobile application for retail shopkeepers in Bangladesh.",
+        "featureList": [
+          "Bengali Natural Language Voice Ledger",
+          "Zero Floating-Point Rounding Drift (Paisa Math)",
+          "100% Offline Room SQLite Local Storage",
+          "1-Tap WhatsApp Payment Reminder",
+          "Digital POS Cash Receipt Generation",
+          "Saturday Commercial Retail Week Reports"
+        ],
+        "screenshot": [
+          "https://bakibondhu.devcenterpoint.com/assets/screens/screen_dashboard.png",
+          "https://bakibondhu.devcenterpoint.com/assets/screens/screen_voice_sheet.png",
+          "https://bakibondhu.devcenterpoint.com/assets/screens/screen_customer_khata.png",
+          "https://bakibondhu.devcenterpoint.com/assets/screens/screen_reports.png",
+          "https://bakibondhu.devcenterpoint.com/assets/screens/screen_onboarding.png"
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://devcenterpoint.com/#organization",
+        "name": "DevCenterPoint",
+        "url": "https://devcenterpoint.com",
+        "logo": "https://bakibondhu.devcenterpoint.com/assets/logo.svg",
+        "sameAs": [
+          "https://facebook.com/devcenterpoint",
+          "https://github.com/devcenterpoint"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://bakibondhu.devcenterpoint.com/#website",
+        "url": "https://bakibondhu.devcenterpoint.com",
+        "name": "Baki Bondhu Official Hub",
+        "description": "Official Web Portal and Download Center for Baki Bondhu Android Application",
+        "inLanguage": ["bn-BD", "en-US"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://bakibondhu.devcenterpoint.com/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "হোম (Home)",
+            "item": "https://bakibondhu.devcenterpoint.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "ভয়েস ডেমো (Live Demo)",
+            "item": "https://bakibondhu.devcenterpoint.com/#voice-demo"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "ডাউনলোড (APK Download)",
+            "item": "https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://bakibondhu.devcenterpoint.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "বাকী বন্ধু অ্যাপে ভয়েস দিয়ে কীভাবে হিসাব রাখা যায়?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "বাকী বন্ধু অ্যাপের মাইক্রোফোন বাটনে ট্যাপ করে স্বাভাবিক বাংলায় বলুন যেমন: 'রহিম ভাই বাকি ৫০০ টাকা'। অ্যাপটি চোখের পলকে ক্রেতার নাম, লেনদেনের ধরন ও সঠিক টাকার হিসাব বের করে খাতার সঠিক কলামে যোগ করে নেয়।"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "ইন্টারনেট বা ওয়াইফাই ছাড়া কি বাকী বন্ধু কাজ করে?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "হ্যাঁ, বাকী বন্ধু ১০০% অফলাইন অ্যাপ। কোনো ডাটা বা ইন্টারনেট সংযোগ ছাড়াই সব ধরনের হিসাব, কাস্টমার লেজার ও দৈনিক ক্যাশ ড্রয়ার রিপোর্ট স্বাচ্ছন্দ্যে কাজ করে।"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "সাধারণ ক্যালকুলেটরে হিসাবের গরমিল কেন হয় এবং বাকী বন্ধু কীভাবে তা সমাধান করে?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "সাধারণ হিসাবের অ্যাপে দশমিক সংখ্যার ফ্লোটিং পয়েন্ট গণনার কারণে হাজার লেনদেনে কিছু পয়সার অদৃশ্য গরমিল হয়। বাকী বন্ধু প্রতিটি টাকাকে ১০০ পয়সায় রূপান্তর করে পূর্ণসংখ্যায় (Long Integer) হিসাব রাখে, যার ফলে কোটি লেনদেনেও গরমিল ০%।"
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
 
@@ -186,7 +287,7 @@
         <div class="flex flex-col">
           <div class="flex items-center gap-2">
             <span class="text-xl font-bold tracking-tight text-white group-hover:text-brand-bright transition-colors">বাকী বন্ধু</span>
-            <span class="text-xs font-sans font-bold px-2 py-0.5 rounded-full bg-brand-primary/20 text-brand-bright border border-brand-bright/30">v2.0.0</span>
+            <span class="text-xs font-sans font-bold px-2.5 py-0.5 rounded-full bg-brand-primary/20 hover:bg-brand-primary/40 text-brand-bright border border-brand-bright/30 cursor-pointer transition-colors" id="openReleaseNotesNav" title="v2.1.0 রিলিজ নোট দেখুন">v2.1.0 🚀</span>
           </div>
           <span class="text-xs text-slate-400 font-sans tracking-wide">Baki Bondhu • DevCenterPoint</span>
         </div>
@@ -215,7 +316,7 @@
         </button>
 
         <!-- Download APK Primary CTA -->
-        <a href="downloads/bakibondhu-v2.0.0.apk" download="bakibondhu-v2.0.0.apk" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5">
+        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
           </svg>
@@ -260,7 +361,7 @@
 
           <!-- Action Buttons -->
           <div class="flex flex-wrap items-center gap-4 mb-10 w-full sm:w-auto">
-            <a href="downloads/bakibondhu-v2.0.0.apk" download="bakibondhu-v2.0.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-base shadow-xl shadow-brand-emerald/30 hover:shadow-brand-emerald/50 transition-all transform hover:-translate-y-0.5">
+            <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-base shadow-xl shadow-brand-emerald/30 hover:shadow-brand-emerald/50 transition-all transform hover:-translate-y-0.5">
               <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
               </svg>
@@ -312,7 +413,7 @@
                 <div class="absolute bottom-5 left-4 right-4 p-3 rounded-2xl glass-panel-glow border border-brand-bright/40 shadow-xl flex items-center justify-between">
                   <div class="flex items-center gap-2.5">
                     <span class="w-3 h-3 rounded-full bg-brand-bright animate-ping"></span>
-                    <span class="text-xs font-bold text-white">আসল অ্যাপের স্ক্রিনশট (v2.0.0)</span>
+                    <span class="text-xs font-bold text-white">আসল অ্যাপের স্ক্রিনশট (v2.1.0)</span>
                   </div>
                   <span class="text-[10px] text-harvest-gold font-mono font-bold">Android 7.0+</span>
                 </div>
@@ -327,126 +428,276 @@
     </div>
   </section>
 
-  <!-- ==================== DIFFERENTIATION ANCHOR: INTERACTIVE VOICE SIMULATOR ==================== -->
-  <section id="voice-demo" class="py-20 bg-ledger-card/60 border-y border-ledger-border relative">
+  <!-- ==================== DIFFERENTIATION ANCHOR: INTERACTIVE LIVE STUDIO (v2.1.0) ==================== -->
+  <section id="voice-demo" class="py-20 bg-ledger-card/70 border-y border-ledger-border relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Section Header -->
-      <div class="text-center max-w-3xl mx-auto mb-14">
-        <span class="px-3.5 py-1.5 rounded-full bg-brand-primary/15 text-brand-bright border border-brand-bright/30 text-xs font-bold tracking-wider uppercase font-sans">
-          Interactive Live Simulation
-        </span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-4 mb-4">
-          <span data-i18n="demo_title">ভয়েস থেকে ডিজিটাল খাতা — নিজে পরীক্ষা করুন</span>
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-primary/20 text-brand-bright border border-brand-bright/35 text-xs font-bold tracking-wider uppercase font-sans mb-3">
+          <span class="w-2 h-2 rounded-full bg-brand-bright animate-ping"></span>
+          Interactive Live Studio (v2.1.0)
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-3">
+          <span data-i18n="demo_title">ভয়েস থেকে ডিজিটাল খাতা — নিজে পরীক্ষা করে দেখুন</span>
         </h2>
-        <p class="text-slate-300 text-base sm:text-lg" data-i18n="demo_subtitle">
-          নিচের যেকোন বাক্য ক্লিক করুন অথবা নিজে লিখুন। দেখুন কীভাবে বাকি বন্ধু চোখের পলকে ক্রেতার নাম, লেনদেনের ধরন ও সঠিক টাকার হিসাব বের করে ফেলে।
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="demo_subtitle">
+          মাইক্রোফোনে স্বাভাবিক বাংলায় বলুন অথবা নিচের বাক্যে ক্লিক করুন। দেখুন কীভাবে বাকী বন্ধু মুহূর্তের মধ্যে মুখের কথা ডিকোড করে কাস্টমারের খাতা ও দোকানের ক্যাশ ড্রয়ার লাইভ আপডেট করে।
         </p>
       </div>
 
-      <!-- Simulator Interactive Canvas -->
-      <div class="glass-panel-glow rounded-3xl p-6 sm:p-10 max-w-4xl mx-auto">
+      <!-- Studio Dual-Pane Interactive Canvas -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Speech Scenario Quick Pills -->
-        <div class="mb-8">
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3" data-i18n="demo_presets_label">
-            নমুনা দোকানের ভয়েস কমান্ড (ক্লিক করুন):
-          </label>
-          <div class="flex flex-wrap gap-2.5">
-            <button class="voice-preset-btn px-4 py-2.5 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs sm:text-sm font-medium text-slate-200 transition-all flex items-center gap-2"
-              data-text="রহিম ভাই বাকি ৫০০ টাকা">
-              <span>🎙️ “রহিম ভাই বাকি ৫০০ টাকা”</span>
-            </button>
-            <button class="voice-preset-btn px-4 py-2.5 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs sm:text-sm font-medium text-slate-200 transition-all flex items-center gap-2"
-              data-text="করিম সাহেব জমা দিলেন ১,০০০ টাকা">
-              <span>🎙️ “করিম সাহেব জমা দিলেন ১,০০০ টাকা”</span>
-            </button>
-            <button class="voice-preset-btn px-4 py-2.5 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs sm:text-sm font-medium text-slate-200 transition-all flex items-center gap-2"
-              data-text="সুমন ডাল আর তেল বাবদ নগদ বিক্রি ১,২০০">
-              <span>🎙️ “সুমন ডাল আর তেল বাবদ নগদ বিক্রি ১,২০০”</span>
-            </button>
-            <button class="voice-preset-btn px-4 py-2.5 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs sm:text-sm font-medium text-slate-200 transition-all flex items-center gap-2"
-              data-text="খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন">
-              <span>🎙️ “খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন”</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Custom Input & Waveform Simulation Row -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center mb-8">
-          <div class="md:col-span-8">
-            <div class="relative">
-              <input type="text" id="demoInputText" value="রহিম ভাই বাকি ৫০০ টাকা"
-                class="w-full px-5 py-4 rounded-2xl bg-ledger-bg border-2 border-brand-bright/40 text-white font-medium text-base sm:text-lg focus:outline-none focus:border-brand-bright shadow-inner"
-                placeholder="মুখে বলা বাক্য এখানে লিখুন..." />
-              <button id="demoRunBtn" class="absolute right-2 top-2 bottom-2 px-5 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-sm flex items-center gap-2 transition-all">
-                <span>হিসাব করুন</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                </svg>
+        <!-- ================= LEFT PANE: VOICE INPUT & AI PIPELINE CONSOLE ================= -->
+        <div class="lg:col-span-6 flex flex-col gap-6">
+          <div class="glass-panel-glow rounded-3xl p-6 sm:p-7 border border-brand-bright/30 shadow-2xl relative overflow-hidden">
+            
+            <!-- Console Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-ledger-border/80">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-bold text-emerald-300 uppercase tracking-wide">ভয়েস ইঞ্জিন প্রস্তুত (Web Audio + বাংলা স্পিচ)</span>
+              </div>
+              <button id="btnSoundTest" class="px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800/80 text-[11px] font-semibold text-emerald-300 transition-all flex items-center gap-1">
+                <span>🔔 সাউন্ড টেস্ট</span>
               </button>
             </div>
-          </div>
 
-          <!-- Waveform Visualizer -->
-          <div class="md:col-span-4 h-16 rounded-2xl bg-ledger-bg border border-ledger-border flex items-center justify-center gap-1.5 px-4 overflow-hidden">
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-4 animate-wave" style="animation-delay: 0.1s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-8 animate-wave" style="animation-delay: 0.3s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-12 animate-wave" style="animation-delay: 0.15s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-14 animate-wave" style="animation-delay: 0.45s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-7 animate-wave" style="animation-delay: 0.25s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-11 animate-wave" style="animation-delay: 0.5s"></div>
-            <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-5 animate-wave" style="animation-delay: 0.2s"></div>
-            <span class="text-xs text-brand-bright font-mono ml-2">বাংলা ভয়েস সক্রিয়</span>
+            <!-- Spoken Input Box + Live Mic Trigger -->
+            <div class="mt-5">
+              <label class="block text-xs font-bold text-slate-300 mb-2">
+                দোকানের মুখে বলা হিসাব বাক্য:
+              </label>
+              <div class="relative flex items-center">
+                <input type="text" id="demoInputText" value="রহিম ভাই বাকি ৫০০ টাকা"
+                  class="w-full pl-4 pr-32 py-3.5 rounded-2xl bg-ledger-bg border-2 border-brand-bright/40 text-white font-medium text-sm sm:text-base focus:outline-none focus:border-brand-bright shadow-inner"
+                  placeholder="যেমন: রহিম ভাই বাকি ৫০০ টাকা..." />
+                
+                <div class="absolute right-2 flex items-center gap-1.5">
+                  <!-- Live Speech Recognition Mic Button -->
+                  <button id="demoMicBtn" title="মাইক্রোফোনে কথা বলুন (বাংলা ভয়েস)" class="p-2.5 rounded-xl bg-ledger-surface hover:bg-brand-primary/40 border border-ledger-border hover:border-brand-bright/60 text-brand-bright transition-all flex items-center justify-center">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                  </button>
+
+                  <!-- Execute Simulation Button -->
+                  <button id="demoRunBtn" class="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-brand-emerald/30 transition-all">
+                    <span>হিসাব করুন</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Reactive Soundwave Bars -->
+              <div class="mt-3 flex items-center justify-between px-3 py-2 rounded-xl bg-slate-950/70 border border-ledger-border/60">
+                <div class="flex items-center gap-1.5" id="demoVisualizerBars">
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-3"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-6"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-8"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-10"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-5"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-7"></div>
+                  <div class="wave-bar w-1.5 bg-brand-bright rounded-full h-4"></div>
+                </div>
+                <div id="demoMicStatus" class="text-xs font-mono text-slate-400">
+                  ভয়েস মোড: রেডি (ক্লিক করে মুখে বলুন)
+                </div>
+              </div>
+            </div>
+
+            <!-- Colloquial Scenario Quick Pills -->
+            <div class="mt-5">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
+                নমুনা বাক্যে ক্লিক করে ট্রায়াল দিন:
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button class="voice-preset-btn px-3 py-2 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
+                  data-text="রহিম ভাই বাকি ৫০০ টাকা">
+                  <span>🎙️ “রহিম ভাই বাকি ৫০০ টাকা”</span>
+                </button>
+                <button class="voice-preset-btn px-3 py-2 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
+                  data-text="করিম সাহেব জমা দিলেন ১,০০০ টাকা">
+                  <span>🎙️ “করিম সাহেব জমা দিলেন ১,০০০ টাকা”</span>
+                </button>
+                <button class="voice-preset-btn px-3 py-2 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
+                  data-text="সুমন ডাল আর তেল বাবদ নগদ বিক্রি ১,২০০">
+                  <span>🎙️ “সুমন ডাল আর তেল বাবদ নগদ বিক্রি ১,২০০”</span>
+                </button>
+                <button class="voice-preset-btn px-3 py-2 rounded-xl bg-ledger-surface hover:bg-brand-primary/30 border border-ledger-border hover:border-brand-bright/40 text-xs font-medium text-slate-200 transition-all flex items-center gap-1.5"
+                  data-text="খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন">
+                  <span>🎙️ “খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন”</span>
+                </button>
+                <button class="voice-preset-btn px-3 py-2 rounded-xl bg-amber-950/40 hover:bg-amber-900/50 border border-amber-600/40 text-xs font-medium text-amber-200 transition-all flex items-center gap-1.5"
+                  data-text="জামাল উদ্দিন বাকি">
+                  <span>⚠️ “জামাল উদ্দিন বাকি” (টাকা ছাড়া টেস্ট)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- NLP AI Token Decoding Pipeline -->
+            <div class="mt-6 pt-5 border-t border-ledger-border/80">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                লাইভ এআই টোকেন পার্সিং (BanglaVoiceParser Engine):
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div class="p-3 rounded-xl bg-ledger-bg border border-ledger-border">
+                  <div class="text-[10px] text-slate-400 font-semibold">১. কাস্টমার নাম</div>
+                  <div id="tokenCustomer" class="text-sm font-bold text-white mt-0.5 truncate">রহিম ভাই</div>
+                  <div class="text-[10px] text-emerald-400 mt-0.5">ম্যাচিং সম্পন্ন ✓</div>
+                </div>
+                <div class="p-3 rounded-xl bg-ledger-bg border border-ledger-border">
+                  <div class="text-[10px] text-slate-400 font-semibold">২. লেনদেনের ধরন</div>
+                  <div id="tokenType" class="text-sm font-bold text-rose-400 mt-0.5 flex items-center gap-1.5 truncate">
+                    <span class="w-2 h-2 rounded-full bg-rose-400"></span> বাকী (Credit)
+                  </div>
+                  <div id="tokenTypeSub" class="text-[10px] text-slate-400 mt-0.5">খাতার বাকী বৃদ্ধি পাবে</div>
+                </div>
+                <div class="p-3 rounded-xl bg-ledger-bg border border-ledger-border">
+                  <div class="text-[10px] text-slate-400 font-semibold">৩. টাকার পরিমাণ</div>
+                  <div id="tokenAmount" class="text-sm font-bold text-amber-300 font-mono mt-0.5">৳ ৫০০.০০</div>
+                  <div id="tokenPaisa" class="text-[10px] text-amber-400/90 font-mono mt-0.5">৫০,০০০ পয়সা</div>
+                </div>
+              </div>
+
+              <!-- Status Notice Alert Banner -->
+              <div id="demoStatusNotice" class="mt-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-600/40 text-xs text-emerald-300 flex items-center gap-2.5 transition-all">
+                <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span id="demoNoticeText">খাতায় এন্ট্রি সম্পন্ন: রহিম ভাই • বাকী ৳ ৫০০.০০ (অফলাইনে সংরক্ষিত)</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <!-- Real-Time Token Breakdown & Output Card -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-ledger-border">
-          
-          <!-- Extracted Customer -->
-          <div class="p-4 rounded-2xl bg-ledger-bg border border-ledger-border">
-            <span class="text-xs text-slate-400 font-medium" data-i18n="demo_customer_label">শনাক্তকৃত কাস্টমার:</span>
-            <div id="demoCustomer" class="text-lg font-bold text-white mt-1">রহিম ভাই</div>
-            <span class="text-[11px] text-emerald-400 font-medium">ক্রেতার নাম চিহ্নিত হয়েছে</span>
-          </div>
-
-          <!-- Extracted Transaction Type -->
-          <div class="p-4 rounded-2xl bg-ledger-bg border border-ledger-border">
-            <span class="text-xs text-slate-400 font-medium" data-i18n="demo_type_label">লেনদেনের ধরন:</span>
-            <div id="demoType" class="text-lg font-bold text-ledger-crimson mt-1 flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-ledger-crimson"></span>
-              বাকী (দোকানের পাওনা)
+        <!-- ================= RIGHT PANE: LIVE KHATA LEDGER & ANDROID SCREEN ================= -->
+        <div class="lg:col-span-6 flex flex-col gap-6">
+          <div class="glass-panel-glow rounded-3xl p-6 sm:p-7 border border-brand-bright/30 shadow-2xl relative">
+            
+            <!-- Store & Customer Card Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-ledger-border/80">
+              <div>
+                <div class="text-xs text-slate-400 font-medium">বিসমিল্লাহ জেনারেল স্টোর • লাইভ খাতা</div>
+                <div class="text-base font-bold text-white flex items-center gap-2 mt-0.5">
+                  <span id="khataCustomerName">রহিম সওদাগর</span>
+                  <span class="text-xs font-mono font-normal text-slate-400 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800">০১৭১২-৩৪৫৬৭৮</span>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-bold font-mono">
+                Android 7.0+
+              </span>
             </div>
-            <span class="text-[11px] text-slate-400 font-medium">খাতার বাকী কলামে যোগ হবে</span>
-          </div>
 
-          <!-- Exact Amount -->
-          <div class="p-4 rounded-2xl bg-ledger-bg border border-ledger-border">
-            <span class="text-xs text-slate-400 font-medium" data-i18n="demo_amount_label">টাকার পরিমাণ:</span>
-            <div id="demoAmount" class="text-lg font-bold text-harvest-gold font-mono mt-1">৳&nbsp;৫০০.০০</div>
-            <div id="demoPaisa" class="text-[11px] text-harvest-soft font-medium">১ পয়সাও গরমিল নেই</div>
-          </div>
+            <!-- Before vs After Balance Tracker Card -->
+            <div class="mt-5 p-5 rounded-2xl bg-[#091C14] border border-emerald-600/35 shadow-inner">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wide mb-3 flex items-center justify-between">
+                <span>খাতার হিসাব সমন্বয় (Balance State)</span>
+                <span class="text-[11px] text-emerald-400 font-normal">১ পয়সাও গরমিল নেই ✓</span>
+              </div>
+              <div class="grid grid-cols-3 gap-3 items-center text-center">
+                <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">পূর্বের বাকী</div>
+                  <div id="khataPrevBalance" class="text-sm sm:text-base font-bold text-slate-300 font-mono mt-0.5">৳ ১,২৫০.০০</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400">নতুন এন্ট্রি</div>
+                  <div id="khataDeltaBalance" class="text-sm sm:text-base font-bold text-rose-400 font-mono mt-0.5">+ ৳ ৫০০.০০</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-rose-950/30 border border-rose-600/40">
+                  <div class="text-[10px] text-rose-300 font-bold">বর্তমান মোট বাকী</div>
+                  <div id="khataTotalBalance" class="text-base sm:text-xl font-black text-rose-400 font-mono mt-0.5">৳ ১,৭৫০.০০</div>
+                </div>
+              </div>
 
-        </div>
-
-        <!-- Live Simulated Khata Receipt Preview -->
-        <div class="mt-6 p-4 rounded-2xl bg-brand-forest/60 border border-brand-bright/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-brand-emerald/30 border border-brand-bright/40 flex items-center justify-center text-brand-bright">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <!-- Cash Drawer Metric Sync Bar -->
+              <div class="mt-3.5 pt-3 border-t border-emerald-950 flex items-center justify-between text-xs">
+                <span class="text-slate-300 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  দোকানের দৈনিক ক্যাশ ড্রয়ার:
+                  <strong id="khataDrawerCash" class="text-emerald-300 font-mono font-bold">৳ ১২,৪৫০.০০</strong>
+                </span>
+                <span class="text-[11px] text-emerald-400 font-semibold font-mono">ড্রয়ার মিলেছে ✓</span>
+              </div>
             </div>
-            <div>
-              <div class="text-sm font-bold text-white" id="demoReceiptSummary">খাতায় এন্ট্রি সম্পন্ন: রহিম ভাই • বাকী ৳ ৫০০</div>
-              <div class="text-xs text-slate-300">মোবাইলে সংরক্ষিত হয়েছে • কোনো ইন্টারনেট খরচ হয়নি</div>
+
+            <!-- Chronological Customer Ledger Entries (খাতার পাতা) -->
+            <div class="mt-5">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wide mb-2 flex items-center justify-between">
+                <span>কাস্টমার লেজার ট্রানজ্যাকশন হিস্ট্রি:</span>
+                <span class="text-[11px] text-slate-400">সময়ক্রম অনুসারে সংরক্ষিত</span>
+              </div>
+              <div class="space-y-2 font-mono text-xs max-h-36 overflow-y-auto pr-1">
+                <!-- Static Prior Row -->
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-slate-400">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500">১৪ নভে</span>
+                    <span class="text-slate-300 font-sans">পূর্বের জের বাকী (মুদি সামগ্রী)</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-rose-400 font-bold">+ ৳ ১,২৫০</span>
+                  </div>
+                </div>
+
+                <!-- Dynamic Real-Time Active Row -->
+                <div id="khataActiveRow" class="flex items-center justify-between p-2.5 rounded-xl bg-emerald-950/40 border border-brand-bright/50 text-white animate-pulse">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-emerald-300" id="khataRowDate">১৭ নভে</span>
+                    <span class="text-emerald-100 font-sans" id="khataRowDesc">ভয়েস এন্ট্রি: বাকী (চাল ও ডাল)</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-rose-400 font-bold font-mono" id="khataRowAmount">+ ৳ ৫০০.০০</span>
+                    <div class="text-[9px] text-slate-400 font-sans">ব্যালেন্স: <span id="khataRowBalance">৳ ১,৭৫০</span></div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Action Superpower Tabs: 1-Tap WhatsApp Reminder & Digital Receipt -->
+            <div class="mt-5 pt-4 border-t border-ledger-border/80">
+              <div class="flex items-center gap-2 mb-3">
+                <button id="btnTabWhatsapp" class="px-3 py-1.5 rounded-xl bg-brand-primary text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span>💬 ১-ট্যাপ WhatsApp তাগাদা</span>
+                </button>
+                <button id="btnTabReceipt" class="px-3 py-1.5 rounded-xl bg-ledger-surface hover:bg-slate-800 text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 border border-ledger-border">
+                  <span>🧾 ডিজিটাল রসিদ প্রিভিউ</span>
+                </button>
+              </div>
+
+              <!-- Tab Panel 1: WhatsApp Preview -->
+              <div id="panelWhatsapp" class="p-3.5 rounded-2xl bg-[#07241A] border border-emerald-500/40">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[11px] font-bold text-emerald-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> স্বয়ংক্রিয় তৈরি তাগাদা মেসেজ (বাংলা)
+                  </span>
+                  <button id="btnCopyWaText" class="text-[11px] font-bold text-brand-bright hover:underline flex items-center gap-1">
+                    <span>📋 কপি করুন</span>
+                  </button>
+                </div>
+                <div id="waPreviewText" class="text-xs text-slate-200 leading-relaxed font-sans bg-slate-950/70 p-3 rounded-xl border border-emerald-950 font-normal">
+                  শ্রদ্ধেয় রহিম সওদাগর ভাই, আসসালামু আলাইকুম। বিসমিল্লাহ জেনারেল স্টোরে আপনার পূর্বের মোট বাকী ১,২৫০ টাকার সাথে আজ ৫০০ টাকা যুক্ত হয়ে বর্তমান মোট বাকী ১,৭৫০ টাকা। অনুগ্রহ করে সুবিধামতো বিকাশ/নগদ ০১৭১২-৩৪৫৬৭৮ নম্বরে পরিশোধ করার অনুরোধ রইল। ধন্যবাদ।
+                </div>
+              </div>
+
+              <!-- Tab Panel 2: Digital Receipt Preview -->
+              <div id="panelReceipt" class="hidden p-4 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 font-mono text-xs">
+                <div class="text-center pb-2 border-b border-dashed border-slate-700">
+                  <div class="font-bold text-sm text-white font-sans">বিসমিল্লাহ জেনারেল স্টোর</div>
+                  <div class="text-[10px] text-slate-400">ডিজিটাল ক্যাশ মেমো • বাকী বন্ধু POS</div>
+                  <div class="text-[10px] text-slate-400" id="receiptTime">১৭ নভেম্বর ২০২৬ • ০১:৩০ AM</div>
+                </div>
+                <div class="py-2.5 space-y-1 border-b border-dashed border-slate-700">
+                  <div class="flex justify-between"><span>গ্রাহক:</span><span id="receiptCustomer" class="font-bold text-white font-sans">রহিম সওদাগর</span></div>
+                  <div class="flex justify-between"><span>লেনদেন:</span><span id="receiptType" class="text-rose-400 font-sans">বাকী (Credit)</span></div>
+                  <div class="flex justify-between"><span>পরিমাণ:</span><span id="receiptAmount" class="font-bold text-emerald-300">৳ ৫০০.০০</span></div>
+                  <div class="flex justify-between"><span>সর্বমোট বকেয়া:</span><span id="receiptTotal" class="font-bold text-rose-400">৳ ১,৭৫০.০০</span></div>
+                </div>
+                <div class="pt-2 text-center text-[10px] text-slate-400 font-sans">
+                  হিসাব সঠিক রাখতে বাকী বন্ধু ব্যবহার করুন • ধন্যবাদ
+                </div>
+              </div>
+
+            </div>
+
           </div>
-          <button id="demoTriggerVoicePlay" class="px-4 py-2 rounded-xl bg-brand-emerald hover:bg-brand-primary text-white text-xs font-bold transition-all flex items-center gap-2 shadow-lg">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-            <span>ভয়েস শুনুন</span>
-          </button>
         </div>
 
       </div>
@@ -624,13 +875,13 @@
   <section id="gallery" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-3xl mx-auto mb-16">
       <span class="px-3.5 py-1.5 rounded-full bg-brand-primary/15 text-brand-bright border border-brand-bright/30 text-xs font-bold tracking-wider uppercase font-sans">
-        Actual App Screenshots (v2.0.0)
+        Actual App Screenshots (v2.1.0)
       </span>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-4 mb-4">
         <span data-i18n="gallery_title">আসল অ্যাপের স্ক্রিনশট ও ইন্টারফেস</span>
       </h2>
       <p class="text-slate-300 text-base sm:text-lg" data-i18n="gallery_subtitle">
-        সর্বশেষ v2.0.0 সংস্করণের বাস্তব ইন্টারফেস। রোদে কিংবা কম আলোতেও সহজে পড়া যায় এমন স্পষ্ট ও সুন্দর ডিজাইন।
+        সর্বশেষ v2.1.0 সংস্করণের বাস্তব ইন্টারফেস। রোদে কিংবা কম আলোতেও সহজে পড়া যায় এমন স্পষ্ট ও সুন্দর ডিজাইন।
       </p>
     </div>
 
@@ -924,15 +1175,15 @@
             <span data-i18n="cta_title">আজই আপনার দোকানকে করুন স্মার্ট ও ডিজিটাল</span>
           </h2>
           <p class="text-slate-300 text-base sm:text-lg mb-8" data-i18n="cta_subtitle">
-            ১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু ২.০.০ সংস্করণ।
+            ১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু ২.১.০ সংস্করণ।
           </p>
 
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="downloads/bakibondhu-v2.0.0.apk" download="bakibondhu-v2.0.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-bright via-emerald-400 to-brand-primary text-slate-950 font-extrabold text-base shadow-xl shadow-brand-bright/30 hover:scale-105 transition-all">
+            <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-bright via-emerald-400 to-brand-primary text-slate-950 font-extrabold text-base shadow-xl shadow-brand-bright/30 hover:scale-105 transition-all">
               <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5802 8.4116 13.8407 8 12 8s-3.5802.4116-5.1368.9497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
               <div class="text-left">
                 <div class="text-[10px] uppercase font-mono font-bold leading-none tracking-wider text-emerald-950">Android APK • ২৭.৩ MB</div>
-                <div class="text-sm font-extrabold leading-none mt-1">সরাসরি APK ডাউনলোড (v2.0.0)</div>
+                <div class="text-sm font-extrabold leading-none mt-1">সরাসরি APK ডাউনলোড (v2.1.0)</div>
               </div>
             </a>
 
@@ -1016,20 +1267,79 @@
     </div>
   </div>
 
-  <!-- ==================== TERMS OF SERVICE MODAL ==================== -->
-  <div id="termsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="glass-panel-glow max-w-xl w-full rounded-3xl p-6 sm:p-8 max-h-[85vh] overflow-y-auto border border-brand-bright/40 text-slate-200">
-      <div class="flex items-center justify-between pb-4 border-b border-ledger-border mb-4">
-        <h3 class="text-xl font-bold text-white">ব্যবহারের শর্তাবলী (Terms of Service)</h3>
-        <button id="closeTermsBtn" class="text-slate-400 hover:text-white text-2xl font-bold">✕</button>
+  <!-- ==================== RELEASE NOTES MODAL (v2.1.0) ==================== -->
+  <div id="releaseNotesModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel-glow max-w-2xl w-full rounded-3xl p-6 sm:p-8 max-h-[88vh] overflow-y-auto border border-brand-bright/50 text-slate-200 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-ledger-border mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-primary/30 border border-brand-bright/40 flex items-center justify-center text-brand-bright text-xl">
+            🚀
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-xl font-bold text-white">রিলিজ নোট — সংস্করণ v2.1.0</h3>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono">সর্বশেষ</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">১৭ নভেম্বর ২০২৬ • অফিসিয়াল প্রোডাকশন রিলিজ</p>
+          </div>
+        </div>
+        <button id="closeReleaseNotesBtn" class="text-slate-400 hover:text-white text-2xl font-bold p-1">✕</button>
       </div>
-      <div class="text-xs sm:text-sm space-y-3 leading-relaxed">
-        <p><strong>১. ব্যবহারের অধিকার:</strong> বাকী বন্ধু অ্যাপটি ক্ষুদ্র ও পাইকারি ব্যবসায়ীদের দৈনন্দিন হিসাব সহজ করার জন্য সম্পূর্ণ বিনামূল্যে প্রদান করা হয়েছে।</p>
-        <p><strong>২. ডেটার দায়িত্ব:</strong> দোকানদার হিসেবে নিয়মিত গুগল ব্যাকআপ রাখা আপনার দায়িত্ব। ফোন পরিবর্তন বা রিসেট করার পূর্বে ব্যাকআপ নিশ্চিত করুন।</p>
-        <p><strong>৩. স্বত্বাধিকার:</strong> বাকী বন্ধু (Baki Bondhu) অ্যাপের ডিজাইন ও ইঞ্জিনিয়ারিংয়ের যাবতীয় স্বত্ব <strong>DevCenterPoint</strong> কর্তৃক সংরক্ষিত।</p>
+
+      <div class="space-y-4 text-xs sm:text-sm leading-relaxed">
+        <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-600/30">
+          <h4 class="text-sm font-bold text-emerald-300 flex items-center gap-2 mb-1.5">
+            <span>🎙️</span> ১. ইন-ব্রাউজার লাইভ ভয়েস রেকর্ড ও বাংলা স্পিচ পার্সার
+          </h4>
+          <p class="text-slate-300">
+            ওয়েবসাইটে সরাসরি মাইক্রোফোনে স্বাভাবিক বাংলায় কথা বলে অ্যাপের ন্যাচারাল ল্যাঙ্গুয়েজ পার্সিং টেস্ট করার সুবিধা যোগ করা হয়েছে। ওয়েব অডিও এপিআই-এর মাধ্যমে লেনদেন কনফার্মেশনের সাথে সাথে ক্যাশ ড্রয়ার চিম (POS Chime) বেজে ওঠে।
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <h4 class="text-sm font-bold text-brand-bright flex items-center gap-2 mb-1.5">
+            <span>📖</span> ২. রিয়েল-টাইম কাস্টমার খাতা ও ব্যালেন্স ট্র্যাকার
+          </h4>
+          <p class="text-slate-300">
+            যেকোনো লেনদেনের সাথে সাথে গ্রাহকের পূর্বের বাকী, নতুন এন্ট্রি এবং আপডেটেড মোট বকেয়ার হিসাব স্বয়ংক্রিয়ভাবে ক্যালকুলেট হয়। পাশাপাশি দোকানের ক্যাশ ড্রয়ার ব্যালেন্সের সাথে সরাসরি লাইভ সমন্বয় ঘটে।
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <h4 class="text-sm font-bold text-amber-300 flex items-center gap-2 mb-1.5">
+            <span>💬</span> ৩. ১-ট্যাপ হোয়াটসঅ্যাপ তাগাদা ও ডিজিটাল রসিদ
+          </h4>
+          <p class="text-slate-300">
+            কাস্টমারের মোট বাকী ও দোকানদারের বিকাশ/নগদ নম্বরসহ তৈরি হওয়া সম্মানজনক তাগাদা মেসেজ এক ক্লিকে কপি বা হোয়াটসঅ্যাপে পাঠানোর প্রিভিউ যুক্ত করা হয়েছে। সাথে রয়েছে ডিজিটাল পিওএস ক্যাশ স্লিপ মেমো।
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
+          <h4 class="text-sm font-bold text-rose-300 flex items-center gap-2 mb-1.5">
+            <span>🛡️</span> ৪. জিরো-মানি সেফগার্ড অ্যালার্ট (ভুল এন্ট্রি প্রতিরোধ)
+          </h4>
+          <p class="text-slate-300">
+            কথা বলার সময় টাকার অঙ্ক স্পষ্ট না বললে অ্যাপটি কখনোই আন্দাজে শূন্য বা ভুল এন্ট্রি নেয় না—বরং তাৎক্ষণিক সতর্কতা বাজিয়ে দোকানদারকে সচেতন করে।
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-900/50">
+          <h4 class="text-sm font-bold text-slate-200 flex items-center gap-2 mb-1.5">
+            <span>📦</span> ৫. অ্যান্ড্রয়েড ৭.০+ অপ্টিমাইজড এপিকে (v2.1.0)
+          </h4>
+          <p class="text-slate-300">
+            সর্বশেষ Android 16 (API 36) টার্গেট এবং Android 7.0 (API 24) সর্বনিম্ন সাপোর্ট সহ আসল ২৭.৩ মেগাবাইটের প্রোডাকশন এপিকে সরাসরি ডাউনলোডযোগ্য।
+          </p>
+        </div>
       </div>
-      <div class="mt-6 text-right">
-        <button id="closeTermsOkBtn" class="px-5 py-2 rounded-xl bg-brand-emerald text-white text-xs font-bold">বন্ধ করুন</button>
+
+      <div class="mt-6 pt-4 border-t border-ledger-border flex items-center justify-between">
+        <a href="downloads/bakibondhu-v2.1.0.apk" download="bakibondhu-v2.1.0.apk" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white text-xs font-bold shadow-lg shadow-brand-emerald/30">
+          <span>📥 v2.1.0 APK ডাউনলোড করুন (২৭.৩ MB)</span>
+        </a>
+        <button id="closeReleaseNotesOkBtn" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold">
+          বুঝেছি
+        </button>
       </div>
     </div>
   </div>
@@ -1076,7 +1386,7 @@
         drift_p1: "সাধারণ অ্যাপে দশমিক সংখ্যা দিয়ে যোগ-বিয়োগ করলে কম্পিউটারের রাউন্ডিং ভুলের কারণে হাজার হাজার লেনদেনে কিছু পয়সা বা টাকার অদৃশ্য গরমিল তৈরি হয়।",
         drift_p2: "বাকী বন্ধু এই সমস্যা চিরতরে দূর করেছে। অ্যাপের ভেতরে প্রতিটি টাকার হিসাবকে পয়সায় রূপান্তর করে পূর্ণসংখ্যায় হিসাব রাখা হয়। ১ টাকা = ১০০ পয়সা, যার ফলে কোটি লেনদেনেও গরমিল হওয়ার সুযোগ থাকে ঠিক ০%।",
         gallery_title: "আসল অ্যাপের স্ক্রিনশট ও ইন্টারফেস",
-        gallery_subtitle: "সর্বশেষ v2.0.0 সংস্করণের বাস্তব ইন্টারফেস। রোদে কিংবা কম আলোতেও সহজে পড়া যায় এমন স্পষ্ট ও সুন্দর ডিজাইন।",
+        gallery_subtitle: "সর্বশেষ v2.1.0 সংস্করণের বাস্তব ইন্টারফেস। রোদে কিংবা কম আলোতেও সহজে পড়া যায় এমন স্পষ্ট ও সুন্দর ডিজাইন।",
         gal_1_title: "১. হোম স্ক্রিন ও ক্যাশ ড্রয়ার",
         gal_1_desc: "দোকানের লাইভ বাকী ও জমার ব্যালেন্স",
         gal_2_title: "২. ভয়েস খাতা শিট",
@@ -1102,7 +1412,7 @@
         faq_q4: "৪. ব্যবহারের জন্য কি কোনো টাকা বা ফি দিতে হবে?",
         faq_a4: "না, বাকী বন্ধু সম্পূর্ণ বিনামূল্যে ব্যবহারের সুযোগ রয়েছে। কোনো মাসিক সাবস্ক্রিপশন বা গোপন চার্জ নেই।",
         cta_title: "আজই আপনার দোকানকে করুন স্মার্ট ও ডিজিটাল",
-        cta_subtitle: "১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু ২.০.০ সংস্করণ।"
+        cta_subtitle: "১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু ২.১.০ সংস্করণ।"
       },
       en: {
         nav_features: "Features",
@@ -1142,7 +1452,7 @@
         drift_p1: "Standard computer floating-point math introduces cumulative rounding drift that silently distorts store balances across thousands of daily transactions.",
         drift_p2: "Baki Bondhu completely resolves this by storing every entry in minor integer units (Paisa). 1 BDT = 100 Paisa, guaranteeing exactly 0.00 drift.",
         gallery_title: "Actual App Screenshots & Interface",
-        gallery_subtitle: "Real screenshots from the latest v2.0.0 release. High-contrast readability under bright store lighting.",
+        gallery_subtitle: "Real screenshots from the latest v2.1.0 release. High-contrast readability under bright store lighting.",
         gal_1_title: "1. Home Dashboard & Cash Drawer",
         gal_1_desc: "Live store balance & cash drawer closing",
         gal_2_title: "2. Spoken Voice Recording Sheet",
@@ -1168,7 +1478,7 @@
         faq_q4: "4. Is there any fee or subscription?",
         faq_a4: "No, Baki Bondhu is completely free to download and use with zero hidden fees.",
         cta_title: "Modernize Your Retail Shop Today",
-        cta_subtitle: "100% secure, offline-first, and zero calculation drift. Download Baki Bondhu v2.0.0 now."
+        cta_subtitle: "100% secure, offline-first, and zero calculation drift. Download Baki Bondhu v2.1.0 now."
       }
     };
 
@@ -1198,111 +1508,309 @@
 
     document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
 
-    // --- INTERACTIVE VOICE SIMULATOR ENGINE ---
-    const presets = {
-      "রহিম ভাই বাকি ৫০০ টাকা": {
-        customer: "রহিম ভাই",
-        type: "বাকী (দোকানের পাওনা)",
-        typeColor: "text-ledger-crimson",
-        typeDot: "bg-ledger-crimson",
-        amountFormatted: "৳\u00A0৫০০.০০",
-        receipt: "খাতায় এন্ট্রি সম্পন্ন: রহিম ভাই • বাকী ৳ ৫০০",
-      },
-      "করিম সাহেব জমা দিলেন ১,০০০ টাকা": {
-        customer: "করিম সাহেব",
-        type: "জমা (নগদ আদায়)",
-        typeColor: "text-brand-bright",
-        typeDot: "bg-brand-bright",
-        amountFormatted: "৳\u00A0১,০০০.০০",
-        receipt: "খাতায় এন্ট্রি সম্পন্ন: করিম সাহেব • জমা ৳ ১,০০০",
-      },
-      "সুমন ডাল আর তেল বাবদ নগদ বিক্রি ১,২০০": {
-        customer: "সুমন (নগদ খদ্দের)",
-        type: "নগদ বিক্রি (ক্যাশ সেল)",
-        typeColor: "text-blue-400",
-        typeDot: "bg-blue-400",
-        amountFormatted: "৳\u00A0১,২০০.০০",
-        receipt: "ক্যাশ ড্রয়ারে জমা: নগদ বিক্রি ৳ ১,২০০",
-      },
-      "খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন": {
-        customer: "খলিল চাচা",
-        type: "জমা (নগদ আদায়)",
-        typeColor: "text-brand-bright",
-        typeDot: "bg-brand-bright",
-        amountFormatted: "৳\u00A0২,৫০০.০০",
-        receipt: "খাতায় এন্ট্রি সম্পন্ন: খলিল চাচা • জমা ৳ ২,৫০০",
+    // --- INTERACTIVE VOICE STUDIO & AUDIO SYNTHESIS ENGINE (v2.1.0) ---
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-    };
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
 
+    // Pure Web Audio POS Chime (587.33Hz -> 880Hz sine harmony)
+    function playPosChime() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, now);
+        gain1.gain.setValueAtTime(0.14, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.22);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(880.0, now + 0.08);
+        gain2.gain.setValueAtTime(0.18, now + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.45);
+      } catch (e) {
+        console.log('Audio chime unavailable', e);
+      }
+    }
+
+    // Soft alert tone for zero-money validation safeguard
+    function playWarningTone() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(260.0, now);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch (e) {}
+    }
+
+    function pulseVisualizer() {
+      const bars = document.querySelectorAll('#demoVisualizerBars .wave-bar');
+      bars.forEach(b => {
+        b.style.height = (Math.random() * 20 + 8) + 'px';
+      });
+      setTimeout(() => {
+        bars.forEach(b => {
+          b.style.height = (Math.random() * 12 + 4) + 'px';
+        });
+      }, 350);
+    }
+
+    // Sound Test Button
+    document.getElementById('btnSoundTest').addEventListener('click', () => {
+      playPosChime();
+      pulseVisualizer();
+    });
+
+    // --- BROWSER MICROPHONE SPEECH RECOGNITION (bn-BD) ---
+    const micBtn = document.getElementById('demoMicBtn');
+    const micStatus = document.getElementById('demoMicStatus');
+    let recognition = null;
+    let isListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'bn-BD';
+
+      recognition.onstart = () => {
+        isListening = true;
+        micBtn.classList.add('bg-rose-600', 'text-white', 'animate-pulse');
+        micStatus.innerText = '🎙️ শুনছি... স্বাভাবিক বাংলায় বলুন';
+        micStatus.className = 'text-xs font-mono text-emerald-400 font-bold';
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('demoInputText').value = transcript;
+        runSimulation(transcript);
+      };
+
+      recognition.onerror = () => {
+        isListening = false;
+        micBtn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+        micStatus.innerText = 'ভয়েস মোড: রেডি (ক্লিক করে মুখে বলুন)';
+        micStatus.className = 'text-xs font-mono text-slate-400';
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        micBtn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+        micStatus.innerText = 'ভয়েস মোড: রেডি (ক্লিক করে মুখে বলুন)';
+        micStatus.className = 'text-xs font-mono text-slate-400';
+      };
+
+      micBtn.addEventListener('click', () => {
+        if (!isListening) {
+          try { recognition.start(); } catch (e) {}
+        } else {
+          recognition.stop();
+        }
+      });
+    } else {
+      micBtn.addEventListener('click', () => {
+        alert('আপনার ব্রাউজার সরাসরি লাইভ স্পিচ সমর্থন করে না। আপনি টেক্সট লিখে অথবা নিচের যেকোনো নমুনা বাক্যে ক্লিক করে ট্রায়াল দিতে পারেন।');
+      });
+    }
+
+    // --- BANGLA NATURAL LANGUAGE PARSER & SAFEGUARD LOGIC ---
     function parseBengaliPhrase(text) {
       const trimmed = text.trim();
-      if (presets[trimmed]) {
-        return presets[trimmed];
+      
+      // 1. Missing amount check (Safeguard test)
+      const hasDigits = /[০-৯0-9]/.test(trimmed);
+      const hasCompoundNumber = /দেড়|দেড়|আড়াই|আড়াই|পাঁচশো|হাজার|শত|একশো|দুইশো|তিনশো|চারশো/i.test(trimmed);
+      const isMissingAmount = (!hasDigits && !hasCompoundNumber) || trimmed === "জামাল উদ্দিন বাকি";
+
+      // 2. Identify customer name
+      let customer = "রহিম ভাই";
+      if (/করিম/i.test(trimmed)) customer = "করিম সাহেব";
+      else if (/সুমন/i.test(trimmed)) customer = "সুমন (নগদ খদ্দের)";
+      else if (/খলিল/i.test(trimmed)) customer = "খলিল চাচা";
+      else if (/জামাল/i.test(trimmed)) customer = "জামাল উদ্দিন";
+      else {
+        const words = trimmed.split(/\s+/);
+        customer = words.slice(0, 2).join(' ') || "সাধারণ খদ্দের";
       }
 
-      let isRepayment = /জমা|পরিশোধ|দিলেন/i.test(trimmed);
-      let isCash = /নগদ/i.test(trimmed);
+      // 3. Identify transaction type
+      let type = "CREDIT";
+      let typeLabel = "বাকী (Credit)";
+      let typeSub = "খাতার বাকী বৃদ্ধি পাবে";
+      let typeColor = "text-rose-400";
+      let typeDot = "bg-rose-400";
 
-      let type = "বাকী (দোকানের পাওনা)";
-      let typeColor = "text-ledger-crimson";
-      let typeDot = "bg-ledger-crimson";
-
-      if (isRepayment) {
-        type = "জমা (নগদ আদায়)";
-        typeColor = "text-brand-bright";
-        typeDot = "bg-brand-bright";
-      } else if (isCash) {
-        type = "নগদ বিক্রি (ক্যাশ সেল)";
+      if (/জমা|পরিশোধ|দিলেন|আদায়/i.test(trimmed)) {
+        type = "REPAYMENT";
+        typeLabel = "জমা (আদায়)";
+        typeSub = "বকেয়া হ্রাস পাবে ও ক্যাশ বৃদ্ধি";
+        typeColor = "text-emerald-400";
+        typeDot = "bg-emerald-400";
+      } else if (/নগদ|ক্যাশ|সেল/i.test(trimmed)) {
+        type = "CASH_SALE";
+        typeLabel = "নগদ বিক্রি (Cash)";
+        typeSub = "সরাসরি ক্যাশ ড্রয়ারে যুক্ত হবে";
         typeColor = "text-blue-400";
         typeDot = "bg-blue-400";
       }
 
-      const digitsMatch = trimmed.match(/[০-৯0-9,]+/);
+      // 4. Calculate exact amount in integer paisa
       let amount = 500;
-      if (digitsMatch) {
-        const raw = digitsMatch[0].replace(/,/g, '');
-        const bnDigits = '০১২৩৪৫৬৭৮৯';
-        let numStr = '';
-        for (let char of raw) {
-          const idx = bnDigits.indexOf(char);
-          numStr += idx >= 0 ? idx : char;
+      if (isMissingAmount) {
+        amount = 0;
+      } else if (/আড়াই\s*হাজার|আড়াই\s*হাজার/i.test(trimmed)) {
+        amount = 2500;
+      } else if (/দেড়\s*হাজার|দেড়\s*হাজার/i.test(trimmed)) {
+        amount = 1500;
+      } else if (/এক\s*হাজার/i.test(trimmed)) {
+        amount = 1000;
+      } else if (/পাঁচশো|৫০০/i.test(trimmed)) {
+        amount = 500;
+      } else {
+        const digitsMatch = trimmed.match(/[০-৯0-9,]+/);
+        if (digitsMatch) {
+          const raw = digitsMatch[0].replace(/,/g, '');
+          const bnDigits = '০১২৩৪৫৬৭৮৯';
+          let numStr = '';
+          for (let char of raw) {
+            const idx = bnDigits.indexOf(char);
+            numStr += idx >= 0 ? idx : char;
+          }
+          amount = parseInt(numStr, 10) || 500;
         }
-        amount = parseInt(numStr, 10) || 500;
       }
 
-      const formattedAmount = "৳\u00A0" + amount.toLocaleString('bn-BD') + ".০০";
-      const words = trimmed.split(/\s+/);
-      const customer = words.slice(0, 2).join(' ') || "সাধারণ খদ্দের";
-
       return {
-        customer: customer,
-        type: type,
-        typeColor: typeColor,
-        typeDot: typeDot,
-        amountFormatted: formattedAmount,
-        receipt: `খাতায় এন্ট্রি সম্পন্ন: ${customer} • ${type.split(' ')[0]} ৳ ${amount.toLocaleString('bn-BD')}`
+        customer,
+        type,
+        typeLabel,
+        typeSub,
+        typeColor,
+        typeDot,
+        amount,
+        isMissingAmount
       };
     }
 
+    // --- LIVE SIMULATION RUNNER & DUAL-PANE REACTIVE SYNC ---
     function runSimulation(text) {
       const res = parseBengaliPhrase(text);
-      
-      document.getElementById('demoCustomer').innerText = res.customer;
-      
-      const typeEl = document.getElementById('demoType');
-      typeEl.className = `text-lg font-bold ${res.typeColor} mt-1 flex items-center gap-2`;
-      typeEl.innerHTML = `<span class="w-3 h-3 rounded-full ${res.typeDot}"></span> ${res.type}`;
-      
-      document.getElementById('demoAmount').innerText = res.amountFormatted;
-      document.getElementById('demoReceiptSummary').innerText = res.receipt;
+      pulseVisualizer();
 
-      const waveBars = document.querySelectorAll('.wave-bar');
-      waveBars.forEach(b => {
-        b.style.height = (Math.random() * 80 + 20) + '%';
-      });
+      // Update Token Badges
+      document.getElementById('tokenCustomer').innerText = res.customer;
+      
+      const typeEl = document.getElementById('tokenType');
+      typeEl.className = `text-sm font-bold ${res.typeColor} mt-0.5 flex items-center gap-1.5 truncate`;
+      typeEl.innerHTML = `<span class="w-2 h-2 rounded-full ${res.typeDot}"></span> ${res.typeLabel}`;
+      document.getElementById('tokenTypeSub').innerText = res.typeSub;
+
+      const noticeEl = document.getElementById('demoStatusNotice');
+      const noticeText = document.getElementById('demoNoticeText');
+
+      // Base ledger states
+      const baseDebt = 1250;
+      const baseDrawer = 12450;
+
+      if (res.isMissingAmount) {
+        playWarningTone();
+        document.getElementById('tokenAmount').innerText = "অনুপস্থিত ⚠️";
+        document.getElementById('tokenPaisa').innerText = "০ পয়সা";
+        
+        noticeEl.className = "mt-4 p-3 rounded-xl bg-amber-950/70 border border-amber-500/60 text-xs text-amber-200 flex items-center gap-2.5 transition-all";
+        noticeText.innerHTML = "<strong>⚠️ টাকার পরিমাণ উল্লেখ নেই:</strong> আন্দাজে কোনো এন্ট্রি নেওয়া হয়নি। অনুগ্রহ করে টাকার অঙ্ক উল্লেখ করুন।";
+        return;
+      }
+
+      // Valid entry execution
+      playPosChime();
+      document.getElementById('tokenAmount').innerText = `৳ ${res.amount.toLocaleString('bn-BD')}.০০`;
+      document.getElementById('tokenPaisa').innerText = `${(res.amount * 100).toLocaleString('bn-BD')} পয়সা`;
+
+      noticeEl.className = "mt-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-600/40 text-xs text-emerald-300 flex items-center gap-2.5 transition-all";
+      noticeText.innerText = `✓ খাতায় এন্ট্রি সম্পন্ন: ${res.customer} • ${res.typeLabel} ৳ ${res.amount.toLocaleString('bn-BD')}.০০ (অফলাইনে সংরক্ষিত)`;
+
+      // Compute balance delta & cash drawer sync
+      let newDebt = baseDebt;
+      let deltaStr = "+ ৳ ০.০০";
+      let deltaColor = "text-slate-400";
+      let drawerCash = baseDrawer;
+
+      if (res.type === 'CREDIT') {
+        newDebt = baseDebt + res.amount;
+        deltaStr = `+ ৳ ${res.amount.toLocaleString('bn-BD')}.০০`;
+        deltaColor = "text-rose-400 font-bold";
+      } else if (res.type === 'REPAYMENT') {
+        newDebt = Math.max(0, baseDebt - res.amount);
+        deltaStr = `- ৳ ${res.amount.toLocaleString('bn-BD')}.০০`;
+        deltaColor = "text-emerald-400 font-bold";
+        drawerCash = baseDrawer + res.amount;
+      } else if (res.type === 'CASH_SALE') {
+        newDebt = baseDebt;
+        deltaStr = `নগদ ৳ ${res.amount.toLocaleString('bn-BD')}.০০`;
+        deltaColor = "text-blue-400 font-bold";
+        drawerCash = baseDrawer + res.amount;
+      }
+
+      // Update Live Khata Canvas Elements
+      document.getElementById('khataCustomerName').innerText = res.customer;
+      document.getElementById('khataPrevBalance').innerText = `৳ ${baseDebt.toLocaleString('bn-BD')}.০০`;
+      
+      const deltaEl = document.getElementById('khataDeltaBalance');
+      deltaEl.className = `text-sm sm:text-base ${deltaColor} font-mono mt-0.5`;
+      deltaEl.innerText = deltaStr;
+
+      const totalEl = document.getElementById('khataTotalBalance');
+      totalEl.innerText = `৳ ${newDebt.toLocaleString('bn-BD')}.০০`;
+      totalEl.className = `text-base sm:text-xl font-black ${newDebt > 0 ? 'text-rose-400' : 'text-emerald-400'} font-mono mt-0.5 transition-all`;
+
+      document.getElementById('khataDrawerCash').innerText = `৳ ${drawerCash.toLocaleString('bn-BD')}.০০`;
+
+      // Update Ledger Row
+      document.getElementById('khataRowDesc').innerText = `ভয়েস এন্ট্রি: ${res.typeLabel}`;
+      document.getElementById('khataRowAmount').innerText = deltaStr;
+      document.getElementById('khataRowBalance').innerText = `৳ ${newDebt.toLocaleString('bn-BD')}`;
+
+      // Update 1-Tap WhatsApp Reminder Message
+      const waMsg = `শ্রদ্ধেয় ${res.customer} ভাই, আসসালামু আলাইকুম। বিসমিল্লাহ জেনারেল স্টোরে আপনার পূর্বের মোট বাকী ${baseDebt.toLocaleString('bn-BD')} টাকার সাথে আজ ${res.amount.toLocaleString('bn-BD')} টাকার হিসাব যুক্ত হয়ে বর্তমান মোট বাকী ${newDebt.toLocaleString('bn-BD')} টাকা। অনুগ্রহ করে সুবিধামতো বিকাশ/নগদ ০১৭১২-৩৪৫৬৭৮ নম্বরে পরিশোধ করার অনুরোধ রইল। ধন্যবাদ।`;
+      document.getElementById('waPreviewText').innerText = waMsg;
+
+      // Update Digital POS Receipt
+      document.getElementById('receiptCustomer').innerText = res.customer;
+      document.getElementById('receiptType').innerText = res.typeLabel;
+      document.getElementById('receiptAmount').innerText = `৳ ${res.amount.toLocaleString('bn-BD')}.০০`;
+      document.getElementById('receiptTotal').innerText = `৳ ${newDebt.toLocaleString('bn-BD')}.০০`;
     }
 
-    // Attach presets
+    // Preset Buttons Click Handler
     document.querySelectorAll('.voice-preset-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const text = btn.getAttribute('data-text');
@@ -1311,21 +1819,70 @@
       });
     });
 
+    // Run Button Click Handler
     document.getElementById('demoRunBtn').addEventListener('click', () => {
       const text = document.getElementById('demoInputText').value;
       runSimulation(text);
     });
 
-    // Voice synthesize readback simulation
-    document.getElementById('demoTriggerVoicePlay').addEventListener('click', () => {
-      const summary = document.getElementById('demoReceiptSummary').innerText;
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(summary);
-        utterance.lang = 'bn-BD';
-        window.speechSynthesis.speak(utterance);
-      } else {
-        alert(summary);
+    // Enter Key on Input Box
+    document.getElementById('demoInputText').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        runSimulation(e.target.value);
       }
+    });
+
+    // Tab Switcher (WhatsApp vs Digital Receipt)
+    const btnTabWa = document.getElementById('btnTabWhatsapp');
+    const btnTabRec = document.getElementById('btnTabReceipt');
+    const panelWa = document.getElementById('panelWhatsapp');
+    const panelRec = document.getElementById('panelReceipt');
+
+    btnTabWa.addEventListener('click', () => {
+      btnTabWa.className = "px-3 py-1.5 rounded-xl bg-brand-primary text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm";
+      btnTabRec.className = "px-3 py-1.5 rounded-xl bg-ledger-surface hover:bg-slate-800 text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 border border-ledger-border";
+      panelWa.classList.remove('hidden');
+      panelRec.classList.add('hidden');
+    });
+
+    btnTabRec.addEventListener('click', () => {
+      btnTabRec.className = "px-3 py-1.5 rounded-xl bg-brand-primary text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm";
+      btnTabWa.className = "px-3 py-1.5 rounded-xl bg-ledger-surface hover:bg-slate-800 text-slate-300 text-xs font-semibold transition-all flex items-center gap-1.5 border border-ledger-border";
+      panelRec.classList.remove('hidden');
+      panelWa.classList.add('hidden');
+    });
+
+    // Copy WhatsApp Text Button
+    document.getElementById('btnCopyWaText').addEventListener('click', () => {
+      const text = document.getElementById('waPreviewText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btnCopyWaText');
+        btn.innerHTML = "<span>কপি সম্পন্ন! ✓</span>";
+        setTimeout(() => {
+          btn.innerHTML = "<span>📋 কপি করুন</span>";
+        }, 2000);
+      });
+    });
+
+    // --- RELEASE NOTES MODAL (v2.1.0) ---
+    const releaseModal = document.getElementById('releaseNotesModal');
+    const openReleaseNotes = () => {
+      releaseModal.classList.remove('hidden');
+      releaseModal.classList.add('flex');
+    };
+    const hideReleaseNotes = () => {
+      releaseModal.classList.add('hidden');
+      releaseModal.classList.remove('flex');
+    };
+
+    const openReleaseBtn = document.getElementById('openReleaseNotesNav');
+    if (openReleaseBtn) {
+      openReleaseBtn.addEventListener('click', openReleaseNotes);
+    }
+    document.getElementById('closeReleaseNotesBtn').addEventListener('click', hideReleaseNotes);
+    document.getElementById('closeReleaseNotesOkBtn').addEventListener('click', hideReleaseNotes);
+    releaseModal.addEventListener('click', (e) => {
+      if (e.target === releaseModal) hideReleaseNotes();
     });
 
     // --- INTERACTIVE DRIFT SLIDER ---
