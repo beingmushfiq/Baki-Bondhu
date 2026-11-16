@@ -41,3 +41,9 @@ The application interprets real spoken conversational Bengali:
 - Android APK Download: https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk
 - Canonical Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml
 - Robots Directive: https://bakibondhu.devcenterpoint.com/robots.txt
+
+## 7. Official Customer Support & Assistance
+- Official WhatsApp Support: https://wa.me/8801614430525 (+8801614430525)
+- Support Email: support@devcenterpoint.com
+- Publisher: DevCenterPoint (https://devcenterpoint.com)
+
