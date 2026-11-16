@@ -1227,6 +1227,51 @@ class BakiViewModel(
         }
     }
 
+    fun openCloudRestorePreview() {
+        val user = authManager.currentUser.value
+        if (user == null) {
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "রিস্টোর করার জন্য প্রথমে Google দিয়ে সাইন ইন করুন" else "Please sign in with Google to restore",
+                type = BakiToastType.WARNING
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            _isFetchingRestorePreview.value = true
+            _isRestorePreviewOpen.value = true
+            val previewResult = syncRepository.getCloudPreview(user.uid)
+            _isFetchingRestorePreview.value = false
+            previewResult.onSuccess { stats ->
+                _restorePreviewData.value = com.example.ui.components.CloudRestorePreviewData(
+                    cloudCustomerCount = stats.cloudCustomerCount,
+                    cloudTransactionCount = stats.cloudTransactionCount,
+                    localCustomerCount = uiState.value.customers.size,
+                    localTransactionCount = uiState.value.allTransactionsUnfiltered.size,
+                    lastBackupTimestamp = stats.lastBackupAt
+                )
+            }.onFailure { error ->
+                _isRestorePreviewOpen.value = false
+                val isBn = uiState.value.isBangla
+                showToast(
+                    message = if (isBn) "ক্লাউড প্রিভিউ লোড করা যায়নি: ${error.localizedMessage ?: "নেটওয়ার্ক ত্রুটি"}" else "Failed to load cloud preview: ${error.localizedMessage}",
+                    type = BakiToastType.ERROR
+                )
+            }
+        }
+    }
+
+    fun dismissRestorePreview() {
+        _isRestorePreviewOpen.value = false
+        _restorePreviewData.value = null
+    }
+
+    fun confirmCloudRestore(mergeWithLocal: Boolean) {
+        dismissRestorePreview()
+        restoreFromCloud()
+    }
+
     private fun triggerAutoCloudBackup() {
         if (authManager.currentUser.value != null && _autoBackupEnabled.value) {
             backupToCloud(silent = true)

@@ -125,6 +125,9 @@ class MainActivity : ComponentActivity() {
 fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+    val isRestorePreviewOpen by viewModel.isRestorePreviewOpen.collectAsState()
+    val restorePreviewData by viewModel.restorePreviewData.collectAsState()
+    val isFetchingRestorePreview by viewModel.isFetchingRestorePreview.collectAsState()
     val isBn = uiState.isBangla
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
@@ -474,9 +477,9 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     isSyncingCloud = uiState.isSyncingCloud,
                     lastCloudBackupAt = uiState.lastCloudBackupAt,
                     autoBackupEnabled = uiState.autoBackupEnabled,
-                    isRestorePreviewOpen = uiState.isRestorePreviewOpen,
-                    restorePreviewData = uiState.restorePreviewData,
-                    isFetchingRestorePreview = uiState.isFetchingRestorePreview,
+                    isRestorePreviewOpen = isRestorePreviewOpen,
+                    restorePreviewData = restorePreviewData,
+                    isFetchingRestorePreview = isFetchingRestorePreview,
                     onSignInWithGoogle = { viewModel.signInWithGoogle(context) },
                     onSignOut = { viewModel.signOut() },
                     onSetAutoBackup = { viewModel.setAutoBackup(it) },

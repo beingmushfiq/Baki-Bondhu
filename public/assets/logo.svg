@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <linearGradient id="shieldGradLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#022C22" />
+    </linearGradient>
+    <linearGradient id="goldGradLogo" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <filter id="shadowLogo" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Shield Mark (Left) -->
+  <g transform="translate(10, 8)">
+    <!-- Base Shield -->
+    <path d="M32,4 L52,11.5 C52,32.5 32,58 32,58 C32,58 12,32.5 12,11.5 Z" fill="url(#shieldGradLogo)" filter="url(#shadowLogo)" />
+    <!-- Inner Dark Inset -->
+    <path d="M32,8.5 L48,14.5 C48,31 32,52 32,52 C32,52 16,31 16,14.5 Z" fill="#022C22" />
+    <!-- Gold Ribbon Bookmark -->
+    <path d="M25,20 h14 c1.4,0 2.5,1.1 2.5,2.5 v20 l-9.5,-4.5 l-9.5,4.5 v-20 c0,-1.4 1.1,-2.5 2.5,-2.5 z" fill="url(#goldGradLogo)" />
+    <!-- Taka Crossbar -->
+    <rect x="22" y="27" width="20" height="3" rx="1.5" fill="#022C22" />
+    <!-- Taka Stem -->
+    <rect x="30.5" y="22" width="3.5" height="14" rx="1.5" fill="#022C22" />
+    <!-- Voice Soundwave Micro-Dot -->
+    <circle cx="32" cy="40.5" r="1.6" fill="#FEF3C7" />
+  </g>
+
+  <!-- Typography -->
+  <text x="80" y="38" font-family="'Hind Siliguri', 'Segoe UI', sans-serif" font-weight="800" font-size="28" fill="#F8FAFC" letter-spacing="0.5">বাকী বন্ধু</text>
+  <text x="185" y="38" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="700" font-size="16" fill="#10B981" letter-spacing="0.5">BAKI BONDHU</text>
+  <text x="82" y="58" font-family="'Hind Siliguri', 'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#94A3B8" letter-spacing="0.2">ভয়েস-ফার্স্ট স্মার্ট ডিজিটাল খাতা • DevCenterPoint</text>
+</svg>
