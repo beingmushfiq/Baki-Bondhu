@@ -1,0 +1,23 @@
+{
+  "name": "বাকী বন্ধু (Baki Bondhu)",
+  "short_name": "বাকী বন্ধু",
+  "description": "মুখের কথায় দোকানের ডিজিটাল হিসাব খাতা ও ক্যাশ ড্রয়ার ব্যবস্থাপনা।",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071610",
+  "theme_color": "#047857",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

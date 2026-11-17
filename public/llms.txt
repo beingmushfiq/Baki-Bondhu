@@ -3,19 +3,24 @@
 
 ## Main Overview
 - [Official Website & Web Hub](https://bakibondhu.devcenterpoint.com/): Official distribution hub, live interactive khata studio, feature tours, and direct Android APK download.
-- [Direct Android APK Download (v2.1.0)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk): Production Android package (27.3 MB, compatible with Android 7.0 Nougat to Android 16).
+- [Direct Android APK Download (v2.2.0)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk): Production Android package (27.3 MB, compatible with Android 7.0 Nougat to Android 16).
+- [Official GitHub Repository](https://github.com/beingmushfiq/Baki-Bondhu): Source code, release tags, issue tracker, and developer contributions.
 
-## Key Architecture & Specifications
+## Key Architecture & Specifications (v2.2.0)
 - **Offline-First Architecture**: 100% functional without mobile internet or Wi-Fi using Room SQLite v5. Zero merchant data leakage.
+- **Google Sign-In & Firebase Realtime Cloud Backup**: Seamless one-tap Google authentication with automated cloud backup on every transaction and 1-tap manual sync to protect store data across devices.
+- **Archive Zone (Soft Delete & Restore)**: Deleted customers and transactions are safely moved to an archive zone with 1-tap instant restoration or permanent purge safeguards.
+- **In-App GitHub Update Engine**: Directly check for official updates from GitHub Releases (`beingmushfiq/Baki-Bondhu`) and install newer APKs without leaving the app.
 - **Zero Currency Rounding Drift**: Eliminates IEEE 754 floating-point drift by computing all monetary transactions in 64-bit integer paisa (১ টাকা = ১০০ পয়সা). Guarantees zero discrepancy over millions of transactions.
-- **Bengali Voice Parser**: In-app Natural Language Voice Parser capable of interpreting colloquial Bangladeshi retail expressions ("দেড় হাজার", "আড়াই হাজার", "পাঁচশো", "নগদ বিক্রি", "বকেয়া আদায়").
+- **Bengali Natural Language Voice Parser**: In-app NLP engine interpreting colloquial Bangladeshi retail expressions ("দেড় হাজার", "আড়াই হাজার", "পাঁচশো", "নগদ বিক্রি", "বকেয়া আদায়").
+- **Flexible 5-Tab Date Filtering**: Filter store transactions across "All Time", "Today", "This Week", "This Month", and custom date ranges with an intuitive calendar picker.
 - **Saturday-Aligned Commercial Week**: Aligns reporting with Bangladeshi retail traditions where accounts open Saturday morning and balance Friday evening.
-- **1-Tap WhatsApp Payment Reminders**: Auto-generates polite Bengali payment reminder text with shop name, bKash number, and Nagad number.
-- **Instant Digital Receipts**: Generates POS customer receipts without requiring external thermal printers.
+- **1-Tap WhatsApp Payment Reminders**: Auto-generates courteous Bengali payment reminders including shop name, bKash number, and Nagad number.
+- **Sequential Bengali Numbering & Protected Typography**: Sequential numbering (`০১.`, `০২.`, `০৩.`) in debt recovery lists with single-line ellipsize typography.
 
 ## Technical Specifications
 - **Package ID**: `com.aistudio.bakibondhu.kxdznp`
-- **Current Version**: `2.1.0` (Version Code 21)
+- **Current Version**: `2.2.0` (Version Code 22)
 - **Minimum OS**: Android 7.0 (API Level 24)
 - **Target OS**: Android 16 (API Level 36)
 - **Distribution File Size**: ~27.3 MB
@@ -25,4 +30,3 @@
 - **WhatsApp Support**: [Direct WhatsApp Chat](https://wa.me/8801614430525) (`+8801614430525`)
 - **Support Email**: `support@devcenterpoint.com`
 - **Developer Portal**: [DevCenterPoint](https://devcenterpoint.com)
-

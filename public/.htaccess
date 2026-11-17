@@ -12,10 +12,11 @@
 
 # 2. Android APK Package & Download Headers
 AddType application/vnd.android.package-archive .apk
+AddType application/manifest+json .webmanifest
 <IfModule mod_headers.c>
     <FilesMatch "\.(apk)$">
         Header set Content-Type "application/vnd.android.package-archive"
-        Header set Content-Disposition "attachment; filename=\"bakibondhu-v2.1.0.apk\""
+        Header set Content-Disposition "attachment; filename=\"bakibondhu-v2.2.0.apk\""
         Header set X-Content-Type-Options "nosniff"
         Header set Cache-Control "public, max-age=3600"
     </FilesMatch>

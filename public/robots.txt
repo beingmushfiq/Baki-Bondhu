@@ -1,6 +1,7 @@
 # ==============================================================================
 # Baki Bondhu (বাকী বন্ধু) - Production Robots Configuration
 # Domain: https://bakibondhu.devcenterpoint.com
+# Version: v2.2.0 (Updated 2026-11-18)
 # ==============================================================================
 
 User-agent: *
@@ -9,7 +10,7 @@ Disallow: /build/
 
 # ------------------------------------------------------------------------------
 # AI Search & Answer Engine Crawlers (GEO / AEO Optimization)
-# Explicitly allowing discovery engines to index factual product and retail data
+# Allowing discovery engines to index factual product, retail, and documentation data
 # ------------------------------------------------------------------------------
 User-agent: GPTBot
 Allow: /
@@ -26,6 +27,12 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Cohere-ai
+Allow: /
+
 # ------------------------------------------------------------------------------
 # Training Scrapers (Controlled Crawl)
 # ------------------------------------------------------------------------------
@@ -39,4 +46,5 @@ Disallow: /
 # LLM Context File & XML Sitemap
 # ------------------------------------------------------------------------------
 # LLM context: https://bakibondhu.devcenterpoint.com/llms.txt
+# Full LLM documentation: https://bakibondhu.devcenterpoint.com/llms-full.txt
 Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml

@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://bakibondhu.devcenterpoint.com/</loc>
-    <lastmod>2026-11-17</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://bakibondhu.devcenterpoint.com/assets/screens/screen_dashboard.png</image:loc>
+      <image:title>বাকী বন্ধু হোম ড্যাশবোর্ড ও ক্যাশ ড্রয়ার</image:title>
+      <image:caption>দোকানের ক্যাশ ড্রয়ার ও মোট বাকি সমন্বয় স্ক্রিন</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://bakibondhu.devcenterpoint.com/assets/screens/screen_voice_sheet.png</image:loc>
+      <image:title>ভয়েস শিট ও লাইভ সাউন্ডওয়েভ</image:title>
+      <image:caption>মুখে বলে বাংলায় তাৎক্ষণিক ডিজিটাল হিসাব খাতা তৈরি</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://bakibondhu.devcenterpoint.com/assets/screens/screen_customer_khata.png</image:loc>
+      <image:title>কাস্টমার ডিজিটাল খাতা ও তাগাদা</image:title>
+      <image:caption>১-ট্যাপ হোয়াটসঅ্যাপ তাগাদা ও বিস্তারিত খতিয়ান</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://bakibondhu.devcenterpoint.com/assets/screens/screen_reports.png</image:loc>
+      <image:title>বাণিজ্যিক সপ্তাহ ও হিসাব রিপোর্ট</image:title>
+      <image:caption>শনিবার-শুক্রবার বাণিজ্যিক সপ্তাহের আদায় ও বাকির রিপোর্ট</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://bakibondhu.devcenterpoint.com/assets/screens/screen_onboarding.png</image:loc>
+      <image:title>দোকানের নাম ও বিকাশ-নগদ নম্বর সেটআপ</image:title>
+      <image:caption>দোকানদারের ব্যক্তিগত সেটিংস ও প্রোফাইল সেটআপ</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.1.0.apk</loc>
-    <lastmod>2026-11-17</lastmod>
+    <loc>https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk</loc>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://bakibondhu.devcenterpoint.com/llms.txt</loc>
-    <lastmod>2026-11-17</lastmod>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bakibondhu.devcenterpoint.com/llms-full.txt</loc>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
