@@ -32,8 +32,10 @@ import java.util.UUID
 interface BakiRepository {
     val allCustomers: Flow<List<CustomerEntity>>
     val customersWithDue: Flow<List<CustomerEntity>>
+    val archivedCustomers: Flow<List<CustomerEntity>>
     val allLedgerEntries: Flow<List<LedgerEntryEntity>>
     val allTransactions: Flow<List<LedgerEntryEntity>>
+    val archivedTransactions: Flow<List<LedgerEntryEntity>>
     val shopSettings: Flow<ShopSettingsEntity?>
     val syncState: Flow<SyncState>
 
@@ -47,6 +49,11 @@ interface BakiRepository {
     suspend fun updateCustomer(customer: CustomerEntity)
     suspend fun deleteCustomer(customer: CustomerEntity)
     suspend fun archiveCustomer(customerId: Long)
+    suspend fun restoreCustomer(customerId: Long)
+    suspend fun restoreTransaction(transactionId: Long)
+    suspend fun purgeCustomer(customerId: Long)
+    suspend fun purgeTransaction(transactionId: Long)
+    suspend fun purgeAllArchived()
 
     suspend fun recordTransaction(
         customerName: String,
@@ -100,8 +107,10 @@ class DefaultBakiRepository(
 
     override val allCustomers: Flow<List<CustomerEntity>> = customerDao.getAllCustomers()
     override val customersWithDue: Flow<List<CustomerEntity>> = customerDao.getCustomersWithDue()
+    override val archivedCustomers: Flow<List<CustomerEntity>> = customerDao.getArchivedCustomers()
     override val allLedgerEntries: Flow<List<LedgerEntryEntity>> = ledgerEntryDao.getAllTransactions()
     override val allTransactions: Flow<List<LedgerEntryEntity>> = allLedgerEntries
+    override val archivedTransactions: Flow<List<LedgerEntryEntity>> = ledgerEntryDao.getArchivedTransactions()
     override val shopSettings: Flow<ShopSettingsEntity?> = shopSettingsDao.getSettings()
 
     private val _syncState = MutableStateFlow(
@@ -489,6 +498,42 @@ class DefaultBakiRepository(
             lastSyncTimestamp = System.currentTimeMillis()
         )
         true
+    }
+
+    override suspend fun restoreCustomer(customerId: Long) = withContext(ioDispatcher) {
+        customerDao.unarchiveCustomer(customerId, System.currentTimeMillis())
+        markPendingSync()
+    }
+
+    override suspend fun restoreTransaction(transactionId: Long) = withContext(ioDispatcher) {
+        val tx = ledgerEntryDao.getTransactionById(transactionId) ?: return@withContext
+        val now = System.currentTimeMillis()
+        val delta = when (tx.type) {
+            TransactionType.BAKI_SALE -> tx.amountPaisa
+            TransactionType.REPAYMENT -> -tx.amountPaisa
+            TransactionType.CASH_SALE -> 0L
+        }
+        if (delta != 0L) {
+            customerDao.adjustBalancePaisa(tx.customerId, delta, now)
+        }
+        ledgerEntryDao.restoreSoftDeletedTransaction(transactionId, now)
+        markPendingSync()
+    }
+
+    override suspend fun purgeCustomer(customerId: Long) = withContext(ioDispatcher) {
+        customerDao.purgeCustomerById(customerId)
+        markPendingSync()
+    }
+
+    override suspend fun purgeTransaction(transactionId: Long) = withContext(ioDispatcher) {
+        ledgerEntryDao.deleteTransactionById(transactionId)
+        markPendingSync()
+    }
+
+    override suspend fun purgeAllArchived() = withContext(ioDispatcher) {
+        customerDao.purgeAllArchivedCustomers()
+        ledgerEntryDao.purgeAllArchivedTransactions()
+        markPendingSync()
     }
 
     private fun markPendingSync() {

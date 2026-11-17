@@ -56,6 +56,15 @@ interface TransactionDao {
     @Query("UPDATE LedgerEntries SET isDeleted = 0, syncStatus = 'PENDING_SYNC', updatedAt = :timestamp WHERE id IN (:ids)")
     suspend fun restoreSoftDeletedTransactions(ids: List<Long>, timestamp: Long = System.currentTimeMillis())
 
+    @Query("UPDATE LedgerEntries SET isDeleted = 0, syncStatus = 'PENDING_SYNC', updatedAt = :timestamp WHERE id = :id")
+    suspend fun restoreSoftDeletedTransaction(id: Long, timestamp: Long = System.currentTimeMillis())
+
+    @Query("SELECT * FROM LedgerEntries WHERE isDeleted = 1 ORDER BY updatedAt DESC")
+    fun getArchivedTransactions(): Flow<List<Transaction>>
+
+    @Query("DELETE FROM LedgerEntries WHERE isDeleted = 1")
+    suspend fun purgeAllArchivedTransactions()
+
     @Query("SELECT SUM(CASE WHEN type = 'BAKI_SALE' THEN amountPaisa WHEN type = 'REPAYMENT' THEN -amountPaisa ELSE 0 END) FROM LedgerEntries WHERE customerId = :customerId AND isDeleted = 0")
     suspend fun calculateNetLedgerPaisaForCustomer(customerId: Long): Long?
 

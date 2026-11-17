@@ -8,6 +8,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -436,10 +438,14 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Date Range Filter Quick Chips
+                // Date Range Filter Quick Chips (5 responsive scrollable tabs)
+                val dateScrollState = rememberScrollState()
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(dateScrollState),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     FilterChip(
                         selected = uiState.dateRangeSelection.type == DateRangeFilterType.ALL,
@@ -475,24 +481,43 @@ fun HomeScreen(
                     )
 
                     FilterChip(
+                        selected = uiState.dateRangeSelection.type == DateRangeFilterType.THIS_MONTH,
+                        onClick = { onDateRangeChange(DateRangeFilterType.THIS_MONTH) },
+                        label = { Text(if (isBn) "এই মাসে" else "This Month") },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = EmeraldPrimary.copy(alpha = 0.2f),
+                            selectedLabelColor = EmeraldPrimary
+                        ),
+                        modifier = Modifier.testTag("date_filter_this_month")
+                    )
+
+                    // 5th Tab: Calendar Icon-Only button for Custom Date Range
+                    FilterChip(
                         selected = uiState.dateRangeSelection.type == DateRangeFilterType.CUSTOM,
                         onClick = onOpenCustomDateRange,
                         label = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.DateRange, contentDescription = null, modifier = Modifier.size(13.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    if (uiState.dateRangeSelection.type == DateRangeFilterType.CUSTOM) {
-                                        uiState.dateRangeSelection.getDisplayLabel(isBn)
-                                    } else {
-                                        if (isBn) "তারিখ 📅" else "Custom 📅"
-                                    }
+                            if (uiState.dateRangeSelection.type == DateRangeFilterType.CUSTOM) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.DateRange,
+                                        contentDescription = if (isBn) "তারিখ নির্বাচন" else "Select Date Range",
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(uiState.dateRangeSelection.getDisplayLabel(isBn))
+                                }
+                            } else {
+                                Icon(
+                                    Icons.Default.DateRange,
+                                    contentDescription = if (isBn) "তারিখ নির্বাচন" else "Select Date Range",
+                                    modifier = Modifier.size(18.dp)
                                 )
                             }
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = GoldTertiary.copy(alpha = 0.25f),
-                            selectedLabelColor = GoldTertiary
+                            selectedLabelColor = GoldTertiary,
+                            selectedLeadingIconColor = GoldTertiary
                         ),
                         modifier = Modifier.testTag("date_filter_custom")
                     )

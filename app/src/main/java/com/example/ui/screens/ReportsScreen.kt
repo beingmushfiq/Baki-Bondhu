@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -527,9 +529,11 @@ fun ReportsScreen(
                 }
             }
         } else {
-            items(oldestDues.take(8), key = { it.id }) { customer ->
+            itemsIndexed(oldestDues.take(8), key = { _, customer -> customer.id }) { index, customer ->
                 val daysAgo = ((now - customer.lastTransactionAt) / dayMs).coerceAtLeast(0)
                 val daysAgoText = if (isBn) "${BanglaVoiceParser.toBanglaDigits(daysAgo.toString())} দিন আগে" else "${daysAgo}d ago"
+                val serialNum = String.format("%02d", index + 1)
+                val serialText = if (isBn) "${BanglaVoiceParser.toBanglaDigits(serialNum)}." else "$serialNum."
 
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -542,17 +546,25 @@ fun ReportsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(14.dp),
+                            .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // Left: Serial + Avatar + Name + Age
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.weight(1f)
                         ) {
+                            Text(
+                                text = serialText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = BakiRed.copy(alpha = 0.85f),
+                                modifier = Modifier.padding(end = 6.dp)
+                            )
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(38.dp)
                                     .clip(CircleShape)
                                     .background(MaterialTheme.colorScheme.errorContainer),
                                 contentAlignment = Alignment.Center
@@ -563,30 +575,36 @@ fun ReportsScreen(
                                     color = MaterialTheme.colorScheme.error
                                 )
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(modifier = Modifier.weight(1f, fill = false)) {
                                 Text(
                                     text = customer.name,
                                     fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = if (isBn) "বাকি বয়স: $daysAgoText" else "Due age: $daysAgoText",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = BakiRed,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 1
                                 )
                             }
                         }
 
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        // Right: Amount + WhatsApp + Tagada
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = BakiStrings.formatMoney(customer.balance, isBn),
                                 fontWeight = FontWeight.ExtraBold,
-                                fontSize = 18.sp,
+                                fontSize = 16.sp,
                                 color = BakiRed
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             IconButton(
                                 onClick = {
                                     if (onSendWhatsAppClick != null) {
@@ -596,7 +614,7 @@ fun ReportsScreen(
                                     }
                                 },
                                 modifier = Modifier
-                                    .size(38.dp)
+                                    .size(34.dp)
                                     .clip(CircleShape)
                                     .background(Color(0xFF25D366).copy(alpha = 0.14f))
                                     .testTag("report_whatsapp_btn_${customer.id}")
@@ -605,28 +623,29 @@ fun ReportsScreen(
                                     painter = painterResource(R.drawable.ic_whatsapp),
                                     contentDescription = "WhatsApp",
                                     tint = Color(0xFF25D366),
-                                    modifier = Modifier.size(19.dp)
+                                    modifier = Modifier.size(17.dp)
                                 )
                             }
                             Spacer(modifier = Modifier.width(4.dp))
                             Button(
                                 onClick = { onSendSmsClick(customer) },
                                 colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
-                                shape = RoundedCornerShape(10.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                                 modifier = Modifier
-                                    .height(38.dp)
+                                    .height(34.dp)
                                     .testTag("report_sms_btn_${customer.id}")
                             ) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.Message,
                                     contentDescription = null,
-                                    modifier = Modifier.size(14.dp),
+                                    modifier = Modifier.size(13.dp),
                                     tint = Color.White
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = if (isBn) "তাগাদা" else "SMS",
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
                                 )

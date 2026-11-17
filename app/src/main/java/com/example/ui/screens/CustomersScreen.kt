@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -241,25 +244,49 @@ fun CustomersScreen(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 FilterChip(
                     selected = filterTab == 0,
                     onClick = { filterTab = 0 },
-                    label = { Text(if (isBn) "সবাই ($allCount)" else "All ($allCount)") },
+                    label = {
+                        Text(
+                            text = if (isBn) "সবাই ($allCount)" else "All ($allCount)",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 12.sp,
+                            maxLines = 2
+                        )
+                    },
                     modifier = Modifier.weight(1f)
                 )
                 FilterChip(
                     selected = filterTab == 1,
                     onClick = { filterTab = 1 },
-                    label = { Text(if (isBn) "বাকি আছে ($dueCountStr)" else "Due ($dueCountStr)") },
-                    modifier = Modifier.weight(1.1f)
+                    label = {
+                        Text(
+                            text = if (isBn) "বাকি আছে ($dueCountStr)" else "Due ($dueCountStr)",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 12.sp,
+                            maxLines = 2
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
                 )
                 FilterChip(
                     selected = filterTab == 2,
                     onClick = { filterTab = 2 },
-                    label = { Text(if (isBn) "পরিশোধিত ($settledCountStr)" else "Clear ($settledCountStr)") },
-                    modifier = Modifier.weight(1.1f)
+                    label = {
+                        Text(
+                            text = if (isBn) "পরিশোধিত ($settledCountStr)" else "Clear ($settledCountStr)",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontSize = 12.sp,
+                            maxLines = 2
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
                 )
             }
 
@@ -293,9 +320,12 @@ fun CustomersScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(filteredCustomers, key = { it.id }) { customer ->
+                    itemsIndexed(filteredCustomers, key = { _, customer -> customer.id }) { index, customer ->
+                        val serialNum = String.format("%02d", index + 1)
+                        val serialText = if (isBn) "${com.example.voice.BanglaVoiceParser.toBanglaDigits(serialNum)}." else "$serialNum."
                         CustomerCardItem(
                             customer = customer,
+                            serialText = serialText,
                             isBn = isBn,
                             dateFormatter = dateFormatter,
                             onClick = { onCustomerClick(customer) },
@@ -326,6 +356,7 @@ fun CustomersScreen(
 @Composable
 fun CustomerCardItem(
     customer: CustomerEntity,
+    serialText: String? = null,
     isBn: Boolean,
     dateFormatter: SimpleDateFormat,
     onClick: () -> Unit,
@@ -347,18 +378,28 @@ fun CustomerCardItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left: Avatar + Details
+            // Left: Serial + Avatar + Details
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
+                if (!serialText.isNullOrBlank()) {
+                    Text(
+                        text = serialText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = (if (hasDue) BakiRed else EmeraldPrimary).copy(alpha = 0.85f),
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
+                }
+
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
                         .background(
                             if (hasDue) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f)
@@ -369,18 +410,20 @@ fun CustomerCardItem(
                     Text(
                         text = customer.name.take(1),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         color = if (hasDue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-                Column {
+                Column(modifier = Modifier.weight(1f, fill = false)) {
                     Text(
                         text = customer.name,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -388,14 +431,16 @@ fun CustomerCardItem(
                             Icon(
                                 Icons.Default.Phone,
                                 contentDescription = null,
-                                modifier = Modifier.size(12.dp),
+                                modifier = Modifier.size(11.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = customer.phone,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = " • ",
@@ -406,13 +451,14 @@ fun CustomerCardItem(
                         Text(
                             text = dateFormatter.format(Date(customer.lastTransactionAt)),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
                         )
                     }
 
                     val overdueInfo = OverdueHelper.computeCustomerOverdue(customer)
                     if (hasDue && overdueInfo.level != OverdueLevel.NONE) {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
                         Surface(
                             shape = RoundedCornerShape(6.dp),
                             color = overdueInfo.containerColor,
@@ -422,21 +468,26 @@ fun CustomerCardItem(
                         ) {
                             Text(
                                 text = if (isBn) overdueInfo.labelBn else overdueInfo.labelEn,
-                                fontSize = 10.sp,
+                                fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                             )
                         }
                     }
                 }
             }
 
-            // Right: Balance & Quick WhatsApp/SMS reminder buttons
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Right: Balance & Quick WhatsApp/SMS reminder buttons (fixed compact bounds)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = BakiStrings.formatMoney(customer.balance, isBn),
-                        fontSize = 20.sp,
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = amountColor
                     )
@@ -459,7 +510,7 @@ fun CustomerCardItem(
                             }
                         },
                         modifier = Modifier
-                            .size(38.dp)
+                            .size(34.dp)
                             .clip(CircleShape)
                             .background(Color(0xFF25D366).copy(alpha = 0.14f))
                             .testTag("whatsapp_btn_${customer.id}")
@@ -468,7 +519,7 @@ fun CustomerCardItem(
                             painter = painterResource(R.drawable.ic_whatsapp),
                             contentDescription = "Send WhatsApp Reminder",
                             tint = Color(0xFF25D366),
-                            modifier = Modifier.size(19.dp)
+                            modifier = Modifier.size(17.dp)
                         )
                     }
 
@@ -476,7 +527,7 @@ fun CustomerCardItem(
                     IconButton(
                         onClick = onSendSms,
                         modifier = Modifier
-                            .size(38.dp)
+                            .size(34.dp)
                             .clip(CircleShape)
                             .background(EmeraldPrimary.copy(alpha = 0.12f))
                             .testTag("sms_btn_${customer.id}")
@@ -485,7 +536,7 @@ fun CustomerCardItem(
                             Icons.AutoMirrored.Filled.Message,
                             contentDescription = "Send SMS",
                             tint = EmeraldPrimary,
-                            modifier = Modifier.size(19.dp)
+                            modifier = Modifier.size(17.dp)
                         )
                     }
                 }

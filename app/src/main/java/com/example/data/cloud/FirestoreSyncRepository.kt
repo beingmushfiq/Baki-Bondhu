@@ -43,9 +43,16 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             if (com.google.firebase.FirebaseApp.getApps(appContext).isEmpty()) {
                 com.google.firebase.FirebaseApp.initializeApp(appContext)
             }
-            FirebaseFirestore.getInstance(
-                appContext.getString(R.string.firestore_database_id)
-            )
+            try {
+                val dbId = appContext.getString(R.string.firestore_database_id)
+                if (dbId.isNotBlank() && !dbId.contains("ai-studio-android")) {
+                    FirebaseFirestore.getInstance(dbId)
+                } else {
+                    FirebaseFirestore.getInstance()
+                }
+            } catch (inner: Exception) {
+                FirebaseFirestore.getInstance()
+            }
         } catch (e: Exception) {
             Log.w("FirestoreSyncRepo", "Firestore not available: ${e.message}")
             null

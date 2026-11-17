@@ -128,28 +128,42 @@ class GoogleAuthManager(private val context: Context) {
 
             val credential = result.credential
             val idToken: String? = if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                googleIdTokenCredential.idToken
-            } else {
+                try {
+                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    googleIdTokenCredential.idToken
+                } catch (e: Exception) {
+                    Log.w("GoogleAuthManager", "createFrom failed, extracting from bundle: ${e.message}")
+                    credential.data.getString("androidx.credentials.BUNDLE_KEY_ID_TOKEN")
+                        ?: credential.data.getString("id_token")
+                }
+            } else if (credential is CustomCredential) {
                 credential.data.getString("androidx.credentials.BUNDLE_KEY_ID_TOKEN")
                     ?: credential.data.getString("id_token")
+            } else {
+                null
             }
 
             if (idToken.isNullOrBlank()) {
-                return Result.failure(IllegalStateException("Failed to extract ID token from credential"))
+                return Result.failure(IllegalStateException("Failed to extract ID token from Google credential. Please try again."))
             }
 
             val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
             val currentAuth = auth ?: return Result.failure(IllegalStateException("Firebase Auth is not available"))
             val authResult = currentAuth.signInWithCredential(firebaseCredential).await()
             val user = authResult.user ?: throw IllegalStateException("Firebase user is null after sign in")
+            Log.i("GoogleAuthManager", "Firebase Sign-In Success: ${user.email} (${user.uid})")
             Result.success(user)
         } catch (e: GetCredentialCancellationException) {
             Log.i("GoogleAuthManager", "Google Sign In was cancelled by the user")
             Result.failure(GoogleSignInCancelledException())
         } catch (e: GetCredentialException) {
-            Log.e("GoogleAuthManager", "Credential exception during Google Sign In: ${e.message}", e)
-            Result.failure(e)
+            Log.e("GoogleAuthManager", "Credential exception during Google Sign In: ${e.type} / ${e.message}", e)
+            val friendlyMsg = if (e.message?.contains("10") == true || e.message?.contains("developer error", ignoreCase = true) == true) {
+                "Google Developer Error (Code 10): Ensure SHA-1 0E:83:EF:CA:07:73:55:D3:B1:AA:4F:D7:83:5D:AB:09:36:F5:53:27 is added to Firebase Console."
+            } else {
+                e.message ?: "Authentication failed"
+            }
+            Result.failure(Exception(friendlyMsg, e))
         } catch (e: Exception) {
             Log.e("GoogleAuthManager", "Unexpected exception during Google Sign In: ${e.message}", e)
             Result.failure(e)

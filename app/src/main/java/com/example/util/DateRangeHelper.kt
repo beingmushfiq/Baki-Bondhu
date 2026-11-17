@@ -14,6 +14,7 @@ enum class DateRangeFilterType {
     ALL,
     TODAY,
     THIS_WEEK,
+    THIS_MONTH,
     CUSTOM
 }
 
@@ -27,6 +28,7 @@ data class DateRangeSelection(
             DateRangeFilterType.ALL -> if (isBn) "সব লেনদেন" else "All Transactions"
             DateRangeFilterType.TODAY -> if (isBn) "আজকের লেনদেন" else "Today's History"
             DateRangeFilterType.THIS_WEEK -> if (isBn) "এই সপ্তাহের" else "This Week"
+            DateRangeFilterType.THIS_MONTH -> if (isBn) "এই মাসের" else "This Month"
             DateRangeFilterType.CUSTOM -> {
                 if (startTimestamp != null && endTimestamp != null) {
                     val sdf = SimpleDateFormat("dd MMM", Locale.getDefault()).apply {
@@ -119,6 +121,28 @@ object DateRangeHelper {
         }.timeInMillis
     }
 
+    fun getStartOfMonth(timestamp: Long = System.currentTimeMillis()): Long {
+        return Calendar.getInstance(DHAKA_TIMEZONE).apply {
+            timeInMillis = timestamp
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    fun getEndOfMonth(timestamp: Long = System.currentTimeMillis()): Long {
+        return Calendar.getInstance(DHAKA_TIMEZONE).apply {
+            timeInMillis = timestamp
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+    }
+
     /**
      * Filters a list of transactions based on the selected DateRangeSelection using half-open intervals.
      */
@@ -137,6 +161,11 @@ object DateRangeHelper {
             DateRangeFilterType.THIS_WEEK -> {
                 val start = getStartOfWeek(now)
                 val end = getEndOfWeek(now)
+                transactions.filter { it.timestamp in start..end }
+            }
+            DateRangeFilterType.THIS_MONTH -> {
+                val start = getStartOfMonth(now)
+                val end = getEndOfMonth(now)
                 transactions.filter { it.timestamp in start..end }
             }
             DateRangeFilterType.CUSTOM -> {

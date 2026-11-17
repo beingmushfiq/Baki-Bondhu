@@ -260,6 +260,7 @@ fun CustomDateRangeDialog(
                                         DateRangeFilterType.ALL -> if (isBn) "সকল লেনদেন (শুরু থেকে আজ)" else "All Time History"
                                         DateRangeFilterType.TODAY -> if (isBn) "আজকের দিন: ${dateFormatter.format(Date(now))}" else "Today: ${dateFormatter.format(Date(now))}"
                                         DateRangeFilterType.THIS_WEEK -> if (isBn) "চলতি সপ্তাহ" else "Current Week"
+                                        DateRangeFilterType.THIS_MONTH -> if (isBn) "চলতি মাস" else "Current Month"
                                         DateRangeFilterType.CUSTOM -> "${dateFormatter.format(Date(startTimestamp))} — ${dateFormatter.format(Date(endTimestamp))}"
                                     },
                                     fontWeight = FontWeight.Bold,
@@ -299,6 +300,11 @@ fun CustomDateRangeDialog(
                                     DateRangeFilterType.THIS_WEEK,
                                     DateRangeHelper.getStartOfWeek(now),
                                     DateRangeHelper.getEndOfWeek(now)
+                                )
+                                DateRangeFilterType.THIS_MONTH -> DateRangeSelection(
+                                    DateRangeFilterType.THIS_MONTH,
+                                    DateRangeHelper.getStartOfMonth(now),
+                                    DateRangeHelper.getEndOfMonth(now)
                                 )
                                 DateRangeFilterType.CUSTOM -> DateRangeSelection(
                                     DateRangeFilterType.CUSTOM,

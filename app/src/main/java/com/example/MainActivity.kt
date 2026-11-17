@@ -48,14 +48,18 @@ import androidx.compose.material.icons.filled.Sync
 import com.example.data.model.SyncStatus
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -247,13 +251,15 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                 )
             }
         },
+        floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             if (pagerState.currentPage != 1) {
                 SpeedDialFab(
                     isBn = isBn,
                     onVoiceClick = { requestVoiceEntry() },
                     onManualDebtClick = { viewModel.openManualEntryDialog(true) },
-                    onAddCustomerClick = { viewModel.openAddCustomerDialog(true) }
+                    onAddCustomerClick = { viewModel.openAddCustomerDialog(true) },
+                    modifier = Modifier.padding(bottom = 12.dp, end = 4.dp)
                 )
             }
         },
@@ -480,6 +486,7 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     isRestorePreviewOpen = isRestorePreviewOpen,
                     restorePreviewData = restorePreviewData,
                     isFetchingRestorePreview = isFetchingRestorePreview,
+                    isCheckingUpdate = uiState.isCheckingUpdate,
                     onSignInWithGoogle = { viewModel.signInWithGoogle(context) },
                     onSignOut = { viewModel.signOut() },
                     onSetAutoBackup = { viewModel.setAutoBackup(it) },
@@ -487,6 +494,8 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     onRestoreFromCloud = { viewModel.openCloudRestorePreview() },
                     onDismissRestorePreview = { viewModel.dismissRestorePreview() },
                     onConfirmCloudRestore = { mergeWithLocal -> viewModel.confirmCloudRestore(mergeWithLocal) },
+                    onOpenArchiveZone = { viewModel.openArchiveZone(true) },
+                    onCheckForUpdate = { viewModel.checkForUpdate(silent = false) },
                     onSave = { shopName, ownerName, bkash, nagad, autoReadBack ->
                         viewModel.updateSettings(shopName, ownerName, bkash, nagad, autoReadBack)
                     },
@@ -507,6 +516,76 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     },
                     onDismiss = { viewModel.openEditTransactionDialog(null) }
                 )
+            }
+
+            // Archive Zone Dialog
+            if (uiState.isArchiveZoneOpen) {
+                com.example.ui.components.ArchiveZoneDialog(
+                    archivedCustomers = uiState.archivedCustomers,
+                    archivedTransactions = uiState.archivedTransactions,
+                    isBn = isBn,
+                    onRestoreCustomer = { viewModel.restoreArchivedCustomer(it) },
+                    onRestoreTransaction = { viewModel.restoreArchivedTransaction(it) },
+                    onPurgeCustomer = { viewModel.purgeArchivedCustomer(it) },
+                    onPurgeTransaction = { viewModel.purgeArchivedTransaction(it) },
+                    onPurgeAll = { viewModel.purgeAllArchive() },
+                    onDismiss = { viewModel.openArchiveZone(false) }
+                )
+            }
+
+            // In-App Update Dialog
+            uiState.updateInfo?.let { update ->
+                if (update.isUpdateAvailable) {
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { viewModel.dismissUpdateDialog() },
+                        title = {
+                            Text(
+                                if (isBn) "নতুন আপডেট উপলব্ধ: v${update.latestVersion}"
+                                else "New Update Available: v${update.latestVersion}",
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        text = {
+                            Column {
+                                Text(
+                                    if (isBn) "বর্তমান সংস্করণ: v${update.currentVersion}\n${update.releaseTitle ?: ""}\n\n${update.releaseNotes?.take(250) ?: ""}"
+                                    else "Current version: v${update.currentVersion}\n${update.releaseTitle ?: ""}\n\n${update.releaseNotes?.take(250) ?: ""}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                if (uiState.updateDownloadProgress != null) {
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    androidx.compose.material3.LinearProgressIndicator(
+                                        progress = { (uiState.updateDownloadProgress ?: 0) / 100f },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "${uiState.updateDownloadProgress}%",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    update.downloadUrl?.let { url ->
+                                        viewModel.startUpdateDownload(url)
+                                    }
+                                },
+                                enabled = uiState.updateDownloadProgress == null,
+                                colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                            ) {
+                                Text(if (isBn) "এখনই ডাউনলোড ও আপডেট" else "Download & Install", color = Color.White)
+                            }
+                        },
+                        dismissButton = {
+                            OutlinedButton(onClick = { viewModel.dismissUpdateDialog() }) {
+                                Text(if (isBn) "পরে" else "Later")
+                            }
+                        }
+                    )
+                }
             }
 
             // 8. Animated Floating Toast Notification Host (Floats safely above bottom bar and FAB)

@@ -63,6 +63,15 @@ interface CustomerDao {
     @Query("UPDATE Customers SET isArchived = 0, updatedAt = :timestamp, syncStatus = 'PENDING_SYNC' WHERE id = :customerId")
     suspend fun unarchiveCustomer(customerId: Long, timestamp: Long = System.currentTimeMillis())
 
+    @Query("SELECT * FROM Customers WHERE isArchived = 1 ORDER BY updatedAt DESC")
+    fun getArchivedCustomers(): Flow<List<Customer>>
+
+    @Query("DELETE FROM Customers WHERE id = :customerId")
+    suspend fun purgeCustomerById(customerId: Long)
+
+    @Query("DELETE FROM Customers WHERE isArchived = 1")
+    suspend fun purgeAllArchivedCustomers()
+
     @Query("SELECT * FROM Customers WHERE syncStatus = 'PENDING_SYNC'")
     suspend fun getPendingSyncCustomers(): List<Customer>
 

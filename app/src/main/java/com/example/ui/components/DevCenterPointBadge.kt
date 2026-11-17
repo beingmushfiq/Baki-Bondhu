@@ -127,7 +127,10 @@ fun DevCenterPointPartnerCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
                     Box(
                         modifier = Modifier
                             .size(36.dp)
@@ -148,27 +151,32 @@ fun DevCenterPointPartnerCard(
                             text = "DevCenterPoint",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1
                         )
                         Text(
                             text = if (isBn) "কারিগরি ও প্রযুক্তি সহযোগী" else "Engineering & Cloud Architecture",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
                         )
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(EmeraldPrimary.copy(alpha = 0.12f))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = EmeraldPrimary.copy(alpha = 0.12f),
+                    contentColor = EmeraldPrimary
                 ) {
                     Text(
                         text = "Verified Partner",
                         color = EmeraldPrimary,
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        maxLines = 1
                     )
                 }
             }
@@ -190,9 +198,9 @@ fun DevCenterPointPartnerCard(
             OutlinedButton(
                 onClick = { launchDevCenterPointUrl(context) },
                 shape = RoundedCornerShape(10.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp)
                     .testTag("visit_devcenterpoint_button")
             ) {
                 Text(
@@ -213,9 +221,12 @@ fun DevCenterPointPartnerCard(
 
 private fun launchDevCenterPointUrl(context: Context) {
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://devcenterpoint.com")).apply {
+        val uri = Uri.parse("https://devcenterpoint.com")
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(intent)
-    } catch (_: Exception) {}
+    } catch (e: Exception) {
+        android.util.Log.e("DevCenterPoint", "Failed to launch URL: ${e.message}", e)
+    }
 }

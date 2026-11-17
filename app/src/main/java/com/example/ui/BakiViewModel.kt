@@ -81,7 +81,13 @@ data class BakiUiState(
     val currentUser: FirebaseUser? = null,
     val isSyncingCloud: Boolean = false,
     val lastCloudBackupAt: Long? = null,
-    val autoBackupEnabled: Boolean = true
+    val autoBackupEnabled: Boolean = true,
+    val isArchiveZoneOpen: Boolean = false,
+    val archivedCustomers: List<CustomerEntity> = emptyList(),
+    val archivedTransactions: List<TransactionEntity> = emptyList(),
+    val updateInfo: com.example.util.AppUpdateInfo? = null,
+    val isCheckingUpdate: Boolean = false,
+    val updateDownloadProgress: Int? = null
 )
 
 class BakiViewModel(
@@ -120,6 +126,20 @@ class BakiViewModel(
 
     private val _isFetchingRestorePreview = MutableStateFlow(false)
     val isFetchingRestorePreview: StateFlow<Boolean> = _isFetchingRestorePreview.asStateFlow()
+
+    // Archive Zone & In-App Update
+    private val _isArchiveZoneOpen = MutableStateFlow(false)
+    val isArchiveZoneOpen: StateFlow<Boolean> = _isArchiveZoneOpen.asStateFlow()
+
+    val inAppUpdateManager by lazy { com.example.util.InAppUpdateManager(getApplication()) }
+    private val _updateInfo = MutableStateFlow<com.example.util.AppUpdateInfo?>(null)
+    val updateInfo: StateFlow<com.example.util.AppUpdateInfo?> = _updateInfo.asStateFlow()
+
+    private val _isCheckingUpdate = MutableStateFlow(false)
+    val isCheckingUpdate: StateFlow<Boolean> = _isCheckingUpdate.asStateFlow()
+
+    private val _updateDownloadProgress = MutableStateFlow<Int?>(null)
+    val updateDownloadProgress: StateFlow<Int?> = _updateDownloadProgress.asStateFlow()
 
     val voiceManager = VoiceSpeechManager(application) {
         uiState.value.customers.map { it.name }
@@ -243,7 +263,13 @@ class BakiViewModel(
             authManager.currentUser,
             _isSyncingCloud,
             _lastCloudBackupAt,
-            _autoBackupEnabled
+            _autoBackupEnabled,
+            _isArchiveZoneOpen,
+            repository.archivedCustomers,
+            repository.archivedTransactions,
+            _updateInfo,
+            _isCheckingUpdate,
+            _updateDownloadProgress
         )
     ) { args: Array<Any?> ->
         @Suppress("UNCHECKED_CAST")
@@ -279,6 +305,14 @@ class BakiViewModel(
         val syncingCloud = args[27] as Boolean
         val lastBackupAt = args[28] as? Long
         val autoBackup = args[29] as Boolean
+        val archiveZoneOpen = args[30] as Boolean
+        @Suppress("UNCHECKED_CAST")
+        val archCustomers = (args[31] as? List<CustomerEntity>) ?: emptyList()
+        @Suppress("UNCHECKED_CAST")
+        val archTransactions = (args[32] as? List<TransactionEntity>) ?: emptyList()
+        val updateInfo = args[33] as? com.example.util.AppUpdateInfo
+        val checkingUpdate = args[34] as Boolean
+        val updateProgress = args[35] as? Int
 
         val totalBaki = customers.filter { it.balance > 0 }.sumOf { it.balance }
         val customerDebtMap = customers.associate { it.id to it.balance }
@@ -352,7 +386,13 @@ class BakiViewModel(
             currentUser = user,
             isSyncingCloud = syncingCloud,
             lastCloudBackupAt = lastBackupAt,
-            autoBackupEnabled = autoBackup
+            autoBackupEnabled = autoBackup,
+            isArchiveZoneOpen = archiveZoneOpen,
+            archivedCustomers = archCustomers,
+            archivedTransactions = archTransactions,
+            updateInfo = updateInfo,
+            isCheckingUpdate = checkingUpdate,
+            updateDownloadProgress = updateProgress
         )
     }.stateIn(
         scope = viewModelScope,
@@ -1270,6 +1310,120 @@ class BakiViewModel(
     fun confirmCloudRestore(mergeWithLocal: Boolean) {
         dismissRestorePreview()
         restoreFromCloud()
+    }
+
+    // Archive Zone Operations
+    fun openArchiveZone(isOpen: Boolean) {
+        _isArchiveZoneOpen.value = isOpen
+    }
+
+    fun restoreArchivedCustomer(customerId: Long) {
+        viewModelScope.launch {
+            repository.restoreCustomer(customerId)
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "কাস্টমার সফলভাবে পুনরুদ্ধার করা হয়েছে" else "Customer restored",
+                type = BakiToastType.SUCCESS
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun restoreArchivedTransaction(transactionId: Long) {
+        viewModelScope.launch {
+            repository.restoreTransaction(transactionId)
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "লেনদেন সফলভাবে পুনরুদ্ধার করা হয়েছে" else "Transaction restored",
+                type = BakiToastType.SUCCESS
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun purgeArchivedCustomer(customerId: Long) {
+        viewModelScope.launch {
+            repository.purgeCustomer(customerId)
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "কাস্টমার স্থায়ীভাবে মুছে ফেলা হয়েছে" else "Customer permanently purged",
+                type = BakiToastType.INFO
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun purgeArchivedTransaction(transactionId: Long) {
+        viewModelScope.launch {
+            repository.purgeTransaction(transactionId)
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "লেনদেন স্থায়ীভাবে মুছে ফেলা হয়েছে" else "Transaction permanently purged",
+                type = BakiToastType.INFO
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun purgeAllArchive() {
+        viewModelScope.launch {
+            repository.purgeAllArchived()
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "আর্কাইভের সকল রেকর্ড স্থায়ীভাবে মুছে ফেলা হয়েছে" else "Archive emptied",
+                type = BakiToastType.INFO
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    // In-App Update Methods
+    fun checkForUpdate(silent: Boolean = false) {
+        viewModelScope.launch {
+            _isCheckingUpdate.value = true
+            val result = inAppUpdateManager.checkForUpdates()
+            _isCheckingUpdate.value = false
+            result.onSuccess { info ->
+                _updateInfo.value = info
+                if (!info.isUpdateAvailable && !silent) {
+                    val isBn = uiState.value.isBangla
+                    showToast(
+                        message = if (isBn) "অ্যাপটি ইতিমধ্যে সর্বশেষ সংস্করণে রয়েছে (${info.currentVersion})"
+                        else "App is up to date (${info.currentVersion})",
+                        type = BakiToastType.INFO
+                    )
+                }
+            }.onFailure { e ->
+                if (!silent) {
+                    val isBn = uiState.value.isBangla
+                    showToast(
+                        message = if (isBn) "আপডেট চেক করা যায়নি: ${e.message}" else "Update check failed: ${e.message}",
+                        type = BakiToastType.WARNING
+                    )
+                }
+            }
+        }
+    }
+
+    fun startUpdateDownload(apkUrl: String) {
+        viewModelScope.launch {
+            _updateDownloadProgress.value = 0
+            val result = inAppUpdateManager.downloadAndInstallApk(apkUrl) { progress ->
+                _updateDownloadProgress.value = progress
+            }
+            _updateDownloadProgress.value = null
+            result.onFailure { e ->
+                val isBn = uiState.value.isBangla
+                showToast(
+                    message = if (isBn) "ডাউনলোড ব্যর্থ হয়েছে: ${e.message}" else "Download failed: ${e.message}",
+                    type = BakiToastType.ERROR
+                )
+            }
+        }
+    }
+
+    fun dismissUpdateDialog() {
+        _updateInfo.value = null
     }
 
     private fun triggerAutoCloudBackup() {

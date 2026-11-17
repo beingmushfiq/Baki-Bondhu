@@ -1,7 +1,7 @@
 {
   "firestore": [
     {
-      "database": "ai-studio-android-bakibond-808f1a4f-3d29-430d-9667-647c12547480",
+      "database": "(default)",
       "rules": "firestore.rules"
     }
   ],

@@ -2,6 +2,7 @@ package com.example.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +15,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -68,6 +71,7 @@ fun SettingsSheet(
     isRestorePreviewOpen: Boolean = false,
     restorePreviewData: CloudRestorePreviewData? = null,
     isFetchingRestorePreview: Boolean = false,
+    isCheckingUpdate: Boolean = false,
     onSignInWithGoogle: () -> Unit = {},
     onSignOut: () -> Unit = {},
     onSetAutoBackup: (Boolean) -> Unit = {},
@@ -75,6 +79,8 @@ fun SettingsSheet(
     onRestoreFromCloud: () -> Unit = {},
     onDismissRestorePreview: () -> Unit = {},
     onConfirmCloudRestore: (mergeWithLocal: Boolean) -> Unit = {},
+    onOpenArchiveZone: () -> Unit = {},
+    onCheckForUpdate: () -> Unit = {},
     onSave: (shopName: String, ownerName: String, bkash: String, nagad: String, autoReadBack: Boolean) -> Unit,
     onClearDatabase: () -> Unit = {},
     onDismiss: () -> Unit
@@ -143,26 +149,52 @@ fun SettingsSheet(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_google),
-                                    contentDescription = "Google",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(26.dp)
-                                )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f, fill = false)
+                            ) {
+                                if (currentUser != null) {
+                                    // User Avatar
+                                    Surface(
+                                        shape = androidx.compose.foundation.shape.CircleShape,
+                                        color = EmeraldPrimary.copy(alpha = 0.2f),
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            val initial = (currentUser.displayName?.take(1) ?: currentUser.email?.take(1) ?: "G").uppercase()
+                                            Text(
+                                                text = initial,
+                                                fontWeight = FontWeight.Bold,
+                                                color = EmeraldPrimary,
+                                                fontSize = 16.sp
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_google),
+                                        contentDescription = "Google",
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(26.dp)
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Column {
                                     Text(
                                         text = if (currentUser != null) (currentUser.displayName ?: currentUser.email ?: "Google Account")
                                         else (if (isBn) "Google ক্লাউড ব্যাকআপ" else "Google Cloud Backup"),
                                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                                     )
                                     if (currentUser != null) {
                                         Text(
                                             text = currentUser.email ?: "",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                                         )
                                     } else {
                                         Text(
@@ -175,17 +207,36 @@ fun SettingsSheet(
                             }
 
                             if (currentUser != null) {
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = EmeraldPrimary.copy(alpha = 0.15f)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
-                                    Text(
-                                        text = if (isBn) "সংযুক্ত ✓" else "Connected ✓",
-                                        color = EmeraldPrimary,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                    )
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = EmeraldPrimary.copy(alpha = 0.15f)
+                                    ) {
+                                        Text(
+                                            text = if (isBn) "সংযুক্ত ✓" else "Connected ✓",
+                                            color = EmeraldPrimary,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                        )
+                                    }
+                                    // Disconnect Button
+                                    IconButton(
+                                        onClick = onSignOut,
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .testTag("settings_google_disconnect_btn")
+                                    ) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.Logout,
+                                            contentDescription = if (isBn) "লগ আউট / ডিসকানেক্ট" else "Disconnect Google Account",
+                                            tint = MaterialTheme.colorScheme.error,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -438,6 +489,48 @@ fun SettingsSheet(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Archive Zone Button
+                OutlinedButton(
+                    onClick = onOpenArchiveZone,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = EmeraldPrimary),
+                    border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .testTag("settings_open_archive_btn")
+                ) {
+                    Icon(Icons.Default.Archive, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(if (isBn) "আর্কাইভ জোন (মুছে ফেলা রেকর্ড দেখুন)" else "Archive Zone (View Deleted Records)")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Check for Updates Button
+                OutlinedButton(
+                    onClick = onCheckForUpdate,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .testTag("settings_check_update_btn")
+                ) {
+                    if (isCheckingUpdate) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(if (isBn) "আপডেট চেক হচ্ছে..." else "Checking update...")
+                    } else {
+                        Icon(Icons.Default.SystemUpdate, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(if (isBn) "অ্যাপের আপডেট চেক করুন" else "Check for App Updates")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Clear Database Action Button
                 OutlinedButton(
                     onClick = { showConfirmClear = true },
@@ -509,6 +602,8 @@ fun SettingsSheet(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
