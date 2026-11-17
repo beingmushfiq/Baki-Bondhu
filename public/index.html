@@ -303,7 +303,7 @@
         <div class="flex flex-col min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
             <span class="text-base sm:text-xl font-bold tracking-tight text-white group-hover:text-brand-bright transition-colors whitespace-nowrap">বাকী বন্ধু</span>
-            <span class="hidden xs:inline-flex sm:inline-flex text-[10px] sm:text-xs font-sans font-bold px-1.5 sm:px-2.5 py-0.5 rounded-full bg-brand-primary/20 hover:bg-brand-primary/40 text-brand-bright border border-brand-bright/30 cursor-pointer transition-colors whitespace-nowrap" id="openReleaseNotesNav" title="v2.2.0 রিলিজ নোট দেখুন">v2.2.0 🚀</span>
+            <span class="latest-version-badge hidden xs:inline-flex sm:inline-flex text-[10px] sm:text-xs font-sans font-bold px-1.5 sm:px-2.5 py-0.5 rounded-full bg-brand-primary/20 hover:bg-brand-primary/40 text-brand-bright border border-brand-bright/30 cursor-pointer transition-colors whitespace-nowrap" id="openReleaseNotesNav" title="v2.2.0 রিলিজ নোট দেখুন">v2.2.0 🚀</span>
           </div>
           <span class="hidden md:block text-xs text-slate-400 font-sans tracking-wide truncate">Baki Bondhu • DevCenterPoint</span>
         </div>
@@ -332,19 +332,19 @@
         </button>
 
         <!-- Desktop Full APK Download Button -->
-        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
+        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="apk-download-btn hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-semibold text-sm shadow-lg shadow-brand-emerald/25 hover:shadow-brand-emerald/40 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
           </svg>
-          <span data-i18n="btn_get_app">অ্যাপ ডাউনলোড (২৭.৩ MB)</span>
+          <span data-i18n="btn_get_app">অ্যাপ ডাউনলোড (<span class="latest-apk-size">২৭.৩ MB</span>)</span>
         </a>
 
         <!-- Mobile Compact Download Pill (Shows on screens < lg) -->
-        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-xs shadow-md shadow-brand-emerald/20 active:scale-95 transition-all whitespace-nowrap" title="apk ডাউনলোড করুন (২৭.৩ মেগাবাইট)">
+        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="apk-download-btn inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-xs shadow-md shadow-brand-emerald/20 active:scale-95 transition-all whitespace-nowrap" title="apk ডাউনলোড করুন">
           <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
           </svg>
-          <span>এপিকে (২৭ MB)</span>
+          <span>এপিকে (<span class="latest-apk-size">২৭ MB</span>)</span>
         </a>
 
         <!-- Mobile Animated Hamburger Button (Shows on screens < lg) -->
@@ -431,14 +431,14 @@
     <!-- High-Conversion Download Card at bottom of Drawer -->
     <div class="mt-6 pt-4 border-t border-ledger-border/80">
       <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" 
-         class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-sm shadow-xl shadow-brand-emerald/30 active:scale-98 transition-all">
+         class="apk-download-btn w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white font-bold text-sm shadow-xl shadow-brand-emerald/30 active:scale-98 transition-all">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
           <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
         </svg>
-        <span>অ্যাপ ডাউনলোড করুন (২৭.৩ MB)</span>
+        <span>অ্যাপ ডাউনলোড করুন (<span class="latest-apk-size">২৭.৩ MB</span>)</span>
       </a>
       <div class="text-center text-[11px] text-slate-400 mt-2 font-sans">
-        Android 7.0+ • সংস্করণ ২.২.০ • ১০০% নিরাপদ অফলাইন
+        Android 7.0+ • সংস্করণ <span class="latest-version-clean">২.২.০</span> • ১০০% নিরাপদ অফলাইন
       </div>
     </div>
   </div>
@@ -478,11 +478,11 @@
 
           <!-- Action Buttons -->
           <div class="flex flex-wrap items-center gap-4 mb-10 w-full sm:w-auto">
-            <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-base shadow-xl shadow-brand-emerald/30 hover:shadow-brand-emerald/50 transition-all transform hover:-translate-y-0.5">
+            <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="apk-download-btn w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary hover:from-brand-primary hover:to-brand-deep text-white font-bold text-base shadow-xl shadow-brand-emerald/30 hover:shadow-brand-emerald/50 transition-all transform hover:-translate-y-0.5">
               <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
               </svg>
-              <span data-i18n="hero_btn_download">ফ্রি ডাউনলোড করুন (APK • ২৭.৩ MB)</span>
+              <span data-i18n="hero_btn_download">ফ্রি ডাউনলোড করুন (APK • <span class="latest-apk-size">২৭.৩ MB</span>)</span>
             </a>
 
             <a href="#voice-demo" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl glass-panel hover:bg-ledger-surface/90 text-slate-200 hover:text-white font-semibold text-base transition-all border border-ledger-border hover:border-brand-bright/40">
@@ -1292,15 +1292,15 @@
             <span data-i18n="cta_title">আজই আপনার দোকানকে করুন স্মার্ট ও ডিজিটাল</span>
           </h2>
           <p class="text-slate-300 text-base sm:text-lg mb-8" data-i18n="cta_subtitle">
-            ১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু ২.১.০ সংস্করণ।
+            ১০০% নিরাপদ, সম্পূর্ণ অফলাইন এবং প্রতিটি পয়সার সুরক্ষা। এখনই ডাউনলোড করুন বাকী বন্ধু <span class="latest-version-clean">২.২.০</span> সংস্করণ।
           </p>
 
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-bright via-emerald-400 to-brand-primary text-slate-950 font-extrabold text-base shadow-xl shadow-brand-bright/30 hover:scale-105 transition-all">
+            <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="apk-download-btn w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-bright via-emerald-400 to-brand-primary text-slate-950 font-extrabold text-base shadow-xl shadow-brand-bright/30 hover:scale-105 transition-all">
               <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5802 8.4116 13.8407 8 12 8s-3.5802.4116-5.1368.9497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
               <div class="text-left">
-                <div class="text-[10px] uppercase font-mono font-bold leading-none tracking-wider text-emerald-950">Android APK • ২৭.৩ MB</div>
-                <div class="text-sm font-extrabold leading-none mt-1">সরাসরি APK ডাউনলোড (v2.2.0)</div>
+                <div class="text-[10px] uppercase font-mono font-bold leading-none tracking-wider text-emerald-950">Android APK • <span class="latest-apk-size">২৭.৩ MB</span></div>
+                <div class="text-sm font-extrabold leading-none mt-1 latest-apk-title">সরাসরি APK ডাউনলোড (<span class="latest-version-tag">v2.2.0</span>)</div>
               </div>
             </a>
 
@@ -1479,8 +1479,8 @@
       </div>
 
       <div class="mt-6 pt-4 border-t border-ledger-border flex items-center justify-between">
-        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white text-xs font-bold shadow-lg shadow-brand-emerald/30">
-          <span>📥 v2.2.0 APK ডাউনলোড করুন (২৭.৩ MB)</span>
+        <a href="downloads/bakibondhu-v2.2.0.apk" download="bakibondhu-v2.2.0.apk" class="apk-download-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-emerald to-brand-primary text-white text-xs font-bold shadow-lg shadow-brand-emerald/30">
+          <span>📥 <span class="latest-version-tag">v2.2.0</span> APK ডাউনলোড করুন (<span class="latest-apk-size">২৭.৩ MB</span>)</span>
         </a>
         <button id="closeReleaseNotesOkBtn" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold cursor-pointer">
           বুঝেছি
@@ -2381,7 +2381,74 @@
     document.getElementById('closeTermsOkBtn').addEventListener('click', hideTerms);
     termsModal.addEventListener('click', (e) => { if (e.target === termsModal) hideTerms(); });
 
+    // --- GITHUB RELEASES AUTO-SYNC ENGINE (ALWAYS KEEP LATEST VERSION & NAME) ---
+    async function syncLatestReleaseFromGitHub() {
+      const repo = "beingmushfiq/Baki-Bondhu";
+      const apiUrl = `https://api.github.com/repos/${repo}/releases/latest`;
+
+      try {
+        const res = await fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const tagName = data.tag_name || "v2.2.0";
+        const cleanVer = tagName.replace(/^v/i, '');
+        const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+        const cleanVerBn = cleanVer.split('').map(c => bnDigits[c] !== undefined ? bnDigits[c] : c).join('');
+
+        // Find APK asset in release
+        let apkDownloadUrl = null;
+        let apkName = `bakibondhu-${tagName}.apk`;
+        let apkSizeMbBn = "২৭.৩";
+        let apkSizeMbEn = "27.3";
+
+        if (data.assets && Array.isArray(data.assets)) {
+          const apkAsset = data.assets.find(a => a.name && a.name.toLowerCase().endsWith('.apk'));
+          if (apkAsset) {
+            apkDownloadUrl = apkAsset.browser_download_url;
+            apkName = apkAsset.name;
+            if (apkAsset.size) {
+              const mb = (apkAsset.size / (1024 * 1024)).toFixed(1);
+              apkSizeMbEn = mb;
+              apkSizeMbBn = mb.split('').map(c => bnDigits[c] !== undefined ? bnDigits[c] : c).join('');
+            }
+          }
+        }
+
+        // Fallback to local files if release asset not set yet
+        if (!apkDownloadUrl) {
+          apkDownloadUrl = `downloads/${apkName}`;
+        }
+
+        // Update all download buttons on page (href and download attribute)
+        document.querySelectorAll('.apk-download-btn').forEach(btn => {
+          btn.setAttribute('href', apkDownloadUrl);
+          btn.setAttribute('download', apkName);
+        });
+
+        // Update version badges & labels dynamically
+        document.querySelectorAll('.latest-version-badge').forEach(badge => {
+          badge.innerText = `${tagName} 🚀`;
+        });
+        document.querySelectorAll('.latest-version-tag').forEach(el => {
+          el.innerText = tagName;
+        });
+        document.querySelectorAll('.latest-version-clean').forEach(el => {
+          el.innerText = cleanVerBn;
+        });
+        document.querySelectorAll('.latest-apk-size').forEach(el => {
+          el.innerText = `${apkSizeMbBn} MB`;
+        });
+        document.querySelectorAll('.latest-apk-title').forEach(el => {
+          el.innerText = `সরাসরি APK ডাউনলোড (${tagName})`;
+        });
+      } catch (err) {
+        console.warn('GitHub latest release auto-sync fallback:', err);
+      }
+    }
+
     // Initial run
+    syncLatestReleaseFromGitHub();
     runSimulation("রহিম ভাই বাকি ৫০০ টাকা");
     updateWhatsAppPreview();
   </script>
