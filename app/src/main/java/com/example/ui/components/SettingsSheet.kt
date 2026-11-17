@@ -4,8 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -258,9 +260,10 @@ fun SettingsSheet(
                                 ),
                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                                 shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(48.dp)
+                                    .defaultMinSize(minHeight = 48.dp)
                                     .testTag("google_sign_in_button")
                             ) {
                                 if (isSyncingCloud) {
@@ -276,8 +279,11 @@ fun SettingsSheet(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = if (isBn) "Google অ্যাকাউন্ট দিয়ে সাইন ইন করুন" else "Sign in with Google",
-                                        fontWeight = FontWeight.Bold
+                                        text = if (isBn) "Google দিয়ে সাইন ইন করুন" else "Sign in with Google",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                 }
                             }
@@ -495,14 +501,21 @@ fun SettingsSheet(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = EmeraldPrimary),
                     border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f)),
                     shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(44.dp)
+                        .defaultMinSize(minHeight = 44.dp)
                         .testTag("settings_open_archive_btn")
                 ) {
                     Icon(Icons.Default.Archive, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(if (isBn) "আর্কাইভ জোন (মুছে ফেলা রেকর্ড দেখুন)" else "Archive Zone (View Deleted Records)")
+                    Text(
+                        text = if (isBn) "আর্কাইভ জোন (মুছে ফেলা রেকর্ড)" else "Archive Zone (Deleted Records)",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        softWrap = false
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -513,19 +526,26 @@ fun SettingsSheet(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(44.dp)
+                        .defaultMinSize(minHeight = 44.dp)
                         .testTag("settings_check_update_btn")
                 ) {
                     if (isCheckingUpdate) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (isBn) "আপডেট চেক হচ্ছে..." else "Checking update...")
+                        Text(if (isBn) "আপডেট চেক হচ্ছে..." else "Checking update...", fontSize = 13.sp)
                     } else {
                         Icon(Icons.Default.SystemUpdate, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isBn) "অ্যাপের আপডেট চেক করুন" else "Check for App Updates")
+                        Text(
+                            text = if (isBn) "অ্যাপের আপডেট চেক করুন" else "Check for App Updates",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            softWrap = false
+                        )
                     }
                 }
 
@@ -537,12 +557,21 @@ fun SettingsSheet(
                     colors = ButtonDefaults.outlinedButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
                     ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(44.dp)
+                        .defaultMinSize(minHeight = 44.dp)
                         .testTag("settings_clear_database_btn")
                 ) {
-                    Text(if (isBn) "সকল খাতা ও লেনদেন ক্লিয়ার করুন" else "Clear All Customers & Ledger")
+                    Text(
+                        text = if (isBn) "সকল খাতা ও লেনদেন ক্লিয়ার করুন" else "Clear All Customers & Ledger",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        softWrap = false
+                    )
                 }
 
                 if (showConfirmClear) {
@@ -578,21 +607,25 @@ fun SettingsSheet(
                 ) {
                     OutlinedButton(
                         onClick = onDismiss,
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp)
+                            .defaultMinSize(minHeight = 48.dp)
                     ) {
-                        Text(BakiStrings.cancel(isBn))
+                        Text(BakiStrings.cancel(isBn), fontWeight = FontWeight.SemiBold)
                     }
 
                     Button(
                         onClick = {
                             onSave(shopName, ownerName, bkash, nagad, autoReadBack)
                         },
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                         modifier = Modifier
                             .weight(1.2f)
-                            .height(48.dp)
+                            .defaultMinSize(minHeight = 48.dp)
                             .testTag("save_settings_button")
                     ) {
                         Text(
