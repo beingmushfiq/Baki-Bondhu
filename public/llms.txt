@@ -3,6 +3,7 @@
 
 ## Main Overview
 - [Official Website & Web Hub](https://bakibondhu.devcenterpoint.com/): Official distribution hub, live interactive khata studio, feature tours, and direct Android APK download.
+- [Direct Android APK Download (Latest)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk): Always downloads the latest production package with correct filename (`bakibondhu-v2.2.0.apk`).
 - [Direct Android APK Download (v2.2.0)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk): Production Android package (27.3 MB, compatible with Android 7.0 Nougat to Android 16).
 - [Official GitHub Repository](https://github.com/beingmushfiq/Baki-Bondhu): Source code, release tags, issue tracker, and developer contributions.
 

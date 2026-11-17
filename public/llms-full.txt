@@ -44,7 +44,9 @@ The application interprets real spoken conversational Bengali:
 
 ## 6. Official Endpoints
 - Homepage: https://bakibondhu.devcenterpoint.com/
+- Android APK Download (Latest): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk
 - Android APK Download (v2.2.0): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk
+- Direct Download Shortlink: https://bakibondhu.devcenterpoint.com/download
 - GitHub Repository: https://github.com/beingmushfiq/Baki-Bondhu
 - Canonical Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml
 - Robots Directive: https://bakibondhu.devcenterpoint.com/robots.txt
