@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -190,7 +192,10 @@ fun ReportsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
                                 Box(
                                     modifier = Modifier
                                         .size(36.dp)
@@ -206,39 +211,55 @@ fun ReportsScreen(
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Column {
+                                Column(modifier = Modifier.weight(1f, fill = false)) {
                                     Text(
                                         text = if (isBn) "আজকের ক্যাশ ড্রয়ার স্থিতি" else "Today's Till Cash Flow",
                                         color = Color.White,
                                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         text = if (isBn) "নগদ বিক্রি + আদায়কৃত টাকা" else "Cash Sales + Repayments Collected",
                                         color = Color.White.copy(alpha = 0.75f),
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             }
 
+                            Spacer(modifier = Modifier.width(8.dp))
+
                             if (onOpenDailyClosing != null) {
                                 OutlinedButton(
                                     onClick = onOpenDailyClosing,
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldTertiary),
-                                    border = BorderStroke(1.dp, GoldTertiary.copy(alpha = 0.6f)),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = Color.White.copy(alpha = 0.12f),
+                                        contentColor = GoldTertiary
+                                    ),
+                                    border = BorderStroke(1.dp, GoldTertiary.copy(alpha = 0.7f)),
                                     shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.testTag("reports_open_closing_btn")
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                    modifier = Modifier
+                                        .defaultMinSize(minWidth = 1.dp, minHeight = 32.dp)
+                                        .testTag("reports_open_closing_btn")
                                 ) {
                                     Icon(
                                         Icons.AutoMirrored.Filled.ReceiptLong,
                                         contentDescription = null,
+                                        tint = GoldTertiary,
                                         modifier = Modifier.size(14.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = if (isBn) "ক্লোজিং" else "Closing",
                                         fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        color = GoldTertiary
                                     )
                                 }
                             }
