@@ -152,7 +152,7 @@ fun DevCenterPointPartnerCard(
                     Column(modifier = Modifier.weight(1f, fill = false)) {
                         Text(
                             text = "DevCenterPoint",
-                            style = MaterialTheme.typography.titleMedium,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
@@ -178,9 +178,9 @@ fun DevCenterPointPartnerCard(
                     Text(
                         text = "Verified Partner",
                         color = EmeraldPrimary,
-                        fontSize = 10.sp,
+                        fontSize = 9.5.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
                         maxLines = 1,
                         softWrap = false
                     )

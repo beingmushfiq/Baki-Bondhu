@@ -241,26 +241,31 @@ fun ReportsScreen(
                                     ),
                                     border = BorderStroke(1.dp, GoldTertiary.copy(alpha = 0.7f)),
                                     shape = RoundedCornerShape(10.dp),
-                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                                     modifier = Modifier
-                                        .defaultMinSize(minWidth = 1.dp, minHeight = 32.dp)
+                                        .defaultMinSize(minWidth = 76.dp, minHeight = 34.dp)
                                         .testTag("reports_open_closing_btn")
                                 ) {
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.ReceiptLong,
-                                        contentDescription = null,
-                                        tint = GoldTertiary,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
-                                        text = if (isBn) "ক্লোজিং" else "Closing",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = 1,
-                                        softWrap = false,
-                                        color = GoldTertiary
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.ReceiptLong,
+                                            contentDescription = null,
+                                            tint = GoldTertiary,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = if (isBn) "ক্লোজিং" else "Closing",
+                                            fontSize = 11.5.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            softWrap = false,
+                                            color = GoldTertiary
+                                        )
+                                    }
                                 }
                             }
                         }

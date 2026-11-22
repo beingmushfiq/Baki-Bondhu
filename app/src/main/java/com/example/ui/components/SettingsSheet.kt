@@ -271,20 +271,25 @@ fun SettingsSheet(
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(if (isBn) "সংযুক্ত হচ্ছে..." else "Signing in...", fontWeight = FontWeight.Bold)
                                 } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_google),
-                                        contentDescription = null,
-                                        tint = Color.Unspecified,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text(
-                                        text = if (isBn) "Google দিয়ে সাইন ইন করুন" else "Sign in with Google",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 13.sp,
-                                        maxLines = 1,
-                                        softWrap = false
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_google),
+                                            contentDescription = null,
+                                            tint = Color.Unspecified,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = if (isBn) "Google দিয়ে সাইন ইন করুন" else "Sign in with Google",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -507,15 +512,20 @@ fun SettingsSheet(
                         .defaultMinSize(minHeight = 44.dp)
                         .testTag("settings_open_archive_btn")
                 ) {
-                    Icon(Icons.Default.Archive, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (isBn) "আর্কাইভ জোন (মুছে ফেলা রেকর্ড)" else "Archive Zone (Deleted Records)",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        softWrap = false
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(Icons.Default.Archive, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = if (isBn) "আর্কাইভ জোন (মুছে ফেলা রেকর্ড)" else "Archive Zone (Deleted Records)",
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
