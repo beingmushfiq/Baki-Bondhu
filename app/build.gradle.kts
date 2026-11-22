@@ -112,8 +112,9 @@ dependencies {
   // implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   implementation(libs.firebase.ai)
-  // Firestore and Firebase Auth with Credential Manager:
+  // Firestore, Realtime Database, and Firebase Auth with Credential Manager:
   implementation(libs.firebase.firestore)
+  implementation(libs.firebase.database)
   implementation(libs.firebase.auth)
   implementation(libs.androidx.credentials)
   implementation(libs.androidx.credentials.play.services)

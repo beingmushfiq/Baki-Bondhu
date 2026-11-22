@@ -9,9 +9,12 @@ import com.example.data.model.SyncStatus
 import com.example.data.model.TransactionEntity
 import com.example.data.model.TransactionType
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import java.util.UUID
 
 data class BackupStats(
@@ -33,52 +36,74 @@ data class CloudPreviewStats(
     val lastBackupAt: Long?
 )
 
-class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) {
+class FirestoreSyncRepository(
+    private val dbProvider: () -> FirebaseFirestore?,
+    private val rtdbProvider: () -> FirebaseDatabase? = { null }
+) {
 
-    constructor(db: FirebaseFirestore) : this({ db })
+    constructor(db: FirebaseFirestore) : this({ db }, { null })
 
-    constructor(context: Context) : this({
-        try {
-            val appContext = context.applicationContext
-            if (com.google.firebase.FirebaseApp.getApps(appContext).isEmpty()) {
-                com.google.firebase.FirebaseApp.initializeApp(appContext)
-            }
-            val dbInstance = try {
-                val dbId = try { appContext.getString(R.string.firestore_database_id).trim() } catch (_: Exception) { "" }
-                if (dbId.isNotBlank() && dbId != "(default)" && !dbId.contains("ai-studio-android")) {
-                    try {
-                        FirebaseFirestore.getInstance(dbId)
-                    } catch (_: Exception) {
+    constructor(context: Context) : this(
+        dbProvider = {
+            try {
+                val appContext = context.applicationContext
+                if (com.google.firebase.FirebaseApp.getApps(appContext).isEmpty()) {
+                    com.google.firebase.FirebaseApp.initializeApp(appContext)
+                }
+                val dbInstance = try {
+                    val dbId = try { appContext.getString(R.string.firestore_database_id).trim() } catch (_: Exception) { "" }
+                    if (dbId.isNotBlank() && dbId != "(default)" && !dbId.contains("ai-studio-android")) {
+                        try {
+                            FirebaseFirestore.getInstance(dbId)
+                        } catch (_: Exception) {
+                            FirebaseFirestore.getInstance()
+                        }
+                    } else {
                         FirebaseFirestore.getInstance()
                     }
-                } else {
+                } catch (inner: Exception) {
                     FirebaseFirestore.getInstance()
                 }
-            } catch (inner: Exception) {
-                FirebaseFirestore.getInstance()
+                dbInstance
+            } catch (e: Exception) {
+                Log.w("FirestoreSyncRepo", "Firestore not available: ${e.message}")
+                null
             }
-            dbInstance
-        } catch (e: Exception) {
-            Log.w("FirestoreSyncRepo", "Firestore not available: ${e.message}")
-            null
+        },
+        rtdbProvider = {
+            try {
+                val appContext = context.applicationContext
+                if (com.google.firebase.FirebaseApp.getApps(appContext).isEmpty()) {
+                    com.google.firebase.FirebaseApp.initializeApp(appContext)
+                }
+                val rtdbUrl = try {
+                    appContext.getString(R.string.firebase_database_url).trim()
+                } catch (_: Exception) { "" }.ifBlank {
+                    "https://gen-lang-client-0530887953-default-rtdb.asia-southeast1.firebasedatabase.app/"
+                }
+                FirebaseDatabase.getInstance(rtdbUrl)
+            } catch (e: Exception) {
+                Log.w("FirestoreSyncRepo", "Realtime Database not available: ${e.message}")
+                null
+            }
         }
-    })
+    )
 
     private val db: FirebaseFirestore? get() = dbProvider()
+    private val rtdb: FirebaseDatabase? get() = rtdbProvider()
     private val tag = "FirestoreSyncRepo"
 
     /**
-     * Initializes or updates user profile metadata in Firestore.
+     * Initializes or updates user profile metadata in both Realtime Database and Firestore.
      */
     suspend fun syncUserProfile(user: FirebaseUser, settings: ShopSettingsEntity? = null, autoBackup: Boolean = true) {
-        val database = db ?: return
-        val userDoc = database.collection("users").document(user.uid)
+        val now = System.currentTimeMillis()
         val data = mutableMapOf<String, Any>(
             "userId" to user.uid,
             "email" to (user.email ?: ""),
             "displayName" to (user.displayName ?: ""),
             "autoBackupEnabled" to autoBackup,
-            "updatedAt" to System.currentTimeMillis()
+            "updatedAt" to now
         )
         if (settings != null) {
             data["shopName"] = settings.shopName
@@ -87,12 +112,25 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             data["nagadNumber"] = settings.nagadNumber
             data["language"] = settings.language
         }
-        userDoc.set(data, SetOptions.merge()).await()
+
+        // 1. Sync to Realtime Database if available
+        try {
+            rtdb?.reference?.child("users")?.child(user.uid)?.child("profile")?.updateChildren(data)?.await()
+        } catch (e: Exception) {
+            Log.w(tag, "Failed to update RTDB profile: ${e.message}")
+        }
+
+        // 2. Sync to Firestore if available
+        try {
+            db?.collection("users")?.document(user.uid)?.set(data, SetOptions.merge())?.await()
+        } catch (e: Exception) {
+            Log.w(tag, "Failed to update Firestore profile: ${e.message}")
+        }
     }
 
     /**
-     * Performs an atomic chunked batch backup of local Room ledger data to the user's Firestore cloud database.
-     * Uses stable UUIDs to guarantee cross-device deduplication.
+     * Performs a complete backup of local Room ledger data to the user's cloud database.
+     * Prioritizes the user's provisioned Firebase Realtime Database with graceful Firestore fallback.
      */
     suspend fun backupAll(
         userId: String,
@@ -101,14 +139,115 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
         transactions: List<TransactionEntity>,
         settings: ShopSettingsEntity
     ): Result<BackupStats> {
-        val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
+        val now = System.currentTimeMillis()
+
+        val profileData = mapOf(
+            "userId" to userId,
+            "email" to (user.email ?: ""),
+            "displayName" to (user.displayName ?: ""),
+            "shopName" to settings.shopName,
+            "ownerName" to settings.ownerName,
+            "bkashNumber" to settings.bkashNumber,
+            "nagadNumber" to settings.nagadNumber,
+            "language" to settings.language,
+            "lastBackupAt" to now,
+            "customerCount" to customers.size,
+            "transactionCount" to transactions.size,
+            "totalBakiPaisa" to customers.filter { it.balancePaisa > 0 }.sumOf { it.balancePaisa },
+            "updatedAt" to now
+        )
+
+        // ==========================================
+        // STRATEGY 1: FIREBASE REALTIME DATABASE (RTDB)
+        // ==========================================
+        val rtdbInstance = rtdb
+        if (rtdbInstance != null) {
+            try {
+                val userRef = rtdbInstance.reference.child("users").child(userId)
+
+                // 1. Prepare atomic update tree
+                val custMap = mutableMapOf<String, Any?>()
+                for (cust in customers) {
+                    val key = cust.uuid.ifBlank { cust.id.toString() }
+                    custMap[key] = mapOf(
+                        "uuid" to cust.uuid,
+                        "userId" to userId,
+                        "name" to cust.name,
+                        "phone" to cust.phone,
+                        "balancePaisa" to cust.balancePaisa,
+                        "balance" to cust.balance,
+                        "trustScore" to cust.trustScore,
+                        "note" to cust.note,
+                        "lastTransactionAt" to cust.lastTransactionAt,
+                        "createdAt" to cust.createdAt,
+                        "dueDate" to cust.dueDate,
+                        "isArchived" to cust.isArchived,
+                        "updatedAt" to cust.updatedAt
+                    )
+                }
+
+                val txMap = mutableMapOf<String, Any?>()
+                for (tx in transactions) {
+                    val key = tx.uuid.ifBlank { tx.id.toString() }
+                    txMap[key] = mapOf(
+                        "uuid" to tx.uuid,
+                        "userId" to userId,
+                        "customerId" to tx.customerId,
+                        "customerUuid" to tx.customerUuid,
+                        "customerName" to tx.customerName,
+                        "type" to tx.type.name,
+                        "amountPaisa" to tx.amountPaisa,
+                        "amount" to tx.amount,
+                        "originalSpokenText" to tx.originalSpokenText,
+                        "note" to tx.note,
+                        "timestamp" to tx.timestamp,
+                        "dueDate" to tx.dueDate,
+                        "isDeleted" to tx.isDeleted,
+                        "updatedAt" to tx.updatedAt
+                    )
+                }
+
+                val fullPayload = mapOf<String, Any?>(
+                    "profile" to profileData,
+                    "customers" to custMap,
+                    "transactions" to txMap
+                )
+
+                // 2. Perform single atomic payload update with 25-second timeout
+                withTimeout(25_000L) {
+                    userRef.updateChildren(fullPayload).await()
+                }
+
+                Log.i(tag, "Successfully backed up ${customers.size} customers and ${transactions.size} transactions to Realtime Database")
+                return Result.success(
+                    BackupStats(
+                        customersBackedUp = customers.size,
+                        transactionsBackedUp = transactions.size,
+                        timestamp = now
+                    )
+                )
+            } catch (rtdbError: Exception) {
+                Log.w(tag, "Realtime Database backup failed: ${rtdbError.message}", rtdbError)
+                if (isPermissionDenied(rtdbError)) {
+                    return Result.failure(formatRtdbPermissionError(rtdbError))
+                }
+                // If not permission denied, continue to Firestore fallback below
+            }
+        }
+
+        // ==========================================
+        // STRATEGY 2: CLOUD FIRESTORE FALLBACK
+        // ==========================================
+        val database = db ?: return Result.failure(
+            IllegalStateException("ক্লাউড ডাটাবেজ সংযোগ পাওয়া যায়নি। ইন্টারনেট সংযোগ ও ফায়ারবেস কনফিগারেশন যাচাই করুন।")
+        )
+
         return try {
             val userDoc = database.collection("users").document(userId)
-            val now = System.currentTimeMillis()
 
-            // 0. Verify server connection & database existence using fast Source.SERVER probe
+            // Verify server connection & database existence using fast Source.SERVER probe
             try {
-                kotlinx.coroutines.withTimeout(8000L) {
+                withTimeout(8000L) {
                     userDoc.get(com.google.firebase.firestore.Source.SERVER).await()
                 }
             } catch (probeError: Exception) {
@@ -116,29 +255,13 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                     return Result.failure(formatFirestoreError(probeError))
                 }
                 if (probeError is kotlinx.coroutines.TimeoutCancellationException) {
-                    return Result.failure(IllegalStateException("গুগল ক্লাউড ডাটাবেজ রেসপন্স করছে না। Firebase কনসোলে Cloud Firestore ডাটাবেজ সক্রিয় করা আছে কি না যাচাই করুন।"))
+                    return Result.failure(IllegalStateException("ক্লাউড ডাটাবেজ রেসপন্স করছে না। Firebase কনসোলে Database রুলস ও সংযোগ যাচাই করুন।"))
                 }
                 Log.w(tag, "Server probe warning: ${probeError.message}")
             }
 
-            // 1. Update user profile document
-            val profileData = mapOf(
-                "userId" to userId,
-                "email" to (user.email ?: ""),
-                "displayName" to (user.displayName ?: ""),
-                "shopName" to settings.shopName,
-                "ownerName" to settings.ownerName,
-                "bkashNumber" to settings.bkashNumber,
-                "nagadNumber" to settings.nagadNumber,
-                "lastBackupAt" to now,
-                "customerCount" to customers.size,
-                "transactionCount" to transactions.size,
-                "totalBakiPaisa" to customers.filter { it.balancePaisa > 0 }.sumOf { it.balancePaisa },
-                "updatedAt" to now
-            )
             userDoc.set(profileData, SetOptions.merge()).await()
 
-            // 2. Batch commit customers using UUIDs in chunks of 400 (well within Firestore 500 limit)
             val customersCol = userDoc.collection("customers")
             customers.chunked(400).forEach { chunk ->
                 val batch = database.batch()
@@ -166,7 +289,6 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                 batch.commit().await()
             }
 
-            // 3. Batch commit transactions using UUIDs in chunks of 400
             val txCol = userDoc.collection("transactions")
             transactions.chunked(400).forEach { chunk ->
                 val batch = database.batch()
@@ -204,46 +326,140 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             )
             Result.success(stats)
         } catch (e: Exception) {
-            Log.e(tag, "Backup failed: ${e.message}", e)
+            Log.e(tag, "Firestore backup failed: ${e.message}", e)
             Result.failure(formatFirestoreError(e))
         }
     }
 
-    private fun formatFirestoreError(e: Exception): Exception {
-        if (e is com.google.firebase.firestore.FirebaseFirestoreException) {
-            val msg = when (e.code) {
-                com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED ->
-                    "অনুমতি নেই (Permission Denied)! Firebase Console > Firestore Database > Rules এ write/read পারমিশন সক্রিয় করুন।"
-                com.google.firebase.firestore.FirebaseFirestoreException.Code.NOT_FOUND ->
-                    "ক্লাউড ডাটাবেজ তৈরি করা নেই! Firebase Console-এ গিয়ে Cloud Firestore ডাটাবেজ তৈরি (Create Database) করুন।"
-                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE ->
-                    "গুগল ফায়ারস্টোর সার্ভার অনুপলব্ধ বা সংযোগ বন্ধ। ইন্টারনেট ও ফায়ারওয়াল চেক করুন।"
-                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAUTHENTICATED ->
-                    "অথেনটিকেশন ব্যর্থ হয়েছে। পুনরায় Google সাইন ইন করুন।"
-                else -> e.localizedMessage ?: e.message ?: "Firestore error: ${e.code}"
-            }
-            return Exception(msg, e)
-        }
-        return e
-    }
-
     /**
-     * Pulls the user's complete cloud ledger and settings from Firestore.
+     * Pulls the user's complete cloud ledger and settings from the cloud database.
+     * Prioritizes Realtime Database, then falls back to Firestore.
      */
     suspend fun restoreAll(userId: String): Result<RestoreStats> {
+        // ==========================================
+        // STRATEGY 1: FIREBASE REALTIME DATABASE (RTDB)
+        // ==========================================
+        val rtdbInstance = rtdb
+        if (rtdbInstance != null) {
+            try {
+                val userRef = rtdbInstance.reference.child("users").child(userId)
+                val snapshot: DataSnapshot = withTimeout(15_000L) {
+                    userRef.get().await()
+                }
+
+                if (snapshot.exists() && (snapshot.hasChild("customers") || snapshot.hasChild("profile"))) {
+                    val profileSnap = snapshot.child("profile")
+                    val restoredSettings = if (profileSnap.exists()) {
+                        ShopSettingsEntity(
+                            shopName = profileSnap.child("shopName").getValue(String::class.java) ?: "",
+                            ownerName = profileSnap.child("ownerName").getValue(String::class.java) ?: "",
+                            bkashNumber = profileSnap.child("bkashNumber").getValue(String::class.java) ?: "",
+                            nagadNumber = profileSnap.child("nagadNumber").getValue(String::class.java) ?: "",
+                            language = profileSnap.child("language").getValue(String::class.java) ?: "bn"
+                        )
+                    } else null
+
+                    val restoredCustomers = snapshot.child("customers").children.mapNotNull { child ->
+                        try {
+                            val uuid = child.child("uuid").getValue(String::class.java) ?: child.key ?: UUID.randomUUID().toString()
+                            val name = child.child("name").getValue(String::class.java) ?: return@mapNotNull null
+                            val phone = child.child("phone").getValue(String::class.java) ?: ""
+                            val balancePaisa = child.child("balancePaisa").getValue(Long::class.java)
+                                ?: Math.round((child.child("balance").getValue(Double::class.java) ?: 0.0) * 100.0)
+                            val trust = (child.child("trustScore").getValue(Long::class.java) ?: 2L).toInt()
+                            val note = child.child("note").getValue(String::class.java) ?: ""
+                            val lastTx = child.child("lastTransactionAt").getValue(Long::class.java) ?: System.currentTimeMillis()
+                            val createdAt = child.child("createdAt").getValue(Long::class.java) ?: System.currentTimeMillis()
+                            val dueDate = child.child("dueDate").getValue(Long::class.java)
+                            val isArchived = child.child("isArchived").getValue(Boolean::class.java) ?: false
+                            val updatedAt = child.child("updatedAt").getValue(Long::class.java) ?: System.currentTimeMillis()
+
+                            CustomerEntity(
+                                id = 0L,
+                                uuid = uuid,
+                                name = name,
+                                phone = phone,
+                                balancePaisa = balancePaisa,
+                                trustScore = trust,
+                                note = note,
+                                lastTransactionAt = lastTx,
+                                createdAt = createdAt,
+                                dueDate = dueDate,
+                                isArchived = isArchived,
+                                syncStatus = SyncStatus.SYNCED,
+                                updatedAt = updatedAt
+                            )
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }
+
+                    val restoredTransactions = snapshot.child("transactions").children.mapNotNull { child ->
+                        try {
+                            val uuid = child.child("uuid").getValue(String::class.java) ?: child.key ?: UUID.randomUUID().toString()
+                            val custUuid = child.child("customerUuid").getValue(String::class.java) ?: ""
+                            val custName = child.child("customerName").getValue(String::class.java) ?: ""
+                            val typeStr = child.child("type").getValue(String::class.java) ?: "BAKI_SALE"
+                            val type = try { TransactionType.valueOf(typeStr) } catch (_: Exception) { TransactionType.BAKI_SALE }
+                            val amountPaisa = child.child("amountPaisa").getValue(Long::class.java)
+                                ?: Math.round((child.child("amount").getValue(Double::class.java) ?: 0.0) * 100.0)
+                            val originalText = child.child("originalSpokenText").getValue(String::class.java)
+                            val note = child.child("note").getValue(String::class.java) ?: ""
+                            val timestamp = child.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
+                            val dueDate = child.child("dueDate").getValue(Long::class.java)
+                            val isDeleted = child.child("isDeleted").getValue(Boolean::class.java) ?: false
+                            val updatedAt = child.child("updatedAt").getValue(Long::class.java) ?: System.currentTimeMillis()
+
+                            TransactionEntity(
+                                id = 0L,
+                                uuid = uuid,
+                                customerId = 0L,
+                                customerUuid = custUuid,
+                                customerName = custName,
+                                type = type,
+                                amountPaisa = amountPaisa,
+                                originalSpokenText = originalText,
+                                note = note,
+                                timestamp = timestamp,
+                                dueDate = dueDate,
+                                isDeleted = isDeleted,
+                                syncStatus = SyncStatus.SYNCED,
+                                updatedAt = updatedAt
+                            )
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }
+
+                    return Result.success(
+                        RestoreStats(
+                            customersRestored = restoredCustomers,
+                            transactionsRestored = restoredTransactions,
+                            settingsRestored = restoredSettings,
+                            timestamp = System.currentTimeMillis()
+                        )
+                    )
+                }
+            } catch (rtdbError: Exception) {
+                Log.w(tag, "Realtime Database restore failed: ${rtdbError.message}", rtdbError)
+                if (isPermissionDenied(rtdbError)) {
+                    return Result.failure(formatRtdbPermissionError(rtdbError))
+                }
+            }
+        }
+
+        // ==========================================
+        // STRATEGY 2: CLOUD FIRESTORE FALLBACK
+        // ==========================================
         val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
         return try {
-            // Verify server connection & database existence using fast Source.SERVER probe
             val userDoc = try {
-                kotlinx.coroutines.withTimeout(8000L) {
+                withTimeout(8000L) {
                     database.collection("users").document(userId).get(com.google.firebase.firestore.Source.SERVER).await()
                 }
             } catch (probeError: Exception) {
                 if (probeError is com.google.firebase.firestore.FirebaseFirestoreException) {
                     return Result.failure(formatFirestoreError(probeError))
-                }
-                if (probeError is kotlinx.coroutines.TimeoutCancellationException) {
-                    return Result.failure(IllegalStateException("গুগল ক্লাউড ডাটাবেজ রেসপন্স করছে না। Firebase কনসোলে Cloud Firestore ডাটাবেজ সক্রিয় করা আছে কি না যাচাই করুন।"))
                 }
                 database.collection("users").document(userId).get().await()
             }
@@ -272,7 +488,6 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                     val uuid = doc.getString("uuid") ?: doc.id.ifBlank { UUID.randomUUID().toString() }
                     val name = doc.getString("name") ?: return@mapNotNull null
                     val phone = doc.getString("phone") ?: ""
-                    // Handle balancePaisa with fallback to legacy balance Double
                     val balancePaisa = doc.getLong("balancePaisa")
                         ?: Math.round((doc.getDouble("balance") ?: 0.0) * 100.0)
                     val trust = (doc.getLong("trustScore") ?: 2L).toInt()
@@ -284,7 +499,7 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                     val updatedAt = doc.getLong("updatedAt") ?: System.currentTimeMillis()
 
                     CustomerEntity(
-                        id = 0L, // Re-indexed locally by Room
+                        id = 0L,
                         uuid = uuid,
                         name = name,
                         phone = phone,
@@ -323,9 +538,9 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
                     val updatedAt = doc.getLong("updatedAt") ?: System.currentTimeMillis()
 
                     TransactionEntity(
-                        id = 0L, // Re-indexed locally by Room
+                        id = 0L,
                         uuid = uuid,
-                        customerId = 0L, // Resolved to local ID during insertion
+                        customerId = 0L,
                         customerUuid = custUuid,
                         customerName = custName,
                         type = type,
@@ -360,6 +575,35 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
      * Retrieves cloud summary counts and last backup timestamp for pre-restore preview.
      */
     suspend fun getCloudPreview(userId: String): Result<CloudPreviewStats> {
+        // Try Realtime Database first
+        val rtdbInstance = rtdb
+        if (rtdbInstance != null) {
+            try {
+                val userRef = rtdbInstance.reference.child("users").child(userId)
+                val snapshot: DataSnapshot = withTimeout(10_000L) {
+                    userRef.get().await()
+                }
+                if (snapshot.exists()) {
+                    val lastBackup = snapshot.child("profile").child("lastBackupAt").getValue(Long::class.java)
+                    val custCount = snapshot.child("customers").childrenCount.toInt()
+                    val txCount = snapshot.child("transactions").childrenCount.toInt()
+                    return Result.success(
+                        CloudPreviewStats(
+                            cloudCustomerCount = custCount,
+                            cloudTransactionCount = txCount,
+                            lastBackupAt = lastBackup
+                        )
+                    )
+                }
+            } catch (rtdbError: Exception) {
+                Log.w(tag, "RTDB cloud preview warning: ${rtdbError.message}")
+                if (isPermissionDenied(rtdbError)) {
+                    return Result.failure(formatRtdbPermissionError(rtdbError))
+                }
+            }
+        }
+
+        // Firestore fallback
         val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
         return try {
             val userDoc = database.collection("users").document(userId).get().await()
@@ -381,5 +625,35 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             Log.e(tag, "Get cloud preview failed", e)
             Result.failure(formatFirestoreError(e))
         }
+    }
+
+    private fun isPermissionDenied(e: Exception): Boolean {
+        val msg = e.message?.lowercase().orEmpty()
+        return msg.contains("permission_denied") || msg.contains("permission denied") || msg.contains("permission")
+    }
+
+    private fun formatRtdbPermissionError(e: Exception): Exception {
+        return Exception(
+            "ডাটাবেজে লেখার অনুমতি নেই (Permission Denied)! Firebase Console > Realtime Database > Rules ট্যাবে গিয়ে লিখুন: \".read\": \"auth != null\", \".write\": \"auth != null\" এবং 'Publish' বাটনে চাপুন।",
+            e
+        )
+    }
+
+    private fun formatFirestoreError(e: Exception): Exception {
+        if (e is com.google.firebase.firestore.FirebaseFirestoreException) {
+            val msg = when (e.code) {
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED ->
+                    "অনুমতি নেই (Permission Denied)! Firebase Console > Database > Rules এ write/read পারমিশন সক্রিয় করুন।"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.NOT_FOUND ->
+                    "ক্লাউড ডাটাবেজ পাওয়া যায়নি (NOT_FOUND)! Firebase Console-এ গিয়ে Cloud Firestore বা Realtime Database তৈরি করুন।"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE ->
+                    "গুগল সার্ভার অনুপলব্ধ বা সংযোগ বন্ধ। ইন্টারনেট সংযোগ পরীক্ষা করুন।"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAUTHENTICATED ->
+                    "অথেনটিকেশন ব্যর্থ হয়েছে। পুনরায় Google সাইন ইন করুন।"
+                else -> e.localizedMessage ?: e.message ?: "Database error: ${e.code}"
+            }
+            return Exception(msg, e)
+        }
+        return e
     }
 }

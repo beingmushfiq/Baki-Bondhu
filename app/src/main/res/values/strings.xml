@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Baki Bondhu</string>
     <string name="default_web_client_id" translatable="false">704564450702-d0ns15b9aipnslup9cvgos3qvp15chmq.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://gen-lang-client-0530887953-default-rtdb.asia-southeast1.firebasedatabase.app/</string>
 </resources>
