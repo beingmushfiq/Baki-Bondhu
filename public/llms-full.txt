@@ -4,48 +4,51 @@ Baki Bondhu is a modern, offline-first Android application designed specifically
 
 ## 1. Problem Statement
 Traditional retail commerce in Bangladesh relies on manual red paper ledgers (লাল খাতা). These suffer from:
-1. Physical vulnerability: Fire, water damage, page tearing, theft, and loss during phone replacements.
-2. Calculation errors: Floating-point math and manual arithmetic create invisible drift between cash drawer balances and recorded debt.
-3. Tedious collection: Debt recovery calls are socially uncomfortable and lack fast settlement details (such as bKash/Nagad accounts).
-4. Generic accounting software failures: Existing cloud apps require permanent 4G internet, complex logins, monthly subscriptions, and English terminology that ordinary shopkeepers find alienating.
+1. **Physical vulnerability**: Fire, water damage, page tearing, theft, and loss during phone replacements.
+2. **Calculation errors**: Floating-point math and manual arithmetic create invisible drift between cash drawer balances and recorded debt.
+3. **Tedious collection**: Debt recovery calls are socially uncomfortable and lack fast settlement details (such as bKash/Nagad accounts).
+4. **Generic accounting software failures**: Existing cloud apps require permanent 4G internet, complex logins, monthly subscriptions, and English terminology that ordinary shopkeepers find alienating.
 
-## 2. Core Technical Architecture (v2.2.0)
-- **Language**: Kotlin 2.0+ with Jetpack Compose Material 3.
+## 2. Core Technical Architecture (v2.2.2)
+- **Language & Framework**: Kotlin 2.0+ with Jetpack Compose Material 3 (declarative reactive UI).
 - **Persistence**: Android Room SQLite Database v5 with foreign keys, compound indices, and deterministic migration schemas.
-- **Precision Math**: Long integer paisa arithmetic (`paisa = round(amount * 100)`). Zero Float/Double IEEE 754 precision drift.
-- **Voice Engine**: Dual engine support—Google SpeechRecognizer API + fallback speech parsing for noisy retail environments.
-- **Cloud Sync & Auth**: Google Sign-In with Firebase Authentication, Realtime Database, and Firestore. Automatic sync triggers upon local writes with fallback to offline storage.
+- **Precision Math**: 64-bit Long integer paisa arithmetic (`paisa = round(amount * 100)`). Zero Float/Double IEEE 754 precision drift.
+- **Voice Engine**: Dual engine support—Google SpeechRecognizer API + fallback in-app phonetics parsing for noisy retail environments.
+- **Cloud Sync & Auth**: Google Sign-In with Firebase Authentication, Firebase Realtime Database (`asia-southeast1`), and Firestore. Sub-second atomic updates (`updateChildren`) trigger upon local writes with fallback to offline storage.
 - **Data Recovery & Archive**: Built-in Archive Zone (`isArchived = 1`) ensuring safe soft-deletion with instant one-tap restoration and two-step permanent purge confirmation.
-- **In-App Distribution Engine**: Automated version check against GitHub Releases API (`https://api.github.com/repos/beingmushfiq/Baki-Bondhu/releases/latest`), progressive APK download, and installation via Android `FileProvider`.
+- **In-App Distribution Engine**: Automated version check against GitHub Releases API (`https://api.github.com/repos/beingmushfiq/Baki-Bondhu/releases/latest`), progressive APK download via `OkHttpClient` (302 redirect-aware), and installation via Android `FileProvider`.
 
 ## 3. Colloquial Voice Parsing Algorithm (BanglaVoiceParser)
 The application interprets real spoken conversational Bengali:
-- Spoken: "রহিম ভাই বাকি ৫০০ টাকা" -> Customer: "রহিম ভাই", Type: Credit (বাকী), Amount: 50,000 paisa (৳ 500.00).
-- Spoken: "করিম সাহেব জমা দিলেন ১,০০০ টাকা" -> Customer: "করিম সাহেব", Type: Repayment (জমা), Amount: 100,000 paisa (৳ 1,000.00).
-- Spoken: "খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন" -> Parses Bengali compound phrase "আড়াই হাজার" into 250,000 paisa (৳ 2,500.00).
-- Safeguard: Spoken phrase without an explicit amount (e.g., "জামাল উদ্দিন বাকি") refuses to insert a zero transaction and prompts the merchant to clarify amount.
+- Spoken: *"রহিম ভাই বাকি ৫০০ টাকা"* -> Customer: "রহিম ভাই", Type: Credit (বাকী), Amount: 50,000 paisa (৳ 500.00).
+- Spoken: *"করিম সাহেব জমা দিলেন ১,০০০ টাকা"* -> Customer: "করিম সাহেব", Type: Repayment (জমা), Amount: 100,000 paisa (৳ 1,000.00).
+- Spoken: *"খলিল চাচা আড়াই হাজার টাকা পরিশোধ করলেন"* -> Parses Bengali compound phrase "আড়াই হাজার" into 250,000 paisa (৳ 2,500.00).
+- Spoken: *"বাবুল দেড় হাজার টাকা নিল"* -> Parses "দেড় হাজার" into 150,000 paisa (৳ 1,500.00).
+- Safeguard: Spoken phrase without an explicit amount (e.g., *"জামাল উদ্দিন বাকি"*) refuses to insert a zero transaction and prompts the merchant to clarify amount.
 
 ## 4. Merchant Workflows
 1. **Daily Cash Drawer (ক্যাশ ড্রয়ার)**:
    Morning Opening Cash + Cash Sales + Debt Collections - Daily Cash Expenses = Evening Closing Drawer Balance.
 2. **Saturday Commercial Week**:
-   Reports calculate Saturday 00:00 through Friday 23:59 to reflect local market weekly cycles.
-3. **Date Filtering**:
+   Reports calculate Saturday 00:00 through Friday 23:59 to reflect local market weekly cycles in Bangladesh.
+3. **5-Tab Date Filtering**:
    Filter across "All Time" (সব দিন), "Today" (আজকে), "This Week" (এই সপ্তাহে), "This Month" (এই মাসে), and Custom Range (তারিখ নির্বাচন).
 4. **1-Tap WhatsApp Debt Reminders**:
    Constructs polite Bengali reminder messages including the merchant's bKash and Nagad numbers for direct customer settlement.
 5. **Sequential Reports & Lists**:
    All debt recovery lists display sequential Bengali numbering (`০১.`, `০২.`, `০৩.`) with protected single-line names.
+6. **Archive Zone**:
+   Soft-deleted customer records and accidental transaction deletions can be previewed, restored in one tap, or permanently purged.
 
 ## 5. Security & Privacy
-- Offline-first: Data resides encrypted on device SQLite database.
-- Optional Cloud Backup: Backups are bound strictly to the merchant's authenticated Google Account.
-- No third-party data tracking, selling, or advertising telemetry.
+- **Offline-first**: All business ledger data resides locally on the merchant's device in an encrypted SQLite database.
+- **Optional Cloud Backup**: Backups are bound strictly to the merchant's authenticated Google Account.
+- **Zero Third-Party Telemetry**: No tracking, advertising telemetry, or sharing of transaction details with third parties.
 
 ## 6. Official Endpoints
 - Homepage: https://bakibondhu.devcenterpoint.com/
 - Android APK Download (Latest): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk
-- Android APK Download (v2.2.0): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk
+- Android APK Download (v2.2.2): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.2.apk
 - Direct Download Shortlink: https://bakibondhu.devcenterpoint.com/download
 - GitHub Repository: https://github.com/beingmushfiq/Baki-Bondhu
 - Canonical Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml

@@ -1,17 +1,17 @@
 # Baki Bondhu (বাকী বন্ধু)
-> Baki Bondhu is an offline-first, Bengali voice-enabled retail digital ledger and cash management Android application developed by DevCenterPoint for retail merchants in Bangladesh.
+> Baki Bondhu is an offline-first, Bengali voice-enabled retail digital ledger and cash drawer management Android application developed by DevCenterPoint for retail merchants in Bangladesh.
 
 ## Main Overview
 - [Official Website & Web Hub](https://bakibondhu.devcenterpoint.com/): Official distribution hub, live interactive khata studio, feature tours, and direct Android APK download.
-- [Direct Android APK Download (Latest)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk): Always downloads the latest production package with correct filename (`bakibondhu-v2.2.0.apk`).
-- [Direct Android APK Download (v2.2.0)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.0.apk): Production Android package (27.3 MB, compatible with Android 7.0 Nougat to Android 16).
+- [Direct Android APK Download (Latest)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk): Always downloads the latest production package with correct filename (`bakibondhu-v2.2.2.apk`).
+- [Direct Android APK Download (v2.2.2)](https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.2.apk): Production Android package (~28.9 MB, compatible with Android 7.0 Nougat to Android 15/16).
 - [Official GitHub Repository](https://github.com/beingmushfiq/Baki-Bondhu): Source code, release tags, issue tracker, and developer contributions.
 
-## Key Architecture & Specifications (v2.2.0)
+## Key Architecture & Specifications (v2.2.2)
 - **Offline-First Architecture**: 100% functional without mobile internet or Wi-Fi using Room SQLite v5. Zero merchant data leakage.
-- **Google Sign-In & Firebase Realtime Cloud Backup**: Seamless one-tap Google authentication with automated cloud backup on every transaction and 1-tap manual sync to protect store data across devices.
+- **Google Sign-In & Firebase Realtime Cloud Backup**: One-tap Google authentication with automated sub-second atomic cloud backup (`updateChildren`) using Firebase Realtime Database in Singapore (`asia-southeast1`) and Firestore fallback to protect store data across devices.
 - **Archive Zone (Soft Delete & Restore)**: Deleted customers and transactions are safely moved to an archive zone with 1-tap instant restoration or permanent purge safeguards.
-- **In-App GitHub Update Engine**: Directly check for official updates from GitHub Releases (`beingmushfiq/Baki-Bondhu`) and install newer APKs without leaving the app.
+- **In-App GitHub Update Engine**: Directly check for official updates from GitHub Releases (`beingmushfiq/Baki-Bondhu`), with redirect-aware `OkHttpClient` handling AWS S3 302 redirects, and install newer APKs without leaving the app.
 - **Zero Currency Rounding Drift**: Eliminates IEEE 754 floating-point drift by computing all monetary transactions in 64-bit integer paisa (১ টাকা = ১০০ পয়সা). Guarantees zero discrepancy over millions of transactions.
 - **Bengali Natural Language Voice Parser**: In-app NLP engine interpreting colloquial Bangladeshi retail expressions ("দেড় হাজার", "আড়াই হাজার", "পাঁচশো", "নগদ বিক্রি", "বকেয়া আদায়").
 - **Flexible 5-Tab Date Filtering**: Filter store transactions across "All Time", "Today", "This Week", "This Month", and custom date ranges with an intuitive calendar picker.
@@ -21,10 +21,10 @@
 
 ## Technical Specifications
 - **Package ID**: `com.aistudio.bakibondhu.kxdznp`
-- **Current Version**: `2.2.0` (Version Code 22)
+- **Current Version**: `2.2.2` (Version Code 24)
 - **Minimum OS**: Android 7.0 (API Level 24)
-- **Target OS**: Android 16 (API Level 36)
-- **Distribution File Size**: ~27.3 MB
+- **Target OS**: Android 15 (API Level 35)
+- **Distribution File Size**: ~28.9 MB
 - **Developer & Publisher**: DevCenterPoint (https://devcenterpoint.com)
 
 ## Official Customer Support & Inquiries
