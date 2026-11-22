@@ -127,62 +127,60 @@ fun DevCenterPointPartnerCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(EmeraldPrimary.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(EmeraldPrimary.copy(alpha = 0.15f)),
-                        contentAlignment = Alignment.Center
+                    Icon(
+                        Icons.Default.Code,
+                        contentDescription = null,
+                        tint = EmeraldPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(
-                            Icons.Default.Code,
-                            contentDescription = null,
-                            tint = EmeraldPrimary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(modifier = Modifier.weight(1f, fill = false)) {
                         Text(
                             text = "DevCenterPoint",
-                            fontSize = 14.sp,
+                            fontSize = 14.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             maxLines = 1,
                             softWrap = false
                         )
-                        Text(
-                            text = if (isBn) "কারিগরি সহযোগী" else "Engineering Partner",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = EmeraldPrimary.copy(alpha = 0.12f),
+                            contentColor = EmeraldPrimary
+                        ) {
+                            Text(
+                                text = "Verified Partner",
+                                color = EmeraldPrimary,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
                     }
-                }
-
-                Spacer(modifier = Modifier.width(6.dp))
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = EmeraldPrimary.copy(alpha = 0.12f),
-                    contentColor = EmeraldPrimary
-                ) {
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Verified Partner",
-                        color = EmeraldPrimary,
-                        fontSize = 9.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                        text = if (isBn) "কারিগরি সহযোগী • devcenterpoint.com" else "Engineering & Architecture Partner",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
-                        softWrap = false
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

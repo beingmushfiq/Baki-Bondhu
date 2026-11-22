@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -263,7 +264,7 @@ fun SettingsSheet(
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .defaultMinSize(minHeight = 48.dp)
+                                    .heightIn(min = 48.dp)
                                     .testTag("google_sign_in_button")
                             ) {
                                 if (isSyncingCloud) {
@@ -283,10 +284,11 @@ fun SettingsSheet(
                                         )
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = if (isBn) "Google দিয়ে সাইন ইন করুন" else "Sign in with Google",
+                                            text = if (isBn) "Google সাইন ইন করুন" else "Sign in with Google",
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp,
+                                            fontSize = 13.5.sp,
                                             maxLines = 1,
+                                            softWrap = false,
                                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                                         )
                                     }
@@ -506,10 +508,10 @@ fun SettingsSheet(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = EmeraldPrimary),
                     border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f)),
                     shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 44.dp)
+                        .heightIn(min = 46.dp)
                         .testTag("settings_open_archive_btn")
                 ) {
                     Row(
@@ -523,6 +525,7 @@ fun SettingsSheet(
                             fontSize = 12.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
+                            softWrap = false,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
@@ -536,10 +539,10 @@ fun SettingsSheet(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 44.dp)
+                        .heightIn(min = 46.dp)
                         .testTag("settings_check_update_btn")
                 ) {
                     if (isCheckingUpdate) {
@@ -551,10 +554,11 @@ fun SettingsSheet(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = if (isBn) "অ্যাপের আপডেট চেক করুন" else "Check for App Updates",
-                            fontSize = 13.sp,
+                            fontSize = 12.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
-                            softWrap = false
+                            softWrap = false,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -569,18 +573,19 @@ fun SettingsSheet(
                     ),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f)),
                     shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 44.dp)
+                        .heightIn(min = 46.dp)
                         .testTag("settings_clear_database_btn")
                 ) {
                     Text(
                         text = if (isBn) "সকল খাতা ও লেনদেন ক্লিয়ার করুন" else "Clear All Customers & Ledger",
-                        fontSize = 13.sp,
+                        fontSize = 12.5.sp,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
-                        softWrap = false
+                        softWrap = false,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
 

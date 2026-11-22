@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -194,7 +195,7 @@ fun ReportsScreen(
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f, fill = false)
                             ) {
                                 Box(
                                     modifier = Modifier
@@ -241,9 +242,10 @@ fun ReportsScreen(
                                     ),
                                     border = BorderStroke(1.dp, GoldTertiary.copy(alpha = 0.7f)),
                                     shape = RoundedCornerShape(10.dp),
-                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                                     modifier = Modifier
-                                        .defaultMinSize(minWidth = 76.dp, minHeight = 34.dp)
+                                        .height(34.dp)
+                                        .wrapContentWidth()
                                         .testTag("reports_open_closing_btn")
                                 ) {
                                     Row(
@@ -256,10 +258,10 @@ fun ReportsScreen(
                                             tint = GoldTertiary,
                                             modifier = Modifier.size(14.dp)
                                         )
-                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Spacer(modifier = Modifier.width(5.dp))
                                         Text(
                                             text = if (isBn) "ক্লোজিং" else "Closing",
-                                            fontSize = 11.5.sp,
+                                            fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold,
                                             maxLines = 1,
                                             softWrap = false,
