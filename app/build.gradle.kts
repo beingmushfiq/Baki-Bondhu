@@ -15,7 +15,7 @@ android {
   defaultConfig {
     applicationId = "com.aistudio.bakibondhu.kxdznp"
     minSdk = 24
-    targetSdk = 36
+    targetSdk = 35
     versionCode = 23
     versionName = "2.2.1"
 
@@ -31,12 +31,16 @@ android {
       storePassword = System.getenv("STORE_PASSWORD")
       keyAlias = "upload"
       keyPassword = System.getenv("KEY_PASSWORD")
+      enableV1Signing = true
+      enableV2Signing = true
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")
       storePassword = "android"
       keyAlias = "androiddebugkey"
       keyPassword = "android"
+      enableV1Signing = true
+      enableV2Signing = true
     }
   }
 

@@ -10,10 +10,13 @@ import com.example.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.TimeUnit
 
 data class AppUpdateInfo(
     val latestVersion: String,
@@ -59,14 +62,15 @@ class InAppUpdateManager(private val context: Context) {
             val releaseTitle = json.optString("name", "Version $latestVersion")
             val releaseNotes = json.optString("body", "")
 
-            // Find APK asset
+            // Find APK asset (prioritize version-specific asset over generic latest)
             var downloadUrl: String? = null
             val assets = json.optJSONArray("assets")
             if (assets != null) {
+                val preferredName = "bakibondhu-v$latestVersion.apk"
                 for (i in 0 until assets.length()) {
                     val asset = assets.getJSONObject(i)
                     val name = asset.optString("name", "")
-                    if (name.endsWith(".apk", ignoreCase = true)) {
+                    if (name.equals(preferredName, ignoreCase = true)) {
                         val url = asset.optString("browser_download_url", "")
                         if (url.isNotEmpty()) {
                             downloadUrl = url
@@ -74,9 +78,22 @@ class InAppUpdateManager(private val context: Context) {
                         }
                     }
                 }
+                if (downloadUrl == null) {
+                    for (i in 0 until assets.length()) {
+                        val asset = assets.getJSONObject(i)
+                        val name = asset.optString("name", "")
+                        if (name.endsWith(".apk", ignoreCase = true)) {
+                            val url = asset.optString("browser_download_url", "")
+                            if (url.isNotEmpty()) {
+                                downloadUrl = url
+                                break
+                            }
+                        }
+                    }
+                }
             }
 
-            // Fallback to release HTML URL or release tag zip if APK not found in assets
+            // Fallback to release HTML URL if APK not found in assets
             if (downloadUrl == null) {
                 downloadUrl = json.optString("html_url", "https://github.com/$repoOwner/$repoName/releases")
             }
@@ -101,6 +118,7 @@ class InAppUpdateManager(private val context: Context) {
 
     /**
      * Downloads the APK file to app cache and triggers Android package installer.
+     * Uses OkHttpClient with followRedirects=true to reliably download from GitHub/AWS S3.
      */
     suspend fun downloadAndInstallApk(
         apkUrl: String,
@@ -118,21 +136,33 @@ class InAppUpdateManager(private val context: Context) {
                 return@withContext Result.failure(IllegalStateException("No direct APK asset; opening release page."))
             }
 
-            val url = URL(apkUrl)
-            val connection = (url.openConnection() as HttpURLConnection).apply {
-                connectTimeout = 15000
-                readTimeout = 30000
-                instanceFollowRedirects = true
+            val client = OkHttpClient.Builder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
+                .build()
+
+            val request = Request.Builder()
+                .url(apkUrl)
+                .header("User-Agent", "BakiBondhu-App")
+                .header("Accept", "application/octet-stream")
+                .build()
+
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                return@withContext Result.failure(IllegalStateException("Server responded with ${response.code}"))
             }
 
-            val fileLength = connection.contentLength
+            val responseBody = response.body ?: return@withContext Result.failure(IllegalStateException("Empty response body"))
+            val fileLength = responseBody.contentLength()
             val cacheDir = File(context.getExternalFilesDir(null) ?: context.cacheDir, "updates")
             if (!cacheDir.exists()) cacheDir.mkdirs()
 
             val apkFile = File(cacheDir, "BakiBondhu_update.apk")
             if (apkFile.exists()) apkFile.delete()
 
-            connection.inputStream.use { input ->
+            responseBody.byteStream().use { input ->
                 FileOutputStream(apkFile).use { output ->
                     val data = ByteArray(8192)
                     var total: Long = 0
@@ -141,7 +171,7 @@ class InAppUpdateManager(private val context: Context) {
                         total += count
                         if (fileLength > 0) {
                             val percent = ((total * 100) / fileLength).toInt()
-                            onProgress(percent)
+                            onProgress(percent.coerceIn(0, 100))
                         }
                         output.write(data, 0, count)
                     }
@@ -152,7 +182,7 @@ class InAppUpdateManager(private val context: Context) {
             // Verify downloaded APK size is valid (> 500 KB)
             if (apkFile.length() < 500_000L) {
                 apkFile.delete()
-                return@withContext Result.failure(IllegalStateException("Downloaded update package is incomplete."))
+                return@withContext Result.failure(IllegalStateException("Downloaded update package is incomplete (${apkFile.length()} bytes)."))
             }
 
             // Launch package installer

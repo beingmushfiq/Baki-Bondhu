@@ -106,6 +106,21 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             val userDoc = database.collection("users").document(userId)
             val now = System.currentTimeMillis()
 
+            // 0. Verify server connection & database existence using fast Source.SERVER probe
+            try {
+                kotlinx.coroutines.withTimeout(8000L) {
+                    userDoc.get(com.google.firebase.firestore.Source.SERVER).await()
+                }
+            } catch (probeError: Exception) {
+                if (probeError is com.google.firebase.firestore.FirebaseFirestoreException) {
+                    return Result.failure(formatFirestoreError(probeError))
+                }
+                if (probeError is kotlinx.coroutines.TimeoutCancellationException) {
+                    return Result.failure(IllegalStateException("গুগল ক্লাউড ডাটাবেজ রেসপন্স করছে না। Firebase কনসোলে Cloud Firestore ডাটাবেজ সক্রিয় করা আছে কি না যাচাই করুন।"))
+                }
+                Log.w(tag, "Server probe warning: ${probeError.message}")
+            }
+
             // 1. Update user profile document
             val profileData = mapOf(
                 "userId" to userId,
@@ -198,12 +213,14 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
         if (e is com.google.firebase.firestore.FirebaseFirestoreException) {
             val msg = when (e.code) {
                 com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED ->
-                    "অনুমতি নেই (Firestore Rules চেক করুন): ${e.message}"
-                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE ->
-                    "সার্ভার সাময়িকভাবে অনুপলব্ধ (Firestore Unavailable): ${e.message}"
+                    "অনুমতি নেই (Permission Denied)! Firebase Console > Firestore Database > Rules এ write/read পারমিশন সক্রিয় করুন।"
                 com.google.firebase.firestore.FirebaseFirestoreException.Code.NOT_FOUND ->
-                    "ক্লাউড ডাটাবেজ পাওয়া যায়নি (Database Not Found): ${e.message}"
-                else -> e.localizedMessage ?: e.message ?: "Firestore error"
+                    "ক্লাউড ডাটাবেজ তৈরি করা নেই! Firebase Console-এ গিয়ে Cloud Firestore ডাটাবেজ তৈরি (Create Database) করুন।"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE ->
+                    "গুগল ফায়ারস্টোর সার্ভার অনুপলব্ধ বা সংযোগ বন্ধ। ইন্টারনেট ও ফায়ারওয়াল চেক করুন।"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAUTHENTICATED ->
+                    "অথেনটিকেশন ব্যর্থ হয়েছে। পুনরায় Google সাইন ইন করুন।"
+                else -> e.localizedMessage ?: e.message ?: "Firestore error: ${e.code}"
             }
             return Exception(msg, e)
         }
@@ -216,7 +233,20 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
     suspend fun restoreAll(userId: String): Result<RestoreStats> {
         val database = db ?: return Result.failure(IllegalStateException("Firestore is not initialized"))
         return try {
-            val userDoc = database.collection("users").document(userId).get().await()
+            // Verify server connection & database existence using fast Source.SERVER probe
+            val userDoc = try {
+                kotlinx.coroutines.withTimeout(8000L) {
+                    database.collection("users").document(userId).get(com.google.firebase.firestore.Source.SERVER).await()
+                }
+            } catch (probeError: Exception) {
+                if (probeError is com.google.firebase.firestore.FirebaseFirestoreException) {
+                    return Result.failure(formatFirestoreError(probeError))
+                }
+                if (probeError is kotlinx.coroutines.TimeoutCancellationException) {
+                    return Result.failure(IllegalStateException("গুগল ক্লাউড ডাটাবেজ রেসপন্স করছে না। Firebase কনসোলে Cloud Firestore ডাটাবেজ সক্রিয় করা আছে কি না যাচাই করুন।"))
+                }
+                database.collection("users").document(userId).get().await()
+            }
 
             var restoredSettings: ShopSettingsEntity? = null
             if (userDoc.exists()) {

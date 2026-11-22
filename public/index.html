@@ -2395,14 +2395,14 @@
         let apkSizeMbEn = "28.0";
 
         if (data.assets && Array.isArray(data.assets)) {
-          const apkAsset = data.assets.find(a => a.name && a.name.toLowerCase().endsWith('.apk'));
+          // Prioritize exact release asset matching standardApkName over generic bakibondhu-latest.apk
+          const exactAsset = data.assets.find(a => a.name && a.name.toLowerCase() === standardApkName.toLowerCase());
+          const namedAsset = data.assets.find(a => a.name && a.name.toLowerCase().startsWith('bakibondhu-v'));
+          const genericAsset = data.assets.find(a => a.name && a.name.toLowerCase().endsWith('.apk'));
+          const apkAsset = exactAsset || namedAsset || genericAsset;
           if (apkAsset) {
-            if (apkAsset.name && apkAsset.name.toLowerCase().startsWith('bakibondhu-')) {
-              apkDownloadUrl = apkAsset.browser_download_url;
-              apkName = apkAsset.name;
-            } else {
-              apkDownloadUrl = `downloads/${standardApkName}`;
-            }
+            apkDownloadUrl = apkAsset.browser_download_url;
+            apkName = apkAsset.name;
             if (apkAsset.size) {
               const mb = (apkAsset.size / (1024 * 1024)).toFixed(1);
               apkSizeMbEn = mb;
