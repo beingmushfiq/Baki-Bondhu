@@ -43,16 +43,21 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             if (com.google.firebase.FirebaseApp.getApps(appContext).isEmpty()) {
                 com.google.firebase.FirebaseApp.initializeApp(appContext)
             }
-            try {
-                val dbId = appContext.getString(R.string.firestore_database_id)
-                if (dbId.isNotBlank() && !dbId.contains("ai-studio-android")) {
-                    FirebaseFirestore.getInstance(dbId)
+            val dbInstance = try {
+                val dbId = try { appContext.getString(R.string.firestore_database_id).trim() } catch (_: Exception) { "" }
+                if (dbId.isNotBlank() && dbId != "(default)" && !dbId.contains("ai-studio-android")) {
+                    try {
+                        FirebaseFirestore.getInstance(dbId)
+                    } catch (_: Exception) {
+                        FirebaseFirestore.getInstance()
+                    }
                 } else {
                     FirebaseFirestore.getInstance()
                 }
             } catch (inner: Exception) {
                 FirebaseFirestore.getInstance()
             }
+            dbInstance
         } catch (e: Exception) {
             Log.w("FirestoreSyncRepo", "Firestore not available: ${e.message}")
             null
@@ -184,9 +189,25 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             )
             Result.success(stats)
         } catch (e: Exception) {
-            Log.e(tag, "Backup failed", e)
-            Result.failure(e)
+            Log.e(tag, "Backup failed: ${e.message}", e)
+            Result.failure(formatFirestoreError(e))
         }
+    }
+
+    private fun formatFirestoreError(e: Exception): Exception {
+        if (e is com.google.firebase.firestore.FirebaseFirestoreException) {
+            val msg = when (e.code) {
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED ->
+                    "অনুমতি নেই (Firestore Rules চেক করুন): ${e.message}"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE ->
+                    "সার্ভার সাময়িকভাবে অনুপলব্ধ (Firestore Unavailable): ${e.message}"
+                com.google.firebase.firestore.FirebaseFirestoreException.Code.NOT_FOUND ->
+                    "ক্লাউড ডাটাবেজ পাওয়া যায়নি (Database Not Found): ${e.message}"
+                else -> e.localizedMessage ?: e.message ?: "Firestore error"
+            }
+            return Exception(msg, e)
+        }
+        return e
     }
 
     /**
@@ -301,7 +322,7 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             Result.success(stats)
         } catch (e: Exception) {
             Log.e(tag, "Restore failed", e)
-            Result.failure(e)
+            Result.failure(formatFirestoreError(e))
         }
     }
 
@@ -328,7 +349,7 @@ class FirestoreSyncRepository(private val dbProvider: () -> FirebaseFirestore?) 
             )
         } catch (e: Exception) {
             Log.e(tag, "Get cloud preview failed", e)
-            Result.failure(e)
+            Result.failure(formatFirestoreError(e))
         }
     }
 }

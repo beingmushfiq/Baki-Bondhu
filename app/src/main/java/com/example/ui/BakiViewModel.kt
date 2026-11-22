@@ -1161,10 +1161,16 @@ class BakiViewModel(
                     message = if (isBn) "$name অ্যাকাউন্ট সফলভাবে সংযুক্ত হয়েছে" else "Signed in as $name",
                     type = BakiToastType.SUCCESS
                 )
-                // Initialize user profile in Firestore
-                syncRepository.syncUserProfile(user, uiState.value.settings, _autoBackupEnabled.value)
+                // Initialize user profile in Firestore with timeout
+                try {
+                    withTimeoutOrNull(10_000L) {
+                        syncRepository.syncUserProfile(user, uiState.value.settings, _autoBackupEnabled.value)
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("BakiViewModel", "Failed to sync profile: ${e.message}")
+                }
                 if (_autoBackupEnabled.value) {
-                    backupToCloud(silent = true)
+                    backupToCloud(silent = false)
                 }
             }.onFailure { e ->
                 android.util.Log.e("BakiViewModel", "Google sign in failure", e)
