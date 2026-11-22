@@ -59,9 +59,13 @@ import com.example.ui.theme.RoyalJadeAlpine
 import com.example.ui.theme.RoyalJadeForest
 import com.example.ui.theme.SolarChampagne
 
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+
 /**
  * Modern speed-dial floating action button featuring smooth spring rotation,
- * contextual backdrop dimming, and rapid actions for recording new debts, voice inputs,
+ * staggered animations, elevation depth, and rapid actions for recording new debts, voice inputs,
  * and creating customer accounts.
  */
 @Composable
@@ -70,12 +74,22 @@ fun SpeedDialFab(
     onVoiceClick: () -> Unit,
     onManualDebtClick: () -> Unit,
     onAddCustomerClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    expanded: Boolean? = null,
+    onExpandedChange: ((Boolean) -> Unit)? = null
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var internalExpanded by remember { mutableStateOf(false) }
+    val isExpanded = expanded ?: internalExpanded
+    val setExpanded: (Boolean) -> Unit = { newState ->
+        if (onExpandedChange != null) {
+            onExpandedChange(newState)
+        } else {
+            internalExpanded = newState
+        }
+    }
 
     val rotationAngle by animateFloatAsState(
-        targetValue = if (expanded) 45f else 0f,
+        targetValue = if (isExpanded) 45f else 0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
@@ -93,7 +107,7 @@ fun SpeedDialFab(
         ) {
             // Expanded Sub-Actions with Staggered Spring Animation
             AnimatedVisibility(
-                visible = expanded,
+                visible = isExpanded,
                 enter = fadeIn(spring(stiffness = Spring.StiffnessMedium)) +
                         slideInVertically(
                             initialOffsetY = { it / 2 },
@@ -117,7 +131,7 @@ fun SpeedDialFab(
                         contentColor = Color.White,
                         testTag = "fab_action_new_customer",
                         onClick = {
-                            expanded = false
+                            setExpanded(false)
                             onAddCustomerClick()
                         }
                     )
@@ -130,7 +144,7 @@ fun SpeedDialFab(
                         contentColor = Color.White,
                         testTag = "fab_action_quick_debt",
                         onClick = {
-                            expanded = false
+                            setExpanded(false)
                             onManualDebtClick()
                         }
                     )
@@ -143,25 +157,31 @@ fun SpeedDialFab(
                         contentColor = Color.White,
                         testTag = "fab_action_voice",
                         onClick = {
-                            expanded = false
+                            setExpanded(false)
                             onVoiceClick()
                         }
                     )
                 }
             }
 
-            // Primary Toggle Button
+            // Primary Toggle Button with enhanced shadow and ring border
             FloatingActionButton(
-                onClick = { expanded = !expanded },
+                onClick = { setExpanded(!isExpanded) },
                 containerColor = Color.Transparent,
                 contentColor = Color.White,
                 shape = CircleShape,
                 elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 12.dp
+                    defaultElevation = 0.dp,
+                    pressedElevation = 4.dp
                 ),
                 modifier = Modifier
                     .size(62.dp)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = CircleShape,
+                        spotColor = RoyalJadeForest,
+                        ambientColor = EmeraldPrimary
+                    )
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
@@ -172,12 +192,19 @@ fun SpeedDialFab(
                             )
                         )
                     )
+                    .border(
+                        BorderStroke(
+                            1.5.dp,
+                            if (isExpanded) SolarChampagne.copy(alpha = 0.8f) else Color.White.copy(alpha = 0.25f)
+                        ),
+                        CircleShape
+                    )
                     .testTag("fab_speed_dial_main")
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = if (expanded) "Close Quick Actions" else "Record New Debt",
-                    tint = if (expanded) SolarChampagne else Color.White,
+                    contentDescription = if (isExpanded) "Close Quick Actions" else "Record New Debt",
+                    tint = if (isExpanded) SolarChampagne else Color.White,
                     modifier = Modifier
                         .size(30.dp)
                         .rotate(rotationAngle)

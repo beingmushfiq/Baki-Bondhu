@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Calendar
 
 data class BakiUiState(
@@ -857,7 +858,7 @@ class BakiViewModel(
     fun assignVoiceEntryToCustomer(customer: CustomerEntity) {
         val pending = _pendingConfirmation.value ?: return
         _pendingConfirmation.value = pending.copy(customerName = customer.name)
-        confirmPendingTransaction(overrideCustomerPhone = customer.phone.ifBlank { null })
+        confirmPendingTransaction(overrideCustomerPhone = customer.phone.ifBlank { null }, explicitCustomerId = customer.id)
         closeSelectCustomerSheet()
     }
 
@@ -868,7 +869,7 @@ class BakiViewModel(
         closeSelectCustomerSheet()
     }
 
-    fun confirmPendingTransaction(overrideCustomerPhone: String? = null) {
+    fun confirmPendingTransaction(overrideCustomerPhone: String? = null, explicitCustomerId: Long? = null) {
         val pending = _pendingConfirmation.value ?: return
         viewModelScope.launch {
             repository.recordTransaction(
@@ -876,7 +877,8 @@ class BakiViewModel(
                 customerPhone = overrideCustomerPhone,
                 type = pending.type,
                 amount = pending.amount,
-                spokenText = pending.rawText
+                spokenText = pending.rawText,
+                explicitCustomerId = explicitCustomerId
             )
             val isBn = uiState.value.isBangla
             val successMsg = if (isBn) {
@@ -890,7 +892,7 @@ class BakiViewModel(
         }
     }
 
-    fun saveManualTransaction(name: String, phone: String, amount: Double, type: TransactionType, note: String) {
+    fun saveManualTransaction(name: String, phone: String, amount: Double, type: TransactionType, note: String, customerId: Long? = null) {
         viewModelScope.launch {
             repository.recordTransaction(
                 customerName = name,
@@ -898,13 +900,50 @@ class BakiViewModel(
                 type = type,
                 amount = amount,
                 spokenText = null,
-                note = note
+                note = note,
+                explicitCustomerId = customerId
             )
             _isManualEntryOpen.value = false
             val isBn = uiState.value.isBangla
             showToast(
                 message = if (isBn) "নতুন হিসাব যুক্ত হয়েছে (৳${amount.toInt()})" else "Transaction recorded successfully",
                 type = BakiToastType.SUCCESS
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun renameCustomer(customerId: Long, newName: String, newPhone: String) {
+        viewModelScope.launch {
+            val existing = uiState.value.customers.find { it.id == customerId } ?: return@launch
+            val updated = existing.copy(
+                name = newName.trim(),
+                phone = newPhone.trim(),
+                updatedAt = System.currentTimeMillis()
+            )
+            repository.updateCustomer(updated)
+            if (_selectedCustomerForDetail.value?.id == customerId) {
+                _selectedCustomerForDetail.value = updated
+            }
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "খরিদ্দারের তথ্য সফলভাবে পরিবর্তন হয়েছে" else "Customer info updated successfully",
+                type = BakiToastType.SUCCESS
+            )
+            triggerAutoCloudBackup()
+        }
+    }
+
+    fun deleteCustomer(customer: CustomerEntity) {
+        viewModelScope.launch {
+            repository.archiveCustomer(customer.id)
+            if (_selectedCustomerForDetail.value?.id == customer.id) {
+                _selectedCustomerForDetail.value = null
+            }
+            val isBn = uiState.value.isBangla
+            showToast(
+                message = if (isBn) "${customer.name}-কে আর্কাইভে পাঠানো হয়েছে" else "${customer.name} archived",
+                type = BakiToastType.INFO
             )
             triggerAutoCloudBackup()
         }
@@ -1202,26 +1241,50 @@ class BakiViewModel(
                     type = BakiToastType.INFO
                 )
             }
-            val result = syncRepository.backupAll(
-                userId = user.uid,
-                user = user,
-                customers = uiState.value.customers,
-                transactions = uiState.value.allTransactionsUnfiltered,
-                settings = uiState.value.settings
-            )
-            _isSyncingCloud.value = false
-            result.onSuccess { stats ->
-                _lastCloudBackupAt.value = stats.timestamp
-                val countText = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.customersBackedUp}") else "${stats.customersBackedUp}"
-                showToast(
-                    message = if (isBn) "আলহামদুলিল্লাহ! $countText জন ক্রেতার হিসাব ক্লাউডে সংরক্ষিত" else "Cloud backup successful (${stats.customersBackedUp} accounts secured)",
-                    type = BakiToastType.SUCCESS
-                )
-            }.onFailure { error ->
-                showToast(
-                    message = if (isBn) "ব্যাকআপ ব্যর্থ হয়েছে: ${error.localizedMessage ?: "নেটওয়ার্ক ত্রুটি"}" else "Cloud backup failed: ${error.localizedMessage}",
-                    type = BakiToastType.ERROR
-                )
+            try {
+                val result = withTimeoutOrNull(45_000L) {
+                    syncRepository.backupAll(
+                        userId = user.uid,
+                        user = user,
+                        customers = uiState.value.customers,
+                        transactions = uiState.value.allTransactionsUnfiltered,
+                        settings = uiState.value.settings
+                    )
+                }
+
+                if (result == null) {
+                    // Timed out
+                    if (!silent) {
+                        showToast(
+                            message = if (isBn) "ব্যাকআপ সময়সীমা শেষ (টাইমআউট)। ইন্টারনেট চেক করুন।" else "Backup timed out. Please check internet.",
+                            type = BakiToastType.WARNING
+                        )
+                    }
+                } else {
+                    result.onSuccess { stats ->
+                        _lastCloudBackupAt.value = stats.timestamp
+                        val countText = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.customersBackedUp}") else "${stats.customersBackedUp}"
+                        showToast(
+                            message = if (isBn) "আলহামদুলিল্লাহ! $countText জন ক্রেতার হিসাব ক্লাউডে সংরক্ষিত" else "Cloud backup successful (${stats.customersBackedUp} accounts secured)",
+                            type = BakiToastType.SUCCESS
+                        )
+                    }.onFailure { error ->
+                        showToast(
+                            message = if (isBn) "ব্যাকআপ ব্যর্থ হয়েছে: ${error.localizedMessage ?: "নেটওয়ার্ক ত্রুটি"}" else "Cloud backup failed: ${error.localizedMessage}",
+                            type = BakiToastType.ERROR
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("BakiViewModel", "Backup exception", e)
+                if (!silent) {
+                    showToast(
+                        message = if (isBn) "ব্যাকআপ সমস্যা: ${e.localizedMessage ?: "অজ্ঞাত ত্রুটি"}" else "Backup error: ${e.localizedMessage}",
+                        type = BakiToastType.ERROR
+                    )
+                }
+            } finally {
+                _isSyncingCloud.value = false
             }
         }
     }
@@ -1244,25 +1307,44 @@ class BakiViewModel(
                 message = if (isBn) "ক্লাউড থেকে ডেটা আনা হচ্ছে..." else "Restoring ledger from Google Cloud...",
                 type = BakiToastType.INFO
             )
-            val result = syncRepository.restoreAll(user.uid)
-            _isSyncingCloud.value = false
-            result.onSuccess { stats ->
-                repository.restoreCloudData(
-                    customers = stats.customersRestored,
-                    transactions = stats.transactionsRestored,
-                    settings = stats.settingsRestored
-                )
-                val cCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.customersRestored.size}") else "${stats.customersRestored.size}"
-                val tCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.transactionsRestored.size}") else "${stats.transactionsRestored.size}"
+            try {
+                val result = withTimeoutOrNull(45_000L) {
+                    syncRepository.restoreAll(user.uid)
+                }
+
+                if (result == null) {
+                    showToast(
+                        message = if (isBn) "রিস্টোর সময়সীমা শেষ (টাইমআউট)। সংযোগ পরীক্ষা করুন।" else "Restore timed out. Check connection.",
+                        type = BakiToastType.WARNING
+                    )
+                } else {
+                    result.onSuccess { stats ->
+                        repository.restoreCloudData(
+                            customers = stats.customersRestored,
+                            transactions = stats.transactionsRestored,
+                            settings = stats.settingsRestored
+                        )
+                        val cCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.customersRestored.size}") else "${stats.customersRestored.size}"
+                        val tCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.transactionsRestored.size}") else "${stats.transactionsRestored.size}"
+                        showToast(
+                            message = if (isBn) "সফলভাবে $cCount জন ক্রেতা ও $tCount টি হিসাব রিস্টোর হয়েছে" else "Restored $cCount customers and $tCount entries from Cloud",
+                            type = BakiToastType.SUCCESS
+                        )
+                    }.onFailure { error ->
+                        showToast(
+                            message = if (isBn) "ক্লাউড রিস্টোর ব্যর্থ হয়েছে: ${error.localizedMessage ?: "ডেটা পাওয়া যায়নি"}" else "Cloud restore failed: ${error.localizedMessage}",
+                            type = BakiToastType.ERROR
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("BakiViewModel", "Restore exception", e)
                 showToast(
-                    message = if (isBn) "সফলভাবে $cCount জন ক্রেতা ও $tCount টি হিসাব রিস্টোর হয়েছে" else "Restored $cCount customers and $tCount entries from Cloud",
-                    type = BakiToastType.SUCCESS
-                )
-            }.onFailure { error ->
-                showToast(
-                    message = if (isBn) "ক্লাউড রিস্টোর ব্যর্থ হয়েছে: ${error.localizedMessage ?: "ডেটা পাওয়া যায়নি"}" else "Cloud restore failed: ${error.localizedMessage}",
+                    message = if (isBn) "রিস্টোর সমস্যা: ${e.localizedMessage ?: "ত্রুটি"}" else "Restore error: ${e.localizedMessage}",
                     type = BakiToastType.ERROR
                 )
+            } finally {
+                _isSyncingCloud.value = false
             }
         }
     }

@@ -107,6 +107,17 @@ class InAppUpdateManager(private val context: Context) {
         onProgress: (Int) -> Unit = {}
     ): Result<File> = withContext(Dispatchers.IO) {
         try {
+            // If the URL is not a direct APK asset (e.g. fallback release page), open browser directly
+            if (!apkUrl.endsWith(".apk", ignoreCase = true)) {
+                withContext(Dispatchers.Main) {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(browserIntent)
+                }
+                return@withContext Result.failure(IllegalStateException("No direct APK asset; opening release page."))
+            }
+
             val url = URL(apkUrl)
             val connection = (url.openConnection() as HttpURLConnection).apply {
                 connectTimeout = 15000
@@ -136,6 +147,12 @@ class InAppUpdateManager(private val context: Context) {
                     }
                     output.flush()
                 }
+            }
+
+            // Verify downloaded APK size is valid (> 500 KB)
+            if (apkFile.length() < 500_000L) {
+                apkFile.delete()
+                return@withContext Result.failure(IllegalStateException("Downloaded update package is incomplete."))
             }
 
             // Launch package installer

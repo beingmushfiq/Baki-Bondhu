@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -32,14 +34,23 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.ui.BakiStrings
 import com.example.ui.theme.EmeraldPrimary
 import com.example.voice.BanglaVoiceParser
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.filled.WarningAmber
+import com.example.data.model.CustomerEntity
+import com.example.ui.theme.GoldTertiary
+
 @Composable
 fun AddCustomerDialog(
     isBn: Boolean,
+    existingCustomers: List<CustomerEntity> = emptyList(),
     onAdd: (name: String, phone: String, initialDue: Double, note: String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -47,6 +58,13 @@ fun AddCustomerDialog(
     var phone by remember { mutableStateOf("") }
     var initialDueText by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
+
+    val trimmedName = name.trim()
+    val matchingCustomer = remember(trimmedName, existingCustomers) {
+        if (trimmedName.length >= 2) {
+            existingCustomers.find { it.name.trim().equals(trimmedName, ignoreCase = true) }
+        } else null
+    }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -87,6 +105,69 @@ fun AddCustomerDialog(
                         .fillMaxWidth()
                         .testTag("add_customer_name_input")
                 )
+
+                if (matchingCustomer != null) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = GoldTertiary.copy(alpha = 0.15f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, GoldTertiary.copy(alpha = 0.4f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.WarningAmber,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = if (isBn) "একই নামে ইতিমধ্যে একজন খরিদ্দার আছেন!" else "A customer with this name already exists!",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = if (isBn) "সহজে আলাদা করতে ১-ট্যাপে পরিচয় যোগ করুন:" else "Tap to add disambiguation suffix:",
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                listOf(
+                                    "(২)" to "(2)",
+                                    "(নতুন)" to "(New)",
+                                    "(বাজার)" to "(Market)"
+                                ).forEach { (bnSuffix, enSuffix) ->
+                                    val suffix = if (isBn) bnSuffix else enSuffix
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        modifier = Modifier
+                                            .clickable {
+                                                name = "$trimmedName $suffix"
+                                            }
+                                    ) {
+                                        Text(
+                                            text = "+ $suffix",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 

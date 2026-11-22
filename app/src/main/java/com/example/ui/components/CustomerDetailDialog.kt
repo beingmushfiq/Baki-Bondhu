@@ -45,7 +45,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -91,10 +94,14 @@ fun CustomerDetailDialog(
     onDeleteTransaction: ((TransactionEntity) -> Unit)? = null,
     onShareTransaction: ((TransactionEntity) -> Unit)? = null,
     onUpdateDueDate: ((Long?) -> Unit)? = null,
+    onRenameCustomer: ((newName: String, newPhone: String) -> Unit)? = null,
+    onDeleteCustomer: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val dateFormatter = SimpleDateFormat("dd MMMM yyyy, hh:mm a", Locale.getDefault())
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
     // Chronologically sorted list (newest first)
     val chronologicalTx = remember(transactions, customer.id) {
@@ -237,6 +244,46 @@ fun CustomerDetailDialog(
                             )
                         }
                         Spacer(modifier = Modifier.width(6.dp))
+                    }
+
+                    // Edit customer name/phone button
+                    if (onRenameCustomer != null) {
+                        IconButton(
+                            onClick = { showRenameDialog = true },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
+                                .testTag("detail_edit_customer_button")
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = if (isBn) "খরিদ্দার সম্পাদনা" else "Edit Customer",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+
+                    // Delete (archive) customer button
+                    if (onDeleteCustomer != null) {
+                        IconButton(
+                            onClick = { showDeleteConfirmDialog = true },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f))
+                                .testTag("detail_delete_customer_button")
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = if (isBn) "খরিদ্দার মুছুন" else "Delete Customer",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
 
                     IconButton(onClick = onDismiss) {
@@ -750,5 +797,80 @@ fun CustomerDetailDialog(
                 }
             }
         }
+    }
+
+    // Rename customer dialog
+    if (showRenameDialog && onRenameCustomer != null) {
+        RenameCustomerDialog(
+            currentName = customer.name,
+            currentPhone = customer.phone,
+            isBn = isBn,
+            onConfirm = { newName, newPhone ->
+                onRenameCustomer(newName, newPhone)
+                showRenameDialog = false
+            },
+            onDismiss = { showRenameDialog = false }
+        )
+    }
+
+    // Delete (archive) confirmation dialog
+    if (showDeleteConfirmDialog && onDeleteCustomer != null) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            title = {
+                Text(
+                    text = if (isBn) "খরিদ্দার মুছবেন?" else "Delete Customer?",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    if (customer.balance > 0) {
+                        androidx.compose.material3.Surface(
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                        ) {
+                            Text(
+                                text = if (isBn) "⚠️ এই খরিদ্দারের ৳ ${customer.balance.toLong()} বাকি রয়েছে।"
+                                else "⚠️ This customer has ৳ ${customer.balance.toLong()} outstanding.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = androidx.compose.ui.Modifier.padding(8.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    Text(
+                        text = if (isBn) "মুছলে '${customer.name}' আর্কাইভে যাবে। সেখান থেকে পুনরুদ্ধার করা যাবে।"
+                        else "Deleting '${customer.name}' moves them to Archive. You can restore anytime.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            },
+            confirmButton = {
+                androidx.compose.material3.Button(
+                    onClick = {
+                        showDeleteConfirmDialog = false
+                        onDeleteCustomer()
+                        onDismiss()
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(
+                        text = if (isBn) "আর্কাইভে পাঠান" else "Archive & Delete",
+                        color = androidx.compose.ui.graphics.Color.White
+                    )
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.OutlinedButton(
+                    onClick = { showDeleteConfirmDialog = false }
+                ) {
+                    Text(if (isBn) "বাতিল" else "Cancel")
+                }
+            }
+        )
     }
 }

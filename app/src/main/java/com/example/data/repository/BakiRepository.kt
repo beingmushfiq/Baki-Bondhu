@@ -62,7 +62,8 @@ interface BakiRepository {
         amount: Double,
         spokenText: String?,
         note: String = "",
-        dueDate: Long? = null
+        dueDate: Long? = null,
+        explicitCustomerId: Long? = null
     ): Long
 
     suspend fun recordTransactionPaisa(
@@ -72,7 +73,8 @@ interface BakiRepository {
         amountPaisa: Long,
         spokenText: String?,
         note: String = "",
-        dueDate: Long? = null
+        dueDate: Long? = null,
+        explicitCustomerId: Long? = null
     ): Long
 
     fun getTransactionsInDateRange(startTime: Long, endTime: Long): Flow<List<LedgerEntryEntity>>
@@ -192,7 +194,8 @@ class DefaultBakiRepository(
         amount: Double,
         spokenText: String?,
         note: String,
-        dueDate: Long?
+        dueDate: Long?,
+        explicitCustomerId: Long?
     ): Long {
         return recordTransactionPaisa(
             customerName = customerName,
@@ -201,7 +204,8 @@ class DefaultBakiRepository(
             amountPaisa = Math.round(amount * 100.0),
             spokenText = spokenText,
             note = note,
-            dueDate = dueDate
+            dueDate = dueDate,
+            explicitCustomerId = explicitCustomerId
         )
     }
 
@@ -212,16 +216,21 @@ class DefaultBakiRepository(
         amountPaisa: Long,
         spokenText: String?,
         note: String,
-        dueDate: Long?
+        dueDate: Long?,
+        explicitCustomerId: Long?
     ): Long = withContext(ioDispatcher) {
         val cleanName = customerName.trim().ifBlank { "সাধারণ খরিদ্দার" }
         val cleanPhone = customerPhone?.trim() ?: ""
         val now = System.currentTimeMillis()
 
         suspend fun executeAtomic(): Long {
-            // Find existing customer by phone first if provided, otherwise by exact name
-            val existingByPhone = if (cleanPhone.isNotBlank()) customerDao.findCustomerByPhone(cleanPhone) else null
-            val existing = existingByPhone ?: customerDao.findCustomerByName(cleanName)
+            // Find existing customer: explicit ID if provided, otherwise by phone, otherwise by exact name
+            val existing = if (explicitCustomerId != null && explicitCustomerId > 0L) {
+                customerDao.getCustomerByIdDirect(explicitCustomerId)
+            } else {
+                val existingByPhone = if (cleanPhone.isNotBlank()) customerDao.findCustomerByPhone(cleanPhone) else null
+                existingByPhone ?: customerDao.findCustomerByName(cleanName)
+            }
 
             val (customerId, customerUuid) = if (existing != null) {
                 if (dueDate != null) {

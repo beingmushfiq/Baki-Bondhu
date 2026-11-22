@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -193,6 +194,7 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
 
     var showOpeningLoader by remember { mutableStateOf(true) }
     var dismissedOnboarding by remember { mutableStateOf(false) }
+    var isFabExpanded by remember { mutableStateOf(false) }
     val showOnboarding = !dismissedOnboarding &&
             !showOpeningLoader &&
             uiState.settings.ownerName.isBlank() &&
@@ -256,6 +258,8 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
             if (pagerState.currentPage != 1) {
                 SpeedDialFab(
                     isBn = isBn,
+                    expanded = isFabExpanded,
+                    onExpandedChange = { isFabExpanded = it },
                     onVoiceClick = { requestVoiceEntry() },
                     onManualDebtClick = { viewModel.openManualEntryDialog(true) },
                     onAddCustomerClick = { viewModel.openAddCustomerDialog(true) },
@@ -333,6 +337,19 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                         )
                     }
                 }
+
+            // Scrim overlay when SpeedDialFab is expanded
+            if (isFabExpanded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.4f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { isFabExpanded = false }
+                )
+            }
 
             // MODALS & OVERLAYS
 
@@ -424,6 +441,12 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                     onShareTransaction = { tx ->
                         viewModel.openReceiptDialog(tx)
                     },
+                    onRenameCustomer = { newName, newPhone ->
+                        viewModel.renameCustomer(customer.id, newName, newPhone)
+                    },
+                    onDeleteCustomer = {
+                        viewModel.deleteCustomer(customer)
+                    },
                     onDismiss = {
                         viewModel.selectCustomerForDetail(null)
                     }
@@ -452,6 +475,7 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
             if (uiState.isAddCustomerOpen) {
                 AddCustomerDialog(
                     isBn = isBn,
+                    existingCustomers = uiState.customers,
                     onAdd = { name, phone, due, note ->
                         viewModel.addCustomer(name, phone, due, note)
                     },
@@ -464,8 +488,8 @@ fun BakiBondhuApp(viewModel: BakiViewModel = viewModel()) {
                 ManualEntryScreen(
                     uiState = uiState,
                     fallbackVoiceSnippet = uiState.voiceFallbackSnippet,
-                    onSaveTransaction = { name, phone, amount, type, note ->
-                        viewModel.saveManualTransaction(name, phone, amount, type, note)
+                    onSaveTransaction = { name, phone, amount, type, note, customerId ->
+                        viewModel.saveManualTransaction(name, phone, amount, type, note, customerId)
                     },
                     onAddCustomer = { name, phone, due, note ->
                         viewModel.addCustomer(name, phone, due, note)

@@ -97,7 +97,7 @@ import com.example.voice.BanglaVoiceParser
 fun ManualEntryScreen(
     uiState: BakiUiState,
     fallbackVoiceSnippet: String? = null,
-    onSaveTransaction: (name: String, phone: String, amount: Double, type: TransactionType, note: String) -> Unit,
+    onSaveTransaction: (name: String, phone: String, amount: Double, type: TransactionType, note: String, customerId: Long?) -> Unit,
     onAddCustomer: (name: String, phone: String, initialDue: Double, note: String) -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -213,8 +213,8 @@ fun ManualEntryScreen(
                         customers = uiState.customers,
                         isBn = isBn,
                         initialNote = fallbackVoiceSnippet ?: "",
-                        onSave = { name, phone, amount, type, note ->
-                            onSaveTransaction(name, phone, amount, type, note)
+                        onSave = { name, phone, amount, type, note, customerId ->
+                            onSaveTransaction(name, phone, amount, type, note, customerId)
                             onNavigateBack()
                         }
                     )
@@ -302,7 +302,7 @@ private fun ManualTransactionForm(
     customers: List<CustomerEntity>,
     isBn: Boolean,
     initialNote: String,
-    onSave: (name: String, phone: String, amount: Double, type: TransactionType, note: String) -> Unit
+    onSave: (name: String, phone: String, amount: Double, type: TransactionType, note: String, customerId: Long?) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     var isNewCustomerMode by remember { mutableStateOf(false) }
@@ -699,7 +699,8 @@ private fun ManualTransactionForm(
                     }
 
                     errorMessage = null
-                    onSave(targetName, targetPhone, cleanAmount, selectedType, noteText.trim())
+                    val targetCustomerId = if (isNewCustomerMode) null else selectedCustomer?.id
+                    onSave(targetName, targetPhone, cleanAmount, selectedType, noteText.trim(), targetCustomerId)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = when (selectedType) {
