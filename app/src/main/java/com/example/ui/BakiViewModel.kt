@@ -101,9 +101,10 @@ class BakiViewModel(
     constructor(application: Application) : this(
         application = application,
         repository = DefaultBakiRepository(
-            AppDatabase.getInstance(application).customerDao(),
-            AppDatabase.getInstance(application).ledgerEntryDao(),
-            AppDatabase.getInstance(application).shopSettingsDao()
+            customerDao = AppDatabase.getInstance(application).customerDao(),
+            ledgerEntryDao = AppDatabase.getInstance(application).ledgerEntryDao(),
+            shopSettingsDao = AppDatabase.getInstance(application).shopSettingsDao(),
+            database = AppDatabase.getInstance(application)
         ),
         authManager = GoogleAuthManager(application),
         syncRepository = FirestoreSyncRepository(application)
@@ -1295,7 +1296,7 @@ class BakiViewModel(
         }
     }
 
-    fun restoreFromCloud() {
+    fun restoreFromCloud(mergeWithLocal: Boolean = true) {
         val user = authManager.currentUser.value
         if (user == null) {
             val isBn = uiState.value.isBangla
@@ -1328,7 +1329,8 @@ class BakiViewModel(
                         repository.restoreCloudData(
                             customers = stats.customersRestored,
                             transactions = stats.transactionsRestored,
-                            settings = stats.settingsRestored
+                            settings = stats.settingsRestored,
+                            mergeWithLocal = mergeWithLocal
                         )
                         val cCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.customersRestored.size}") else "${stats.customersRestored.size}"
                         val tCount = if (isBn) BanglaVoiceParser.toBanglaDigits("${stats.transactionsRestored.size}") else "${stats.transactionsRestored.size}"
@@ -1397,7 +1399,7 @@ class BakiViewModel(
 
     fun confirmCloudRestore(mergeWithLocal: Boolean) {
         dismissRestorePreview()
-        restoreFromCloud()
+        restoreFromCloud(mergeWithLocal)
     }
 
     // Archive Zone Operations

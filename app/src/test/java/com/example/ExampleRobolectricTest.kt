@@ -647,6 +647,167 @@ class ExampleRobolectricTest {
     val exception = com.example.auth.GoogleSignInCancelledException()
     assertEquals("Google Sign-In was cancelled by user", exception.message)
   }
+
+  @Test
+  fun `verify restoreCloudData does not fail with foreign key constraint when restoring with customerId 0 and existing local data`() = runBlocking {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
+    val repository: BakiRepository = DefaultBakiRepository(
+      customerDao = db.customerDao(),
+      ledgerEntryDao = db.ledgerEntryDao(),
+      shopSettingsDao = db.shopSettingsDao(),
+      database = db
+    )
+
+    // Setup local state matching user screenshot: 1 customer with 450 Taka debt and 1 transaction
+    val localCustId = repository.addCustomer(
+      CustomerEntity(name = "আমার দোকান খদ্দের", phone = "01711111111", balance = 0.0)
+    )
+    repository.recordTransaction(
+      customerName = "আমার দোকান খদ্দের",
+      customerPhone = "01711111111",
+      type = TransactionType.BAKI_SALE,
+      amount = 450.0,
+      spokenText = "আমার দোকান খদ্দের ৪৫০ বাকি"
+    )
+
+    val localCustomer = db.customerDao().getCustomerByIdDirect(localCustId)
+    assertNotNull(localCustomer)
+
+    // Prepare cloud data where customerId is 0L (as parsed from Firestore/RTDB)
+    val cloudCustomer = CustomerEntity(
+      id = 0L,
+      uuid = localCustomer!!.uuid,
+      name = "আমার দোকান খদ্দের",
+      phone = "01711111111",
+      balancePaisa = 45000L
+    )
+    val cloudTx = LedgerEntryEntity(
+      id = 0L,
+      uuid = java.util.UUID.randomUUID().toString(),
+      customerId = 0L, // Notice 0L from cloud!
+      customerUuid = localCustomer.uuid,
+      customerName = "আমার দোকান খদ্দের",
+      type = TransactionType.BAKI_SALE,
+      amountPaisa = 45000L
+    )
+
+    // Perform cloud restore (Smart Merge)
+    repository.restoreCloudData(
+      customers = listOf(cloudCustomer),
+      transactions = listOf(cloudTx),
+      settings = null,
+      mergeWithLocal = true
+    )
+
+    // Verify no Foreign Key failure occurred and customer still exists with proper transactions
+    val restoredCust = db.customerDao().getCustomerByIdDirect(localCustId)
+    assertNotNull(restoredCust)
+    assertEquals(localCustId, restoredCust!!.id)
+
+    val txs = db.ledgerEntryDao().getTransactionsForCustomer(localCustId).first()
+    assertTrue(txs.isNotEmpty())
+    assertEquals(localCustId, txs.first().customerId)
+
+    db.close()
+  }
+
+  @Test
+  fun `verify restoreCloudData full overwrite clears safely without foreign key violation`() = runBlocking {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
+    val repository: BakiRepository = DefaultBakiRepository(
+      customerDao = db.customerDao(),
+      ledgerEntryDao = db.ledgerEntryDao(),
+      shopSettingsDao = db.shopSettingsDao(),
+      database = db
+    )
+
+    // Setup local customer and transaction
+    repository.recordTransaction(
+      customerName = "পুরাতন খদ্দের",
+      customerPhone = "01800000000",
+      type = TransactionType.BAKI_SALE,
+      amount = 200.0,
+      spokenText = "পুরাতন খদ্দের ২০০ বাকি"
+    )
+
+    // Restore brand new cloud customer and transaction with mergeWithLocal = false (full overwrite)
+    val cloudCustUuid = java.util.UUID.randomUUID().toString()
+    val cloudCust = CustomerEntity(
+      id = 0L,
+      uuid = cloudCustUuid,
+      name = "নতুন ক্লাউড খদ্দের",
+      phone = "01900000000",
+      balancePaisa = 100000L
+    )
+    val cloudTx = LedgerEntryEntity(
+      id = 0L,
+      uuid = java.util.UUID.randomUUID().toString(),
+      customerId = 0L,
+      customerUuid = cloudCustUuid,
+      customerName = "নতুন ক্লাউড খদ্দের",
+      type = TransactionType.BAKI_SALE,
+      amountPaisa = 100000L
+    )
+
+    repository.restoreCloudData(
+      customers = listOf(cloudCust),
+      transactions = listOf(cloudTx),
+      settings = null,
+      mergeWithLocal = false
+    )
+
+    val customers = db.customerDao().getAllCustomers().first()
+    assertEquals(1, customers.size)
+    assertEquals("নতুন ক্লাউড খদ্দের", customers[0].name)
+
+    val transactions = db.ledgerEntryDao().getAllTransactions().first()
+    assertEquals(1, transactions.size)
+    assertEquals(customers[0].id, transactions[0].customerId)
+
+    db.close()
+  }
+
+  @Test
+  fun `verify restoreCloudData handles orphaned transactions gracefully without foreign key crash`() = runBlocking {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
+    val repository: BakiRepository = DefaultBakiRepository(
+      customerDao = db.customerDao(),
+      ledgerEntryDao = db.ledgerEntryDao(),
+      shopSettingsDao = db.shopSettingsDao(),
+      database = db
+    )
+
+    // Transaction with unknown customerUuid and customerId = 0
+    val orphanTx = LedgerEntryEntity(
+      id = 0L,
+      uuid = java.util.UUID.randomUUID().toString(),
+      customerId = 0L,
+      customerUuid = "non-existent-uuid",
+      customerName = "হারানো খদ্দের",
+      type = TransactionType.BAKI_SALE,
+      amountPaisa = 15000L
+    )
+
+    // Restore with empty customers list
+    repository.restoreCloudData(
+      customers = emptyList(),
+      transactions = listOf(orphanTx),
+      settings = null,
+      mergeWithLocal = true
+    )
+
+    val customers = db.customerDao().getAllCustomers().first()
+    assertTrue(customers.any { it.name == "হারানো খদ্দের" })
+
+    val transactions = db.ledgerEntryDao().getAllTransactions().first()
+    assertEquals(1, transactions.size)
+    assertTrue(transactions[0].customerId > 0)
+
+    db.close()
+  }
 }
 
 

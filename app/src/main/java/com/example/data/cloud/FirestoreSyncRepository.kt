@@ -399,6 +399,7 @@ class FirestoreSyncRepository(
                             val uuid = child.child("uuid").getValue(String::class.java) ?: child.key ?: UUID.randomUUID().toString()
                             val custUuid = child.child("customerUuid").getValue(String::class.java) ?: ""
                             val custName = child.child("customerName").getValue(String::class.java) ?: ""
+                            val rawCustId = child.child("customerId").getValue(Long::class.java) ?: 0L
                             val typeStr = child.child("type").getValue(String::class.java) ?: "BAKI_SALE"
                             val type = try { TransactionType.valueOf(typeStr) } catch (_: Exception) { TransactionType.BAKI_SALE }
                             val amountPaisa = child.child("amountPaisa").getValue(Long::class.java)
@@ -413,7 +414,7 @@ class FirestoreSyncRepository(
                             TransactionEntity(
                                 id = 0L,
                                 uuid = uuid,
-                                customerId = 0L,
+                                customerId = rawCustId,
                                 customerUuid = custUuid,
                                 customerName = custName,
                                 type = type,
@@ -526,6 +527,7 @@ class FirestoreSyncRepository(
                     val uuid = doc.getString("uuid") ?: doc.id.ifBlank { UUID.randomUUID().toString() }
                     val custUuid = doc.getString("customerUuid") ?: ""
                     val custName = doc.getString("customerName") ?: ""
+                    val rawCustId = doc.getLong("customerId") ?: 0L
                     val typeStr = doc.getString("type") ?: "BAKI_SALE"
                     val type = try { TransactionType.valueOf(typeStr) } catch (_: Exception) { TransactionType.BAKI_SALE }
                     val amountPaisa = doc.getLong("amountPaisa")
@@ -540,7 +542,7 @@ class FirestoreSyncRepository(
                     TransactionEntity(
                         id = 0L,
                         uuid = uuid,
-                        customerId = 0L,
+                        customerId = rawCustId,
                         customerUuid = custUuid,
                         customerName = custName,
                         type = type,

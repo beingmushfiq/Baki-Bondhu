@@ -90,7 +90,8 @@ interface BakiRepository {
     suspend fun restoreCloudData(
         customers: List<CustomerEntity>,
         transactions: List<TransactionEntity>,
-        settings: ShopSettingsEntity?
+        settings: ShopSettingsEntity?,
+        mergeWithLocal: Boolean = true
     )
     suspend fun syncOfflineData(): Boolean
 }
@@ -474,18 +475,149 @@ class DefaultBakiRepository(
     override suspend fun restoreCloudData(
         customers: List<CustomerEntity>,
         transactions: List<TransactionEntity>,
-        settings: ShopSettingsEntity?
+        settings: ShopSettingsEntity?,
+        mergeWithLocal: Boolean
     ) = withContext(ioDispatcher) {
         suspend fun execute() {
-            if (customers.isNotEmpty()) {
-                customerDao.insertCustomers(customers)
+            if (!mergeWithLocal) {
+                // Clear child table (LedgerEntries) first, then parent table (Customers) to respect FK RESTRICT
+                ledgerEntryDao.clearAllLedgerEntries()
+                customerDao.clearAllCustomers()
             }
-            if (transactions.isNotEmpty()) {
-                ledgerEntryDao.insertTransactions(transactions)
+
+            // Map from customer UUID -> resolved local SQLite primary key (customerId)
+            val uuidToLocalId = mutableMapOf<String, Long>()
+            // Map from customer Name (lowercase trimmed) -> resolved local SQLite primary key
+            val nameToLocalId = mutableMapOf<String, Long>()
+
+            // 1. Process and save/update Customers
+            for (cloudCust in customers) {
+                val cleanName = cloudCust.name.trim()
+                if (cleanName.isBlank()) continue
+
+                val existingByUuid = if (mergeWithLocal && cloudCust.uuid.isNotBlank()) {
+                    customerDao.getCustomerByUuid(cloudCust.uuid)
+                } else null
+
+                val existing = existingByUuid ?: if (mergeWithLocal) {
+                    customerDao.findCustomerByNameIncludingArchived(cleanName)
+                } else null
+
+                val localId = if (existing != null) {
+                    // Update existing customer in place preserving its local primary key.
+                    // This avoids SQLite REPLACE which triggers DELETE and violates ON DELETE RESTRICT!
+                    val updatedCustomer = cloudCust.copy(
+                        id = existing.id,
+                        uuid = existing.uuid.ifBlank { cloudCust.uuid },
+                        name = cleanName,
+                        syncStatus = SyncStatus.SYNCED,
+                        updatedAt = maxOf(cloudCust.updatedAt, existing.updatedAt)
+                    )
+                    customerDao.updateCustomer(updatedCustomer)
+                    existing.id
+                } else {
+                    // Brand new customer: insert with id = 0 so SQLite generates a new valid auto-increment ID
+                    val newCustomer = cloudCust.copy(
+                        id = 0L,
+                        uuid = cloudCust.uuid.ifBlank { UUID.randomUUID().toString() },
+                        name = cleanName,
+                        syncStatus = SyncStatus.SYNCED
+                    )
+                    customerDao.insertCustomer(newCustomer)
+                }
+
+                if (cloudCust.uuid.isNotBlank()) {
+                    uuidToLocalId[cloudCust.uuid] = localId
+                }
+                if (existing?.uuid?.isNotBlank() == true) {
+                    uuidToLocalId[existing.uuid] = localId
+                }
+                nameToLocalId[cleanName.lowercase()] = localId
+                if (existing?.name?.isNotBlank() == true) {
+                    nameToLocalId[existing.name.trim().lowercase()] = localId
+                }
             }
+
+            // 2. Process and save/update Transactions
+            for (cloudTx in transactions) {
+                var targetCustomerId: Long? = null
+
+                // 2a. Match by customerUuid
+                if (cloudTx.customerUuid.isNotBlank()) {
+                    targetCustomerId = uuidToLocalId[cloudTx.customerUuid]
+                        ?: customerDao.getCustomerByUuid(cloudTx.customerUuid)?.id
+                }
+
+                // 2b. Fallback: match by customerName
+                if (targetCustomerId == null && cloudTx.customerName.isNotBlank()) {
+                    val cleanTxCustName = cloudTx.customerName.trim().lowercase()
+                    targetCustomerId = nameToLocalId[cleanTxCustName]
+                        ?: customerDao.findCustomerByNameIncludingArchived(cloudTx.customerName.trim())?.id
+                }
+
+                // 2c. Fallback: match by legacy customerId if exists in local DB
+                if (targetCustomerId == null && cloudTx.customerId > 0L) {
+                    val existingCustById = customerDao.getCustomerByIdDirect(cloudTx.customerId)
+                    if (existingCustById != null) {
+                        targetCustomerId = cloudTx.customerId
+                    }
+                }
+
+                // 2d. Ultimate safety guarantee: If transaction has no associated customer in DB,
+                // dynamically create the missing customer record so foreign key constraint is NEVER violated!
+                if (targetCustomerId == null) {
+                    val fallbackName = cloudTx.customerName.trim().ifBlank { "সাধারণ খদ্দের" }
+                    val fallbackUuid = cloudTx.customerUuid.ifBlank { UUID.randomUUID().toString() }
+                    val newCust = Customer(
+                        id = 0L,
+                        uuid = fallbackUuid,
+                        name = fallbackName,
+                        balancePaisa = 0L,
+                        syncStatus = SyncStatus.SYNCED,
+                        createdAt = cloudTx.timestamp,
+                        updatedAt = cloudTx.timestamp
+                    )
+                    targetCustomerId = customerDao.insertCustomer(newCust)
+                    uuidToLocalId[fallbackUuid] = targetCustomerId
+                    nameToLocalId[fallbackName.lowercase()] = targetCustomerId
+                }
+
+                // Check if transaction already exists locally by UUID
+                val existingTx = if (mergeWithLocal && cloudTx.uuid.isNotBlank()) {
+                    ledgerEntryDao.getTransactionByUuid(cloudTx.uuid)
+                } else null
+
+                if (existingTx != null) {
+                    val updatedTx = cloudTx.copy(
+                        id = existingTx.id,
+                        customerId = targetCustomerId,
+                        syncStatus = SyncStatus.SYNCED,
+                        updatedAt = maxOf(cloudTx.updatedAt, existingTx.updatedAt)
+                    )
+                    ledgerEntryDao.updateTransaction(updatedTx)
+                } else {
+                    val newTx = cloudTx.copy(
+                        id = 0L,
+                        customerId = targetCustomerId,
+                        syncStatus = SyncStatus.SYNCED
+                    )
+                    ledgerEntryDao.insertTransaction(newTx)
+                }
+            }
+
+            // 3. Reconcile customer balances with ledger entries
+            for (localId in uuidToLocalId.values.toSet()) {
+                val netPaisa = ledgerEntryDao.calculateNetLedgerPaisaForCustomer(localId)
+                if (netPaisa != null) {
+                    customerDao.setCustomerBalancePaisa(localId, netPaisa, System.currentTimeMillis())
+                }
+            }
+
+            // 4. Save settings if present
             if (settings != null) {
                 shopSettingsDao.saveSettings(settings)
             }
+
             _syncState.value = SyncState(
                 status = SyncStatus.SYNCED,
                 pendingCount = 0,

@@ -32,6 +32,9 @@ interface CustomerDao {
     @Query("SELECT * FROM Customers WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) AND isArchived = 0 LIMIT 1")
     suspend fun findCustomerByName(name: String): Customer?
 
+    @Query("SELECT * FROM Customers WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) LIMIT 1")
+    suspend fun findCustomerByNameIncludingArchived(name: String): Customer?
+
     @Query("SELECT * FROM Customers WHERE phone != '' AND phone = :phone AND isArchived = 0 LIMIT 1")
     suspend fun findCustomerByPhone(phone: String): Customer?
 
