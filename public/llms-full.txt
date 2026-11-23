@@ -9,7 +9,7 @@ Traditional retail commerce in Bangladesh relies on manual red paper ledgers (рж
 3. **Tedious collection**: Debt recovery calls are socially uncomfortable and lack fast settlement details (such as bKash/Nagad accounts).
 4. **Generic accounting software failures**: Existing cloud apps require permanent 4G internet, complex logins, monthly subscriptions, and English terminology that ordinary shopkeepers find alienating.
 
-## 2. Core Technical Architecture (v2.2.2)
+## 2. Core Technical Architecture (v2.2.3)
 - **Language & Framework**: Kotlin 2.0+ with Jetpack Compose Material 3 (declarative reactive UI).
 - **Persistence**: Android Room SQLite Database v5 with foreign keys, compound indices, and deterministic migration schemas.
 - **Precision Math**: 64-bit Long integer paisa arithmetic (`paisa = round(amount * 100)`). Zero Float/Double IEEE 754 precision drift.
@@ -48,7 +48,7 @@ The application interprets real spoken conversational Bengali:
 ## 6. Official Endpoints
 - Homepage: https://bakibondhu.devcenterpoint.com/
 - Android APK Download (Latest): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-latest.apk
-- Android APK Download (v2.2.2): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.2.apk
+- Android APK Download (v2.2.3): https://bakibondhu.devcenterpoint.com/downloads/bakibondhu-v2.2.3.apk
 - Direct Download Shortlink: https://bakibondhu.devcenterpoint.com/download
 - GitHub Repository: https://github.com/beingmushfiq/Baki-Bondhu
 - Canonical Sitemap: https://bakibondhu.devcenterpoint.com/sitemap.xml

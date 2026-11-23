@@ -10,8 +10,8 @@
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     # Direct short URLs for latest release APK
-    RewriteRule ^download/?$ downloads/bakibondhu-v2.2.2.apk [R=302,L]
-    RewriteRule ^downloads/latest/?$ downloads/bakibondhu-v2.2.2.apk [R=302,L]
+    RewriteRule ^download/?$ downloads/bakibondhu-v2.2.3.apk [R=302,L]
+    RewriteRule ^downloads/latest/?$ downloads/bakibondhu-v2.2.3.apk [R=302,L]
 </IfModule>
 
 # 2. Android APK Package & Download Headers
@@ -20,7 +20,7 @@ AddType application/manifest+json .webmanifest
 <IfModule mod_headers.c>
     <FilesMatch "\.(apk)$">
         Header set Content-Type "application/vnd.android.package-archive"
-        Header set Content-Disposition "attachment; filename=\"bakibondhu-v2.2.2.apk\""
+        Header set Content-Disposition "attachment; filename=\"bakibondhu-v2.2.3.apk\""
         Header set X-Content-Type-Options "nosniff"
         Header set Cache-Control "public, max-age=3600"
     </FilesMatch>
